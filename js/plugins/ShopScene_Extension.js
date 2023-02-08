@@ -243,22 +243,22 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
                 case "cannot":
                     this.bitmap.fontSize = 24;
                     this.bitmap.textColor = "#ff0000";
-                    // this.bitmap.drawText("×", 32, 32, 16, 16);
-                    this.bitmap.drawText("×", 30, 16, 16, 16);
+                    this.bitmap.drawText("×", 32, 32, 16, 16);
+                    // this.bitmap.drawText("×", 30, 16, 16, 16);
                     break;
                 case "equipped":
                     this.bitmap.fontSize = 20;
                     this.bitmap.textColor = "#ffffff";
-                    // this.bitmap.drawText("Ｅ", 32, 32, 16, 16);
-                    this.bitmap.drawText("Ｅ", 30, 16, 16, 16);
+                    this.bitmap.drawText("Ｅ", 32, 32, 16, 16);
+                    // this.bitmap.drawText("Ｅ", 30, 16, 16, 16);
                     break;
                 case "up":
-                    // this.drawUpTriangle(32, 32, 16, 16, "#000000", "#00ff00");
-                    this.drawUpTriangle(30, 16, 16, 16, "#000000", "#00ff00");
+                    this.drawUpTriangle(32, 32, 16, 16, "#000000", "#00ff00");
+                    // this.drawUpTriangle(30, 16, 16, 16, "#000000", "#00ff00");
                     break;
                 case "down":
-                    // this.drawDownTriangle(32, 32, 16, 16, "#000000", "#ff6666");
-                    this.drawDownTriangle(30, 16, 16, 16, "#000000", "#ff6666");
+                    this.drawDownTriangle(32, 32, 16, 16, "#000000", "#ff6666");
+                    // this.drawDownTriangle(30, 16, 16, 16, "#000000", "#ff6666");
                     break;
             }
             return true;
@@ -492,8 +492,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
             this.drawCurrentItem(x, y, itemNameWidth);
             this.drawRightArrow(x + itemNameWidth, y);
             this.drawItemName(this._item, x + itemNameWidth + this.rightArrowWidth(), y, itemNameWidth);
-
-            y += this.lineHeight() * 2 + 8;
+            y += this.lineHeight() * 2 + 24;
 
             // Draw characters
             this.setupActorCharacters(x + ActorCharacterBeginOfs, y - this.lineHeight());
@@ -507,9 +506,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
             this.setupActorCharacters(x + ActorCharacterBeginOfs, y - this.lineHeight() * 1.5);
             if (EnableActorArrow) this.setupActorCursors(y - this.lineHeight() * 1.5);
         }
-        // cursed_twitch custom(2023/01/24)
-        // y += 8;
-        y += 64;
+        y += 8;
 
         // Draw params
         this.drawAllParams(x, y);
@@ -576,12 +573,12 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
         // cursed_twitch custom(2023/01/24)
         this._leftActorArrowSprite.show();
         this._leftActorArrowSprite.x = this.padding;
-        // this._leftActorArrowSprite.y = y + 16;
-        this._leftActorArrowSprite.y = y + 48;
+        this._leftActorArrowSprite.y = y + 16;
+        // this._leftActorArrowSprite.y = y + 48;
         this._rightActorArrowSprite.show();
         this._rightActorArrowSprite.x = this.width - this.padding - this._rightActorArrowSprite.width;
-        // this._rightActorArrowSprite.y = y + 16;
-        this._rightActorArrowSprite.y = y + 48;
+        this._rightActorArrowSprite.y = y + 16;
+        // this._rightActorArrowSprite.y = y + 48;
     };
 
     Window_ShopStatus.prototype.hideActorCursors = function () {
