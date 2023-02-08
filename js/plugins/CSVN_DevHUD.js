@@ -121,6 +121,7 @@
     Window_HUD.prototype.initialize = function (rect) {
         Window_Base.prototype.initialize.call(this, rect);
         this._mapContent = "";
+        this._encounterContent = "";
         this._xContent = "";
         this._yContent = "";
         this._regionContent = "";
@@ -130,6 +131,7 @@
 
     Window_HUD.prototype.setContent = function () {
         this.setMapContent();
+        this.setEncounterContent();
         this.setXContent();
         this.setYContent();
         this.setRegionContent();
@@ -138,6 +140,11 @@
 
     Window_HUD.prototype.setMapContent = function () {
         this._mapContent = "Map ID: " + $v.get(param.mapId);
+    };
+
+    Window_HUD.prototype.setEncounterContent = function () {
+        const ox = $gameSystem.isEncounterEnabled() ? "o" : "x"
+        this._encounterContent = "Encounter: " + ox;
     };
 
     Window_HUD.prototype.setXContent = function () {
@@ -160,14 +167,23 @@
         const baseTextRect = this.baseTextRect();
         const wx = 0;
         const wy = 0;
-        const ww = baseTextRect.width / 5;
+        const ww = baseTextRect.width / 6;
+        const wh = baseTextRect.height;
+        return new Rectangle(wx + xOffset, wy + yOffset, ww, wh);
+    };
+
+    Window_HUD.prototype.encTextRect = function () {
+        const baseTextRect = this.baseTextRect();
+        const wx = baseTextRect.width / 6;
+        const wy = 0;
+        const ww = baseTextRect.width / 6;
         const wh = baseTextRect.height;
         return new Rectangle(wx + xOffset, wy + yOffset, ww, wh);
     };
 
     Window_HUD.prototype.xTextRect = function () {
         const baseTextRect = this.baseTextRect();
-        const wx = baseTextRect.width / 5;
+        const wx = baseTextRect.width / 6 * 2;
         const wy = 0;
         const ww = baseTextRect.width / 5;
         const wh = baseTextRect.height;
@@ -176,7 +192,7 @@
 
     Window_HUD.prototype.yTextRect = function () {
         const baseTextRect = this.baseTextRect();
-        const wx = baseTextRect.width / 5 * 2;
+        const wx = baseTextRect.width / 6 * 3;
         const wy = 0;
         const ww = baseTextRect.width / 5;
         const wh = baseTextRect.height;
@@ -185,7 +201,7 @@
 
     Window_HUD.prototype.regionTextRect = function () {
         const baseTextRect = this.baseTextRect();
-        const wx = baseTextRect.width / 5 * 3;
+        const wx = baseTextRect.width / 6 * 4;
         const wy = 0;
         const ww = baseTextRect.width / 5;
         const wh = baseTextRect.height;
@@ -194,7 +210,7 @@
 
     Window_HUD.prototype.terrainTextRect = function () {
         const baseTextRect = this.baseTextRect();
-        const wx = baseTextRect.width / 5 * 4;
+        const wx = baseTextRect.width / 6 * 5;
         const wy = 0;
         const ww = baseTextRect.width / 5;
         const wh = baseTextRect.height;
@@ -204,12 +220,14 @@
     Window_HUD.prototype.refresh = function () {
         this.setContent();
         const mapTextRect = this.mapTextRect();
+        const encTextRect = this.encTextRect();
         const regionTextRect = this.regionTextRect();
         const terrainTextRext = this.terrainTextRect();
         const xTextRect = this.xTextRect();
         const yTextRect = this.yTextRect();
         this.contents.clear();
         this.drawTextEx(this._mapContent, mapTextRect.x, mapTextRect.y, mapTextRect.width);
+        this.drawTextEx(this._encounterContent, encTextRect.x, encTextRect.y, encTextRect.width);
         this.drawTextEx(this._regionContent, regionTextRect.x, regionTextRect.y, regionTextRect.width);
         this.drawTextEx(this._terrainContent, terrainTextRext.x, terrainTextRext.y, terrainTextRext.width);
         this.drawTextEx(this._xContent, xTextRect.x, xTextRect.y, xTextRect.width);
