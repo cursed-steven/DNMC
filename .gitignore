@@ -4,6 +4,7 @@ data/Map*
 data/Actors.json
 data/Armors.json
 data/Weapons.json
+data/Test*
 effects/*
 fonts/*
 icon/*
