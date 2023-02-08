@@ -190,10 +190,10 @@ const BIOME_NAMES = [
  * キャラクター画像サイズ
  */
 const CHARACTER_IMAGE = {
-    WIDTH: 78,
-    HEIGHT: 108,
-    WIDTH_OFFSET: 39,
-    HEIGHT_OFFSET: 108
+    WIDTH: 48,
+    HEIGHT: 48,
+    WIDTH_OFFSET: 48,
+    HEIGHT_OFFSET: 80
 };
 
 //-----------------------------------------------------------------------------
@@ -10646,9 +10646,9 @@ const ACTOR_BCF = {
         faceName: ""
     },
     "2f": {
-        battlerName: "tf/3_1",
-        characterIndex: 0,
-        characterName: "tf/chara3",
+        battlerName: "preset/Actor1_4",
+        characterIndex: 3,
+        characterName: "preset/Actor1",
         miniCharIndex: 2,
         miniCharName: "tf/minis_char6_3",
         faceIndex: 0,
