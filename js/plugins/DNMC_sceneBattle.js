@@ -71,4 +71,16 @@
         };
     };
 
+    //-----------------------------------------------------------------------------
+    // Game_Enemy
+
+    /**
+     * 敵ダメージVEのうち点滅をやめる
+     */
+    Game_Enemy.prototype.performDamage = function () {
+        Game_Battler.prototype.performDamage.call(this);
+        SoundManager.playEnemyDamage();
+        //this.requestEffect("blink");
+    };
+
 })();
