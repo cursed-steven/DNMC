@@ -86,7 +86,8 @@ var $plugins =
 {"name":"SmartAutoBattle","status":true,"description":"戦闘時アクターの自動戦闘をカスタム/改善","parameters":{}},
 {"name":"SimpleMsgSideViewMZ","status":true,"description":"[Ver1.2.0]サイドビューバトルでスキル/アイテムの名前のみ表示","parameters":{"displayAttack":"false","displayIcon":"true","doesShowDesc":"false","descTiming":"1"}},
 {"name":"StartTPBactorcommand","status":true,"description":"タイムプログレス戦闘でアクターコマンドから開始します。","parameters":{}},
-{"name":"MPP_Pseudo3DBattle","status":true,"description":"戦闘中、立体的にカメラが移動する機能が追加されます。","parameters":{"Battleback Scale":"1.3","Drift Delay":"120","Battleback2 Pivot Y Fixes":"[\"{\\\"Battleback2 Image\\\":\\\"Town2\\\",\\\"Pivot Y\\\":\\\"182\\\"}\"]"}},
+{"name":"MPP_Pseudo3DBattle","status":false,"description":"戦闘中、立体的にカメラが移動する機能が追加されます。","parameters":{"Battleback Scale":"1.3","Drift Delay":"120","Battleback2 Pivot Y Fixes":"[\"{\\\"Battleback2 Image\\\":\\\"Town2\\\",\\\"Pivot Y\\\":\\\"182\\\"}\"]"}},
 {"name":"CounterExtend","status":true,"description":"反撃拡張プラグイン","parameters":{"CounterList":"[]","ConsiderateRepeat":"false"}},
-{"name":"DNMC_sceneBattle","status":true,"description":"Donut Machine 専用戦闘改変いろいろ","parameters":{}}
+{"name":"DNMC_sceneBattle","status":true,"description":"Donut Machine 専用戦闘改変いろいろ","parameters":{}},
+{"name":"DNMC_tpFullCustom","status":true,"description":"戦闘中のTP(BB)の扱いの変更部分","parameters":{"stunStateId":"45","guardStateId":"2","justGuardSe":"retro/dry/Arcane_Magic_Spell_DRY_04","justGuardSeVolume":"35","justGuardSePitch":"100"}}
 ];
