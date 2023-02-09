@@ -426,11 +426,22 @@ Scene_Operation.prototype.initialize = function () {
 
         if (!notNullElement) {
             this._data = [
-                $dataSkills[1],
-                $dataSkills[2],
-                $dataSkills[4],
+                $dataSkills[COMMON_SKILL_IDS.ATTACK],
+                $dataSkills[COMMON_SKILL_IDS.DEFEND],
+                $dataSkills[COMMON_SKILL_IDS.ESCAPE],
                 null
             ];
+            // デフォルトの内容で一旦保存してしまう
+            $v.set(vi, [
+                COMMON_SKILL_IDS.ATTACK,
+                COMMON_SKILL_IDS.DEFEND,
+                COMMON_SKILL_IDS.ESCAPE,
+                "",
+                "",
+                "",
+                "",
+                ""
+            ].join(","));
         }
     };
 
