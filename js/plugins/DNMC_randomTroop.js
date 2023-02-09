@@ -24,6 +24,11 @@
  * @text 地形タグ
  * @desc プレイヤーがいる地形タグを格納する変数のID
  * @type variable
+ * 
+ * @param stateInterested
+ * @text 興味が出たステート
+ * @desc 興味がないを出さなくなるステート
+ * @type state
  */
 
 (() => {
@@ -36,7 +41,10 @@
     const MAX_NG_COUNT = 10;
 
     const EXP_RATE = 20;
-    const LV_DIFF = 7;
+    const LV_DIFF = 5;
+    const STATE_IDS = {
+        INTERESTED: param.stateInterested
+    };
 
     /**
      * 指定した地形タグに生息する敵のリストを取得して返す
@@ -69,6 +77,31 @@
     function enemyHeight(dEnemy) {
         if (!dEnemy) return 0;
         return Number(ImageManager.loadEnemy(dEnemy.battlerName).height);
+    }
+
+    /**
+     * 敵画像の幅を考慮してほどほどな範囲のランダムX座標を返す
+     * @param {any} dEnemy 
+     * @returns number
+     */
+    function getRandomX(dEnemy) {
+        // 戦闘画面左半分で画像がはみ出さない範囲でランダム
+        const randX = Math.max(0, Math.randomInt(BOX_WIDTH / 2 - enemyWidth(dEnemy))) + enemyWidth(dEnemy);
+        // 補正
+        return randX + 48;
+    }
+
+    /**
+     * 敵画像の高さを考慮してほどほどな範囲のランダムY座標を返す
+     * @param {any} dEnemy 
+     * @returns number
+     */
+    function getRandomY(dEnemy) {
+        // ステータスウィンドウより上、戦闘背景1より下でかつはみ出さない範囲でランダム
+        const bswh = Window_Selectable.prototype.fittingHeight(4);
+        const randY = Math.max(bswh, Math.randomInt(BOX_HEIGHT - bswh - enemyHeight(dEnemy))) + enemyHeight(dEnemy);
+        // 補正
+        return randY + 180;
     }
 
     //-----------------------------------------------------------------------------
@@ -273,29 +306,21 @@
         return true;
     }
 
-    /**
-     * 敵画像の幅を考慮してほどほどな範囲のランダムX座標を返す
-     * @param {any} dEnemy 
-     * @returns number
-     */
-    function getRandomX(dEnemy) {
-        // 戦闘画面左半分で画像がはみ出さない範囲でランダム
-        const randX = Math.max(0, Math.randomInt(BOX_WIDTH / 2 - enemyWidth(dEnemy))) + enemyWidth(dEnemy);
-        // 補正
-        return randX + 48;
-    }
+    //-----------------------------------------------------------------------------
+    // Game_Action
 
+    const _Game_Action_executeHpDamage = Game_Action.prototype.executeHpDamage;
     /**
-     * 敵画像の高さを考慮してほどほどな範囲のランダムY座標を返す
-     * @param {any} dEnemy 
-     * @returns number
+     * HPが7割を切ったら「興味がない」行動を封印→行動するようになる
+     * @param {Game_Battler} target 
+     * @param {number} value 
      */
-    function getRandomY(dEnemy) {
-        // ステータスウィンドウより上、戦闘背景1より下でかつはみ出さない範囲でランダム
-        const bswh = Window_Selectable.prototype.fittingHeight(4);
-        const randY = Math.max(bswh, Math.randomInt(BOX_HEIGHT - bswh - enemyHeight(dEnemy))) + enemyHeight(dEnemy);
-        // 補正
-        return randY + 180;
-    }
+    Game_Action.prototype.executeHpDamage = function (target, value) {
+        _Game_Action_executeHpDamage.call(this, target, value);
+
+        if (target.hp / target.mhp < 0.7) {
+            target.addState(STATE_IDS.INTERESTED);
+        }
+    };
 
 })();
