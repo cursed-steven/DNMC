@@ -73,8 +73,8 @@
 
             if (stypeId !== 0) {
                 const additionalAnimationId = findAnimationId(stypeId);
-                CSVN_base.log(">>>> " + this.constructor.name + " startAction");
-                CSVN_base.log(additionalAnimationId);
+                // CSVN_base.log(">>>> " + this.constructor.name + " startAction");
+                // CSVN_base.log(additionalAnimationId);
                 if (additionalAnimationId !== 0) {
                     this.push("showAnimation", subject, [subject].clone(), additionalAnimationId);
                 }
