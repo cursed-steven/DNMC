@@ -124,7 +124,7 @@
             if (Input.isPressed("cancel")) {
                 // キャンセル
                 this.commandCancel();
-                this.resetSuspsndedFrames();
+                this.resetSuspendedFrames();
             } else {
                 if (TouchInput.isClicked()) {
                     // タッチUIにも対応
@@ -233,14 +233,14 @@
                 this.onSelectAction();
                 break;
         }
-        this.resetSuspsndedFrames();
+        this.resetSuspendedFrames();
 
     };
 
     /**
      * 入力受付禁止フレームのリセット
      */
-    Scene_Battle.prototype.resetSuspsndedFrames = function () {
+    Scene_Battle.prototype.resetSuspendedFrames = function () {
         this._suspendedFrames = FRAMES_TO_BE_SUSPENDED;
     };
 
