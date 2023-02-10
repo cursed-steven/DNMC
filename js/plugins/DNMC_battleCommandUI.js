@@ -252,6 +252,23 @@
         return new Rectangle(wx, wy, ww, wh);
     };
 
+    //-------------------------------------------------------------------------
+    // Window_Selectable
+
+    /**
+     * 戦闘中はブザーが鳴らないようにする
+     */
+    Window_Selectable.prototype.processOk = function () {
+        if (this.isCurrentItemEnabled()) {
+            this.playOkSound();
+            this.updateInputData();
+            this.deactivate();
+            this.callOkHandler();
+        } else {
+            if (!$gameParty.inBattle()) this.playBuzzerSound();
+        }
+    };
+
     //-----------------------------------------------------------------------------
     // Window_CustomActorCommand
     //
@@ -399,14 +416,14 @@
     };
 
     /**
-     * 指定したスキルが対応アクターで
+     * 指定したスキルが対応アクターで使用可能かどうかを返す
      * @param {any} item 
      * @returns boolean
      */
     Window_CustomActorCommand.prototype.isEnabled = function (item) {
-        return this.actor() ? this.actor().canUse(item) : false;
+        const skill = $dataSkills[item.ext];
+        return this.actor() ? this.actor().canUse(skill) : false;
     };
-
 
     /**
      * セット中スキルの描画
@@ -417,9 +434,26 @@
             const costWidth = this.costWidth();
             const rect = this.itemLineRect(index);
             this.changePaintOpacity(this.isEnabled(cmd));
-            this.drawItemName(cmd, rect.x, rect.y, rect.width - costWidth);
+            this.drawKeysName(index, rect);
+            this.drawItemName(
+                cmd,
+                rect.x + this.keysNameWidth() + this.itemPadding(),
+                rect.y,
+                rect.width - costWidth,
+                index
+            );
             //this.drawSkillCost(cmd, rect.x, rect.y, costWidth);
         }
+    };
+
+    /**
+     * コマンドごとのキー操作描画
+     * @param {number} index 
+     * @param {Rectangle} rect 
+     */
+    Window_CustomActorCommand.prototype.drawKeysName = function (index, rect) {
+        const keysName = this.keysName(index);
+        this.drawText(keysName, rect.x, rect.y, this.keysNameWidth());
     };
 
     const _Window_Base_drawItemName = Window_Base.prototype.drawItemName;
@@ -429,10 +463,51 @@
      * @param {number} x 
      * @param {number} y 
      * @param {number} width 
+     * @param {number} index 
      */
-    Window_CustomActorCommand.prototype.drawItemName = function (cmd, x, y, width) {
+    Window_CustomActorCommand.prototype.drawItemName = function (cmd, x, y, width, index) {
         const skill = $dataSkills[cmd.ext];
         _Window_Base_drawItemName.call(this, skill, x, y, width);
+    };
+
+    /**
+     * コマンドウィンドウ中の位置ごとのキー操作を返す
+     * @param {number} index 
+     * @returns string
+     */
+    Window_CustomActorCommand.prototype.keysName = function (index) {
+        const LR = ["L", "R"][index % 2];
+        let ABXY = "";
+        switch (index) {
+            case 0:
+            case 1:
+                ABXY = "A";
+                break;
+            case 2:
+            case 3:
+                ABXY = "B";
+                break;
+            case 4:
+            case 5:
+                ABXY = "X";
+                break;
+            case 6:
+            case 7:
+                ABXY = "Y";
+                break;
+            default:
+                break;
+        }
+
+        return LR + "+" + ABXY;
+    };
+
+    /**
+     * キー描画用の幅を返す
+     * @returns number
+     */
+    Window_CustomActorCommand.prototype.keysNameWidth = function () {
+        return this.textWidth("000");
     };
 
     /**
