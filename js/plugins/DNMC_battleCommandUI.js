@@ -442,7 +442,7 @@
                 rect.width - costWidth,
                 index
             );
-            //this.drawSkillCost(cmd, rect.x, rect.y, costWidth);
+            this.drawSkillCost(cmd, rect.x, rect.y, costWidth);
         }
     };
 
@@ -468,6 +468,57 @@
     Window_CustomActorCommand.prototype.drawItemName = function (cmd, x, y, width, index) {
         const skill = $dataSkills[cmd.ext];
         _Window_Base_drawItemName.call(this, skill, x, y, width);
+    };
+
+    /**
+     * スキルの発動BB上限とMPコストの描画
+     * @param {any} cmd 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} width 
+     * @returns void
+     */
+    Window_CustomActorCommand.prototype.drawSkillCost = function (cmd, x, y, width) {
+        if (!this.actor()) return;
+
+        const skill = $dataSkills[cmd.ext];
+        if (!skill) return;
+
+        // X座標微調整
+        const x2 = x + this.width / 2 - this.costWidth() * 2 + this.textWidth("0");
+
+        this.drawTpCost(skill, x2, y);
+        this.drawMpCost(skill, x2 + this.textWidth("0000"), y);
+    };
+
+    /**
+     * 発動BB上限の描画
+     * @param {any} skill 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    Window_CustomActorCommand.prototype.drawTpCost = function (skill, x, y) {
+        const cost = this.actor() ? this.actor().skillTpCost(skill) : 0;
+        const width = this.textWidth("000");
+
+        this.changeTextColor(ColorManager.tpCostColor());
+        this.drawText(cost, x, y, width, "right");
+        this.resetTextColor();
+    };
+
+    /**
+     * MPコストの描画
+     * @param {any} skill 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    Window_CustomActorCommand.prototype.drawMpCost = function (skill, x, y) {
+        const cost = this.actor() ? this.actor().skillMpCost(skill) : 0;
+        const width = this.textWidth("000");
+
+        this.changeTextColor(ColorManager.mpCostColor());
+        this.drawText(cost, x, y, width, "right");
+        this.resetTextColor();
     };
 
     /**
