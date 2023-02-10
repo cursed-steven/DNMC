@@ -95,6 +95,11 @@
     Scene_Battle.prototype.update = function () {
         _Scene_Battle_update.call(this);
 
+        // 入力受付可否の判定
+        if (!BattleManager._inputting) {
+            return;
+        }
+
         // アクターのコマンド決定後、所定のフレーム経過までの間
         // 次のコマンド決定を受け付けない
         // ※複数人が同時に入力可能になった場合、
@@ -121,7 +126,11 @@
             // R1を押しながらの処理
             this.onR1();
         } else {
-            if (Input.isPressed("cancel")) {
+            if (Input.isPressed("ok")) {
+                // 決定
+                this.startAction(this._actorCommandWindow.index());
+                this.resetSuspendedFrames();
+            } else if (Input.isPressed("cancel")) {
                 // キャンセル
                 this.commandCancel();
                 this.resetSuspendedFrames();
