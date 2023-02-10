@@ -84,7 +84,6 @@ var $plugins =
 {"name":"NUUN_StateIconSideBySide","status":true,"description":"ステート横並び表示","parameters":{"ActorStateIconShowVal":"4","EnemyStateIconShowVal":"5","StateIconWidth":"0","ActorStateIconAlign":"'right'","EnemyStateIconAlign":"'center'","StateTurn":"------------------------------","ActorStateIconVisible":"false","EnemyStateIconVisible":"false","TurnX":"0","TurnY":"-4","TurnFontSize":"-4","TurnCorrection":"1"}},
 {"name":"CSVN_battleAnimationBySkillType","status":true,"description":"スキル発動時、スキルタイプに対応したアニメーションを挿入","parameters":{"settings":"[\"{\\\"skillType\\\":\\\"1\\\",\\\"animation\\\":\\\"119\\\"}\",\"{\\\"skillType\\\":\\\"2\\\",\\\"animation\\\":\\\"120\\\"}\"]"}},
 {"name":"AddAutoToActorCommand","status":false,"description":"戦闘のアクターコマンドの先頭か後尾に「オート」を追加します","parameters":{"commandName":"オート","autoCommandPos":"0"}},
-{"name":"SmartAutoBattle","status":true,"description":"戦闘時アクターの自動戦闘をカスタム/改善","parameters":{}},
 {"name":"SimpleMsgSideViewMZ","status":true,"description":"[Ver1.2.0]サイドビューバトルでスキル/アイテムの名前のみ表示","parameters":{"displayAttack":"false","displayIcon":"true","doesShowDesc":"false","descTiming":"1"}},
 {"name":"StartTPBactorcommand","status":true,"description":"タイムプログレス戦闘でアクターコマンドから開始します。","parameters":{}},
 {"name":"MPP_Pseudo3DBattle","status":false,"description":"戦闘中、立体的にカメラが移動する機能が追加されます。","parameters":{"Battleback Scale":"1.3","Drift Delay":"120","Battleback2 Pivot Y Fixes":"[\"{\\\"Battleback2 Image\\\":\\\"Town2\\\",\\\"Pivot Y\\\":\\\"182\\\"}\"]"}},
