@@ -108,7 +108,7 @@
         // 敵行動などでコマンド入力を受け付けていない場合
         if (BattleManager._cmdSuspended) {
             CSVN_base.log("cmd suspended by enemy action.");
-            this._actorCommandWindow.hide();
+            //this._actorCommandWindow.hide();
             return;
         }
 
@@ -126,8 +126,14 @@
                 this.commandCancel();
                 this.resetSuspsndedFrames();
             } else {
-                // L1R1どちらも押していないならコマンドは入力されない
-                this.disableAllActorCommands();
+                if (TouchInput.isClicked()) {
+                    // タッチUIにも対応
+                    this.startAction(this._actorCommandWindow.hitIndex());
+                } else {
+                    // タッチ入力もないし
+                    // L1R1どちらも押していないならコマンドは入力されない
+                    this.disableAllActorCommands();
+                }
             }
         }
     };
@@ -186,7 +192,10 @@
      */
     Scene_Battle.prototype.startAction = function (index) {
         const action = BattleManager.inputtingAction();
-        const skillId = this._actorCommandWindow.itemAt(index).ext;
+        let skillId = 0;
+        if (this._actorCommandWindow.itemAt(index)) {
+            skillId = this._actorCommandWindow.itemAt(index).ext;
+        }
 
         if (!action) {
             CSVN_base.log("inputting action is negative.");
