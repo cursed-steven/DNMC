@@ -100,14 +100,14 @@
         // ※複数人が同時に入力可能になった場合、
         // 　次の人にまで同じコマンドが入ってしまう問題の対処
         if (this._suspendedFrames > 0) {
-            CSVN_base.log(`cmd suspended. ${this._suspendedFrames} frames left.`);
+            //CSVN_base.log(`cmd suspended. ${this._suspendedFrames} frames left.`);
             this._suspendedFrames--;
             return;
         }
 
         // 敵行動などでコマンド入力を受け付けていない場合
         if (BattleManager._cmdSuspended) {
-            CSVN_base.log("cmd suspended by enemy action.");
+            //CSVN_base.log("cmd suspended by enemy action.");
             //this._actorCommandWindow.hide();
             return;
         }
@@ -211,6 +211,9 @@
                 break;
             case COMMON_SKILL_IDS.ESCAPE:
                 this.commandEscape();
+                break;
+            case COMMON_SKILL_IDS.ITEM:
+                this.commandItem();
                 break;
             default:
                 const skill = $dataSkills[skillId];

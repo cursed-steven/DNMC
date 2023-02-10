@@ -157,7 +157,8 @@ const COMMON_SKILL_IDS = {
     ATTACK: 1,
     DEFEND: 2,
     ESCAPE: 4,
-    UNINTERESTED: 5
+    UNINTERESTED: 5,
+    ITEM: 6
 };
 
 /**

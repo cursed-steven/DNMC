@@ -429,14 +429,14 @@ Scene_Operation.prototype.initialize = function () {
                 $dataSkills[COMMON_SKILL_IDS.ATTACK],
                 $dataSkills[COMMON_SKILL_IDS.DEFEND],
                 $dataSkills[COMMON_SKILL_IDS.ESCAPE],
-                null
+                $dataSkills[COMMON_SKILL_IDS.ITEM]
             ];
             // デフォルトの内容で一旦保存してしまう
             $v.set(vi, [
                 COMMON_SKILL_IDS.ATTACK,
                 COMMON_SKILL_IDS.DEFEND,
                 COMMON_SKILL_IDS.ESCAPE,
-                "",
+                COMMON_SKILL_IDS.ITEM,
                 "",
                 "",
                 "",
