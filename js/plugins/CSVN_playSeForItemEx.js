@@ -16,8 +16,8 @@
  * @target MZ
  * @plugindesc スキルタイプ／アイテムの使用効果に応じて追加の効果音を鳴らします。
  * @author cursed_twitch
- * @base CSVN_base
- * @orderAfter CSVN_base
+ * @base CSVN_statics
+ * @orderAfter CSVN_statics
  * 
  * @help CSVN_playSeForItemEx.js
  * 
@@ -116,11 +116,6 @@
     'use strict';
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
-    const HP_RECOVERY_CODE = 11;
-    const MP_RECOVERY_CODE = 12;
-    const STATE_ADD_CODE = 21;
-    const STATE_REMOVE_CODE = 22;
-    const GROW_CODE = 42;
 
     const _Scene_Skill_playSeForItem = Scene_Skill.prototype.playSeForItem;
     /**
@@ -175,11 +170,19 @@
 
         if (!SceneManager.isCurrentScene(Scene_Battle)) {
             if (DataManager.isItem(this.item())) {
-                const effects = $dataItems[this.item().id].effects;
-                //CSVN_base.log(effects);
-                const setting = this.findItemSESetting(effects);
-                //CSVN_base.log(setting);
-                this.playAdditionalSeForItem(setting);
+                const item = $dataItems[this.item().id];
+                CSVN_base.log(item);
+                if (item.damage.type === DAMAGE_TYPE.HP_RECOVERY) {
+                    this.playAdditionalSeForItem(param.settingForHPRecovery);
+                } else if (item.damage.type === DAMAGE_TYPE.MP_RECOVERY) {
+                    this.playAdditionalSeForItem(param.settingForMPRecovery);
+                } else {
+                    const effects = item.effects;
+                    //CSVN_base.log(effects);
+                    const setting = this.findItemSESetting(effects);
+                    //CSVN_base.log(setting);
+                    this.playAdditionalSeForItem(setting);
+                }
             }
         }
     };
@@ -193,11 +196,11 @@
         if (!effects) return;
         const effect = effects.find(e => {
             return [
-                HP_RECOVERY_CODE,
-                MP_RECOVERY_CODE,
-                STATE_ADD_CODE,
-                STATE_REMOVE_CODE,
-                GROW_CODE
+                EFFECTS.HP_RECOVERY.CODE,
+                EFFECTS.MP_RECOVERY.CODE,
+                EFFECTS.ADD_STATE.CODE,
+                EFFECTS.REMOVE_STATE.CODE,
+                EFFECTS.GROW.CODE
             ].includes(e.code);
         });
         if (!effect) return;
