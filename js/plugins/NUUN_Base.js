@@ -9,9 +9,72 @@
  */ 
 /*:
  * @target MZ
+ * @plugindesc  NuuNBasePlugin
+ * @author NUUN
+ * @version 1.6.3
+ * 
+ * @help
+ * This is a base plugin that performs common processing.
+ * Place it above the plugin list.
+ * 
+ * Terms of Use
+ * This plugin is distributed under the MIT license.
+ * 
+ * Log
+ * 2/7/2023 Ver.1.6.3
+ * Added processing to call events with plugin commands.
+ * 12/30/2022 Ver.1.6.2
+ * Added exception handling when image could not be loaded.
+ * Added content background processing definition.
+ * 12/21/2022 Ver.1.6.1
+ * Added definition of processing to add enemy use skills.
+ * 11/13/2022 Ver.1.6.0
+ * Added processing to display APNG.
+ * 11/9/2022 Ver.1.5.2
+ * Changed the display in languages other than Japanese to English.
+ * 7/29/2022 Ver.1.5.1 
+ * Added processing to specify the range.
+ * 7/23/2022 Ver.1.5.0
+ * 'NuunManager' also defines the process for specifying the range.
+ * 6/15/2022 Ver.1.4.5
+ * Fixed the problem that 'NaN' is displayed when entering a string.
+ * 5/24/2022 Ver.1.4.4
+ * Added processing to set sprite filtering window.
+ * 2/12/2022 Ver.1.4.3
+ * Fixed an issue where some variable names were wrong.
+ * 1/12/2022 Ver.1.4.2
+ * Added processing to apply enemy MP gauge and enemy TP gauge.
+ * 1/9/2022 Ver.1.4.1
+ * Added processing to round the decimal point.
+ * 1/8/2022 Ver.1.4.0
+ * Added color index acquisition process.
+ * 12/12/2021 Ver.1.3.2
+ * Added processing for applying enemy state display enhancements.
+ * 11/7/2021 Ver.1.3.1
+ * Added processing related to multiple attribute acquisition.
+ * 8/22/2021 Ver.1.3.0
+ * Added processing to 'Window_ItemList'.
+ * 7/15/2021 Ver.1.2.0
+ * Added common processing for gauges and name display plug-ins.
+ * 5/15/2021 Ver.1.1.4
+ * Added a process that can set the window skin for each window.
+ * 5/8/2021 Ver.1.1.3
+ * Fixed some processing.
+ * 5/7/2021 Ver.1.1.2
+ * Added structure acquisition processing.
+ * 4/23/2021 Ver.1.1.1
+ * Added processing for specifying a folder for images.
+ * 3/14/2021 Ver.1.1.0
+ * Added processing for specifying a folder for images.
+ * 12/31/2020 Ver.1.0.0
+ * first edition
+ * 
+ */
+/*:ja
+ * @target MZ
  * @plugindesc  共通処理
  * @author NUUN
- * @version 1.4.2
+ * @version 1.6.3
  * 
  * @help
  * 共通処理を行うベースプラグインです。
@@ -21,11 +84,32 @@
  * このプラグインはMITライセンスで配布しています。
  * 
  * 更新履歴
- * 2022/1/12 Ver.1.4.2
+ * 2023/2/7 Ver.1.6.3
+ * プラグインコマンドでイベントを呼び出すための処理の追加。
+ * 2022/12/30 Ver.1.6.2
+ * 画像が読み込めなかったときの例外処理を追加。
+ * コンテンツ背景処理の定義を追加。
+ * 2022/12/21 Ver.1.6.1
+ * 敵の使用スキルの追加する処理の定義を追加。
+ * 2022/11/13 Ver.1.6.0
+ * APNGを表示するための処理を追加。
+ * 2022/11/9 Ver.1.5.2
+ * 日本語以外での表示を英語表示に変更。
+ * 2022/7/29 Ver.1.5.1
+ * -を元に配列を返す処理をNuunManagerでも定義。
+ * 2022/7/23 Ver.1.5.0
+ * -を元に配列を返す処理を追加。
+ * 2022/7/23 Ver.1.4.5 2022/6/15 Ver.1.4.5
+ * 文字列を記入したときにNaNと表示されてしまう問題を修正。
+ * 2022/7/23 Ver.1.4.4 2022/5/24 Ver.1.4.4
+ * スプライトのフィルタリングウィンドウを設定する処理を追加。
+ * 2022/7/2 Ver.1.4.3 2022/2/12 Ver.1.4.3
+ * 一部変数名が間違っていた問題を修正。
+ * 2022/7/1 Ver.1.4.2 2022/1/12 Ver.1.4.2
  * 敵MPゲージ、敵TPゲージのゲージ適用するための処理の追加。
- * 2022/1/9 Ver.1.4.1
+ * 2022/7/1 Ver.1.4.1 2022/1/9 Ver.1.4.1
  * 小数点を丸める処理を追加。
- * 2022/1/8 Ver.1.4.0
+ * 2022/8/1 Ver.1.4.0 2022/1/8 Ver.1.4.0
  * カラーインデックス取得処理を追加。
  * 2021/12/12 Ver.1.3.2
  * 敵ステート表示拡張を適用するための処理を追加。
@@ -57,6 +141,13 @@ function NuunManager() {
   throw new Error("This is a static class");
 }
 
+function Sprite_NuunAPngImg() {
+  this.initialize(...arguments);
+}
+
+Sprite_NuunAPngImg.prototype = Object.create(Sprite.prototype);
+Sprite_NuunAPngImg.prototype.constructor = Sprite_NuunAPngImg;
+
 (() => {
 const parameters = PluginManager.parameters('NUUN_Base');
 
@@ -75,7 +166,7 @@ function structureData(params) {
 }
 
 function nuun_GausePlugins() {
-  return Imported.NUUN_ButlerHPGauge || Imported.NUUN_EnmeyMPGauge || Imported.NUUN_EnmeyTPGauge || Imported.NUUN_ButlerName || Imported.NUUN_EnemyTpbGauge || Imported.NUUN_EnemyStateIconEX;
+  return Imported.NUUN_ButlerHPGauge || Imported.NUUN_EnemyMPGauge || Imported.NUUN_EnemyTPGauge || Imported.NUUN_ButlerName || Imported.NUUN_EnemyTpbGauge || Imported.NUUN_EnemyStateIconEX;
 }
 
 NuunManager.getColorCode = function(color) {
@@ -86,8 +177,32 @@ NuunManager.getColorCode = function(color) {
 };
 
 NuunManager.numPercentage = function(num, digits, mode) {
+  if (isNaN(num)) { return num }
   return (mode ? Math.round(num * Math.pow(10, digits + 2)) : Math.floor(num * Math.pow(10, digits + 2))) / Math.pow(10, digits + 2);
-}
+};
+
+NuunManager.nuun_getListIdData = function(id) {
+  let newId = [];
+  if (id.includes('-')) {
+    const data = id.split('-').map(Number);
+    for (let i = data[0]; i <= data[1]; i++) {
+      Array.prototype.push.apply(newId, [i]);
+    }
+    return newId;
+  } else {
+    return [Number(id)];
+  }
+};
+
+const _Game_Interpreter_command357 = Game_Interpreter.prototype.command357;
+Game_Interpreter.prototype.command357 = function(params) {
+    PluginManager.setNuunEventData(this._eventId);
+    return _Game_Interpreter_command357.call(this, params);
+};
+
+PluginManager.setNuunEventData = function(eventId) {
+    this.nuunEvent = $gameMap ? $gameMap._events[eventId] : null;
+};
 
 DataManager.nuun_structureData = function(params){
   return params ? structureData(params) : [];
@@ -131,14 +246,61 @@ ImageManager.nuun_actorPictures = function(filename) {
 };
 
 ImageManager.nuun_LoadPictures = function(filename) {
-  return this.loadBitmap("img/", filename);
+  const bitmap = this.loadBitmap("img/", filename);
+  bitmap.nuun_LoadBitmap = true;
+  return bitmap;
 };
+
+const _ImageManager_throwLoadError = ImageManager.throwLoadError;
+ImageManager.throwLoadError = function(bitmap) {
+  if (bitmap.nuun_LoadBitmap) {
+    try {
+      _ImageManager_throwLoadError.call(this, bitmap);
+    } catch (e) {
+
+    }
+  } else {
+    _ImageManager_throwLoadError.call(this, bitmap);
+  }
+};
+
+const _Bitmap_isReady = Bitmap.prototype.isReady;
+Bitmap.prototype.isReady = function() {
+  if (this.nuun_LoadBitmap && this.isError()) {
+    this._loadingState = "none";
+  }
+  return _Bitmap_isReady.call(this);
+};
+
+
+Bitmap.prototype.nuun_contentsBackBlt = function(source, sx, sy, sw, sh, dx, dy, dw, dh, pscale, mode) {
+  let scale = pscale / 100;
+  let scale2 = 100 / pscale;
+  const scaleMode = source.width * scale < dw || source.height * scale < dh;
+  if (scaleMode) {
+    scale = 1.0;
+    scale2 = Math.max(dw / source.width, dh / source.height);
+  }
+  const width = (scaleMode  ? source.width : sw * scale2);
+  const height = (scaleMode ? source.height : sh) * scale2;
+  const x = Math.floor((!mode && scaleMode ? 0 : (dw - source.width) / 2 * -1 * scale));
+  const y = Math.floor((!mode ? 0 : (scaleMode ? (dh - source.height) / 2 * -1 * scale2 : (dh - source.height) / 2 * -1 * scale)));
+  this.blt(source, x + sx, y + sy, width, height, dx, dy, dw, dh);
+};
+
 
 const _BattleManager_initMembers = BattleManager.initMembers;
 BattleManager.initMembers = function() {
   _BattleManager_initMembers.call(this);
   this.gaugeBaseSprite = null;
 };
+
+const _Window_addInnerChild = Window.prototype.addInnerChild;
+Window.prototype.addInnerChild = function(child) {
+    child.className = String(this.constructor.name);
+    return _Window_addInnerChild.call(this, child);
+};
+
 
 const _Window_Selectable_drawItemBackground = Window_Selectable.prototype.drawItemBackground;
 Window_Selectable.prototype.drawItemBackground = function(index) {
@@ -153,6 +315,7 @@ Window_Base.prototype.initialize = function(rect) {
   this._userWindowSkin = null;
 };
 
+
 const _Window_Base_loadWindowskin = Window_Base.prototype.loadWindowskin;
 Window_Base.prototype.loadWindowskin = function() {
   if (this._userWindowSkin) {
@@ -161,6 +324,20 @@ Window_Base.prototype.loadWindowskin = function() {
     _Window_Base_loadWindowskin.call(this);
   }
 };
+
+Window_Base.prototype.nuun_getListIdData = function(id) {
+  let newId = [];
+  if (id.includes('-')) {
+    const data = id.split('-').map(Number);
+    for (let i = data[0]; i <= data[1]; i++) {
+      Array.prototype.push.apply(newId, [i]);
+    }
+    return newId;
+  } else {
+    return [Number(id)];
+  }
+};
+
 
 const _Spriteset_Battle_createLowerLayer = Spriteset_Battle.prototype.createLowerLayer;
 Spriteset_Battle.prototype.createLowerLayer = function() {
@@ -213,5 +390,56 @@ Game_Action.prototype.getAttackElementsList = function() {
 Game_Action.prototype.getItemElementsList = function() {
   return Imported.NUUN_MultiElement ? this.getItemElements() : [this.item().damage.elementId];
 };
+
+
+
+Sprite_NuunAPngImg.prototype.initialize = function() {
+  Sprite.prototype.initialize.call(this);
+  this.initMembers();
+};
+
+Sprite_NuunAPngImg.prototype.initMembers = function() {
+  this._battler = null;
+  this._apngMode = null;
+  this._data = null;
+  this._pictureName = null;
+};
+
+Sprite_NuunAPngImg.prototype.setup = function(battler, data, name) {
+  this._battler = battler;
+  this._data = data;
+  this._pictureName = name.split('pictures/')[1];
+  this.refresh();
+};
+
+Sprite_NuunAPngImg.prototype.refresh = function() {
+  if (this.addApngChild && this.loadApngSprite(this._pictureName)) {
+      this.addApngChild(this._pictureName);
+      this._apngMode = true;
+  }
+};
+
+Sprite_NuunAPngImg.prototype.destroy = function() {
+  this.resetApngImg();
+  Sprite.prototype.destroy.call(this);
+};
+
+Sprite_NuunAPngImg.prototype.resetApngImg = function() {
+  this._battler = null;
+  if (this._apngMode) {
+      this.destroyApngIfNeed();
+      this._apngMode = null;
+  }
+};
+
+Sprite_NuunAPngImg.prototype.loadApngSprite = function(name) {
+  return Sprite_Picture.prototype.loadApngSprite.call(this, name);
+};
+
+Game_Enemy.prototype.allSkillActions = function(actionList) {
+  return actionList;
+};
+
+
 
 })();
