@@ -51,18 +51,29 @@
      */
     Scene_Map.prototype.mapHUDRect = function () {
         const ww = 160;
-        const wh = this.calcWindowHeight(3 * $gameParty.size(), true);
+        const wh = this.HUDHeight();
         const wx = Graphics.boxWidth - ww;
         const wy = this.calcWindowHeight(3, true);
         return new Rectangle(wx, wy, ww, wh);
     };
 
     const _Scene_Map_update = Scene_Map.prototype.update;
+    /**
+     * HUD用処理追加
+     */
     Scene_Map.prototype.update = function () {
         _Scene_Map_update.call(this);
-        this._mapHUD.height = this.calcWindowHeight(3 * $gameParty.size(), true);
+        this._mapHUD.height = this.HUDHeight();
         this._mapHUD.show();
         this._mapHUD.refresh();
+    };
+
+    /**
+     * HUDの高さを返す
+     * @returns number
+     */
+    Scene_Map.prototype.HUDHeight = function () {
+        return this.calcWindowHeight(3 * $gameParty.size(), true);
     };
 
     const _Scene_Menu_terminate = Scene_Map.prototype.terminate;

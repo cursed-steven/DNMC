@@ -49,6 +49,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
     const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
     Scene_EquipStatus.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
+    Scene_EquipStatus.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_EquipStatus.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     Scene_EquipStatus.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
     Scene_EquipStatus.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;

@@ -72,6 +72,7 @@
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
     const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
     Scene_Menu.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
+    Scene_Menu.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_Menu.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     /**
      * メニューシーンにHUDを追加。

@@ -56,6 +56,7 @@ Scene_Operation.prototype.initialize = function () {
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
     const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
     Scene_Operation.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
+    Scene_Operation.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_Operation.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     Scene_Operation.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
     Scene_Operation.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;

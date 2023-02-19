@@ -42,6 +42,7 @@ Scene_Comparison.prototype.constructor = Scene_Comparison;
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
     const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
     Scene_Comparison.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
+    Scene_Comparison.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_Comparison.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     Scene_Comparison.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
     Scene_Comparison.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;

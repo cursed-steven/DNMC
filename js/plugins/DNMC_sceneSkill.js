@@ -33,6 +33,7 @@
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
     const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
     Scene_Skill.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
+    Scene_Skill.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_Skill.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     Scene_Skill.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
     Scene_Skill.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;
