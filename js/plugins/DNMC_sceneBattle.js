@@ -66,6 +66,10 @@
         return new Rectangle(wx, wy, ww, wh);
     };
 
+    /**
+     * 敵選択ウインドウの領域変更
+     * @returns Rectangle
+     */
     Scene_Battle.prototype.enemyWindowRect = function () {
         const wx = this._actorCommandWindow.x;
         const ww = this._actorCommandWindow.width;
