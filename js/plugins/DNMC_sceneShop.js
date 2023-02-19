@@ -34,6 +34,7 @@
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
     const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
     Scene_Shop.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
+    Scene_Shop.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_Shop.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     /**
      * ショップシーンにHUDを追加。
