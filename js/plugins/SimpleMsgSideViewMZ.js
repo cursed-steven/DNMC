@@ -199,9 +199,7 @@
             if (noteDesc) {
                 return noteDesc === true ? '' : noteDesc;
             }
-            // cursed_steven custom (2023/02/20)
-            // return item.message2;
-            return item.message1;
+            return item.message2;
         }
         return '';
     }
