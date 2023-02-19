@@ -16,9 +16,7 @@
  * @plugindesc Donut Machine 専用戦闘改変いろいろ
  * @author cursed_twitch
  * @base CSVN_base
- * @base NUUN_Result
  * @orderAfter CSVN_base
- * @orderAfter NUUN_Result
  * 
  * @help DNMC_sceneBattle.js
  */
