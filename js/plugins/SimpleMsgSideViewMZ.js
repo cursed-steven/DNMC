@@ -142,114 +142,116 @@
  */
 
 (() => {
-  const pluginName = 'SimpleMsgSideViewMZ';
+    const pluginName = 'SimpleMsgSideViewMZ';
 
-  //
-  // process parameters
-  //
-  const parameters = PluginManager.parameters(pluginName);
-  let display = String(parameters['displayAttack'] || 'false');
-  const displayAttack = eval(display);
-  display = String(parameters['displayIcon'] || 'true');
-  const displayIcon = eval(display);
-  display = String(parameters['doesShowDesc'] || 'false');
-  const displayDesc = eval(display);
-  display = null;
-  const dispDescTiming = +(parameters['descTiming'] || '1');
+    //
+    // process parameters
+    //
+    const parameters = PluginManager.parameters(pluginName);
+    let display = String(parameters['displayAttack'] || 'false');
+    const displayAttack = eval(display);
+    display = String(parameters['displayIcon'] || 'true');
+    const displayIcon = eval(display);
+    display = String(parameters['doesShowDesc'] || 'false');
+    const displayDesc = eval(display);
+    display = null;
+    const dispDescTiming = +(parameters['descTiming'] || '1');
 
-  //
-  // To resolve confliction with Keke_SpeedStarBattle.js
-  //
-  if (Game_System.prototype.initSpeedStarBattleKe) {
-    // !!!revert!!!
-    Scene_Battle.prototype.updateLogWindowVisibility = function() {
-      this._logWindow.visible = !this._helpWindow.visible;
-    };
-    
-    Window_BattleLog.prototype.waitAbs = function() {
-      this._waitCount = 60; // this.messageSpeed();
-    };
+    //
+    // To resolve confliction with Keke_SpeedStarBattle.js
+    //
+    if (Game_System.prototype.initSpeedStarBattleKe) {
+        // !!!revert!!!
+        Scene_Battle.prototype.updateLogWindowVisibility = function () {
+            this._logWindow.visible = !this._helpWindow.visible;
+        };
 
-    const _BattleManager_endAction = BattleManager.endAction;
-    BattleManager.endAction = function() {
-      _BattleManager_endAction.call(this);
-      BattleManager._battleWaitKe = Math.min(BattleManager._battleWaitKe, 20);
-    }
-  } else {
-    Window_BattleLog.prototype.waitAbs = function() {
-      this.wait();
-    };
-  }
+        Window_BattleLog.prototype.waitAbs = function () {
+            this._waitCount = 60; // this.messageSpeed();
+        };
 
-
-  //
-  // main routine
-  //
-
-  // !!!overwrite!!!
-  Window_BattleLog.prototype.addText = function(text) {
-    this.refresh();
-    this.wait();
-    // not display battle log
-  };
-
- const itemDescription = item => {
-    if (item) {
-      const noteDesc = item.meta.simpleDesc;
-      if (noteDesc) {
-        return noteDesc === true ? '' : noteDesc;
-      }
-      return item.message2;
-    }
-    return '';
- }
-
-  Window_BattleLog.prototype.addItemNameText = function(item) {
-    this._lines.push(item.name);
-    this._actionIconIndex = displayIcon ? item.iconIndex : 0;
-    if (!displayDesc || dispDescTiming) {
-      this.refresh();
-      this.waitAbs();
-    }
-  };
-
-  Window_BattleLog.prototype.addItemInfoText = function(item) {
-    if (displayDesc) {
-      const desc = itemDescription(item);
-      if (desc) {
-        this._lines.push('\x1f' + desc);
-      }
-      if (desc || dispDescTiming) {
-        this.refresh();
-        this.waitAbs();
-      }
-    }
-  };
-
-  // !!!overwrite!!!
-  Window_BattleLog.prototype.displayAction = function(subject, item) {
-    if (displayAttack ||
-       !(DataManager.isSkill(item) && item.id === subject.attackSkillId())
-    ) {
-      this.push('addItemNameText', item);
-      this.push('addItemInfoText', item);
+        const _BattleManager_endAction = BattleManager.endAction;
+        BattleManager.endAction = function () {
+            _BattleManager_endAction.call(this);
+            BattleManager._battleWaitKe = Math.min(BattleManager._battleWaitKe, 20);
+        }
     } else {
-      this.push('wait');
+        Window_BattleLog.prototype.waitAbs = function () {
+            this.wait();
+        };
     }
-  };
 
-  // !!!overwrite!!!
-  Window_BattleLog.prototype.drawLineText = function(index) {
-    let text = this._lines[index];
-    const rect = this.lineRect(index);
-    this.contents.clearRect(rect.x, rect.y, rect.width, rect.height);
-    if (text[0] === '\x1f') { // item's description
-      text = text.slice(1);
-    } else if (this._actionIconIndex) {  // display item's icon
-      const x = (rect.width - this.textWidth(text)) / 2 - 4;
-      this.drawIcon(this._actionIconIndex, x, rect.y + 2);
+
+    //
+    // main routine
+    //
+
+    // !!!overwrite!!!
+    Window_BattleLog.prototype.addText = function (text) {
+        this.refresh();
+        this.wait();
+        // not display battle log
+    };
+
+    const itemDescription = item => {
+        if (item) {
+            const noteDesc = item.meta.simpleDesc;
+            if (noteDesc) {
+                return noteDesc === true ? '' : noteDesc;
+            }
+            // cursed_steven custom (2023/02/20)
+            // return item.message2;
+            return item.message1;
+        }
+        return '';
     }
-    this.drawText(text, rect.x, rect.y, Graphics.boxWidth, 'center');
-  };
+
+    Window_BattleLog.prototype.addItemNameText = function (item) {
+        this._lines.push(item.name);
+        this._actionIconIndex = displayIcon ? item.iconIndex : 0;
+        if (!displayDesc || dispDescTiming) {
+            this.refresh();
+            this.waitAbs();
+        }
+    };
+
+    Window_BattleLog.prototype.addItemInfoText = function (item) {
+        if (displayDesc) {
+            const desc = itemDescription(item);
+            if (desc) {
+                this._lines.push('\x1f' + desc);
+            }
+            if (desc || dispDescTiming) {
+                this.refresh();
+                this.waitAbs();
+            }
+        }
+    };
+
+    // !!!overwrite!!!
+    Window_BattleLog.prototype.displayAction = function (subject, item) {
+        if (displayAttack ||
+            !(DataManager.isSkill(item) && item.id === subject.attackSkillId())
+        ) {
+            this.push('addItemNameText', item);
+            this.push('addItemInfoText', item);
+        } else {
+            this.push('wait');
+        }
+    };
+
+    // !!!overwrite!!!
+    Window_BattleLog.prototype.drawLineText = function (index) {
+        let text = this._lines[index];
+        const rect = this.lineRect(index);
+        this.contents.clearRect(rect.x, rect.y, rect.width, rect.height);
+        if (text[0] === '\x1f') { // item's description
+            text = text.slice(1);
+        } else if (this._actionIconIndex) {  // display item's icon
+            const x = (rect.width - this.textWidth(text)) / 2 - 4;
+            this.drawIcon(this._actionIconIndex, x, rect.y + 2);
+        }
+        this.drawText(text, rect.x, rect.y, Graphics.boxWidth, 'center');
+    };
 
 })();
