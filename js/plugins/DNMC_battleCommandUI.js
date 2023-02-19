@@ -105,7 +105,7 @@
         // ※複数人が同時に入力可能になった場合、
         // 　次の人にまで同じコマンドが入ってしまう問題の対処
         if (this._suspendedFrames > 0) {
-            //CSVN_base.log(`cmd suspended. ${this._suspendedFrames} frames left.`);
+            // CSVN_base.log(`cmd suspended. ${this._suspendedFrames} frames left.`);
             this._suspendedFrames--;
             return;
         }
@@ -243,7 +243,24 @@
                 break;
         }
         this.resetSuspendedFrames();
+    };
 
+    const _Scene_Battle_onActorOk = Scene_Battle.prototype.onActorOk;
+    /**
+     * 敵選択後も入力受付禁止フレームをリセット
+     */
+    Scene_Battle.prototype.onActorOk = function () {
+        _Scene_Battle_onActorOk.call(this);
+        this.resetSuspendedFrames();
+    };
+
+    const _Scene_Battle_onEnemyOk = Scene_Battle.prototype.onEnemyOk;
+    /**
+     * 敵選択後も入力受付禁止フレームをリセット
+     */
+    Scene_Battle.prototype.onEnemyOk = function () {
+        _Scene_Battle_onEnemyOk.call(this);
+        this.resetSuspendedFrames();
     };
 
     /**
