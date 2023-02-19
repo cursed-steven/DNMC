@@ -109,7 +109,7 @@
             missCount++;
             classId = Math.randomInt(maxId);
             swId = classId + param.classSwIx;
-            if (missCount >= 7) {
+            if (missCount >= 35) {
                 throw new Error("no class unlocked");
             }
         }
