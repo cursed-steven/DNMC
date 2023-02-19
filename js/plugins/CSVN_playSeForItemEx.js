@@ -126,11 +126,30 @@
 
         if (!SceneManager.isCurrentScene(Scene_Battle)) {
             if (DataManager.isSkill(this.item())) {
+                /*
+                 * スキルごとのSE 
+                 */
                 const stypeId = $dataSkills[this.item().id].stypeId;
-                //CSVN_base.log("stypeId: " + stypeId);
+                CSVN_base.log("stypeId: " + stypeId);
                 const condition = this.findSkillSESetting(stypeId);
-                //CSVN_base.log(condition);
+                CSVN_base.log(condition);
                 this.playAdditionalSeForItem(condition);
+
+                /*
+                 * 効果に付随するSE
+                 */
+                const skill = $dataSkills[this.item().id];
+                if (skill.damage.type === DAMAGE_TYPE.HP_RECOVERY) {
+                    this.playAdditionalSeForItem(param.settingForHPRecovery);
+                } else if (skill.damage.type === DAMAGE_TYPE.MP_RECOVERY) {
+                    this.playAdditionalSeForItem(param.settingForMPRecovery);
+                } else {
+                    const effects = skill.effects;
+                    //CSVN_base.log(effects);
+                    const setting = this.findItemSESetting(effects);
+                    //CSVN_base.log(setting);
+                    this.playAdditionalSeForItem(setting);
+                }
             }
         }
     };
@@ -141,7 +160,7 @@
      * @returns 該当する設定
      */
     Scene_Skill.prototype.findSkillSESetting = function (stypeId) {
-        if (!param.settings) return;
+        if (!param.settingsForSkill) return;
         return param.settingsForSkill.find(e => {
             return stypeId === e.stypeId;
         });
@@ -171,7 +190,7 @@
         if (!SceneManager.isCurrentScene(Scene_Battle)) {
             if (DataManager.isItem(this.item())) {
                 const item = $dataItems[this.item().id];
-                CSVN_base.log(item);
+                // CSVN_base.log(item);
                 if (item.damage.type === DAMAGE_TYPE.HP_RECOVERY) {
                     this.playAdditionalSeForItem(param.settingForHPRecovery);
                 } else if (item.damage.type === DAMAGE_TYPE.MP_RECOVERY) {
