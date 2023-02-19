@@ -259,7 +259,7 @@ const WEAPON_TYPE = [
         iconIndex: [96, 96, 96, 96],
         animationId: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 13, 14, 15, 12, 12, 12, 12, 12],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.PENETRATE }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -277,7 +277,7 @@ const WEAPON_TYPE = [
         iconIndex: [97, 123, 123, 119],
         animationId: [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 8, 9, 10, 7, 7, 7, 7, 7],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.SLASH }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.SLASH }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -295,7 +295,7 @@ const WEAPON_TYPE = [
         iconIndex: [98, 98, 98, 98],
         animationId: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 2, 2, 2, 2, 2],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.BASH }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.BASH }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -313,8 +313,8 @@ const WEAPON_TYPE = [
         iconIndex: [99, 99, 99, 99],
         animationId: [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 8, 9, 10, 7, 7, 7, 7, 7],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.SLASH },
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.BASH },
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.SLASH },
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.BASH },
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -332,7 +332,7 @@ const WEAPON_TYPE = [
         iconIndex: [100, 100, 100, 100],
         animationId: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 2, 2, 2, 2, 2],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.BASH }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.BASH }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -350,7 +350,7 @@ const WEAPON_TYPE = [
         iconIndex: [101, 109, 109, 108],
         animationId: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 2, 2, 2, 2, 2],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.BASH }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.BASH }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -368,7 +368,7 @@ const WEAPON_TYPE = [
         iconIndex: [102, 102, 102, 102],
         animationId: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 13, 14, 15, 12, 12, 12, 12, 12],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.PENETRATE }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -386,7 +386,7 @@ const WEAPON_TYPE = [
         iconIndex: [103, 103, 103, 103],
         animationId: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 13, 14, 15, 12, 12, 12, 12, 12],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.PENETRATE }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -404,7 +404,7 @@ const WEAPON_TYPE = [
         iconIndex: [104, 104, 115, 116],
         animationId: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 13, 14, 15, 12, 12, 12, 12, 12],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.PENETRATE }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -422,7 +422,7 @@ const WEAPON_TYPE = [
         iconIndex: [105, 105, 105, 105],
         animationId: [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 8, 9, 10, 7, 7, 7, 7, 7],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.SLASH }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.SLASH }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -440,7 +440,7 @@ const WEAPON_TYPE = [
         iconIndex: [106, 106, 106, 106],
         animationId: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 2, 2, 2, 2, 2],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.BASH }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.BASH }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -458,7 +458,7 @@ const WEAPON_TYPE = [
         iconIndex: [107, 107, 107, 107],
         animationId: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 13, 14, 15, 12, 12, 12, 12, 12],
         fixedTraits: [
-            { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.PENETRATE }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -946,7 +946,7 @@ const WEAPON_MATERIALS = [
                 name: "炎",
                 price: 15000,
                 elementTraits: [
-                    { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.FIRE }
+                    { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.FIRE }
                 ],
                 traits: [
                     //atk+, atk++
@@ -989,7 +989,7 @@ const WEAPON_MATERIALS = [
                 name: "氷",
                 price: 15000,
                 elementTraits: [
-                    { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.ICE }
+                    { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.ICE }
                 ],
                 traits: [
                     //atk+, atk++
@@ -1032,7 +1032,7 @@ const WEAPON_MATERIALS = [
                 name: "雷",
                 price: 15000,
                 elementTraits: [
-                    { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.THUNDER }
+                    { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.THUNDER }
                 ],
                 traits: [
                     //atk+, atk++
@@ -1075,7 +1075,7 @@ const WEAPON_MATERIALS = [
                 name: "水",
                 price: 15000,
                 elementTraits: [
-                    { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.WATER }
+                    { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.WATER }
                 ],
                 traits: [
                     //atk+, atk++
@@ -1118,7 +1118,7 @@ const WEAPON_MATERIALS = [
                 name: "土",
                 price: 15000,
                 elementTraits: [
-                    { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.EARTH }
+                    { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.EARTH }
                 ],
                 traits: [
                     //atk+, atk++
@@ -1161,7 +1161,7 @@ const WEAPON_MATERIALS = [
                 name: "風",
                 price: 15000,
                 elementTraits: [
-                    { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.WIND }
+                    { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.WIND }
                 ],
                 traits: [
                     //atk+, atk++
@@ -1204,7 +1204,7 @@ const WEAPON_MATERIALS = [
                 name: "光",
                 price: 15000,
                 elementTraits: [
-                    { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.LIGHT }
+                    { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.LIGHT }
                 ],
                 traits: [
                     //atk+, atk++
@@ -1247,7 +1247,7 @@ const WEAPON_MATERIALS = [
                 name: "闇",
                 price: 15000,
                 elementTraits: [
-                    { code: TRAITS.ATTACK_ELEMENT.CODE, dataId: ELEMENT.DARKNESS }
+                    { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.DARKNESS }
                 ],
                 traits: [
                     //atk+, atk++

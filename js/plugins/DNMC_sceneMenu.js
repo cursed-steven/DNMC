@@ -303,7 +303,7 @@
         for (const item of this.equips()) {
             if (item) {
                 for (const trait of item.traits) {
-                    if (trait && trait.code === TRAITS.PARAM.code
+                    if (trait && trait.code === Game_BattlerBase.TRAIT_PARAM
                         && trait.dataId === paramId) {
                         traits.push(trait);
                     }

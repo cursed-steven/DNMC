@@ -215,11 +215,11 @@
         if (!effects) return;
         const effect = effects.find(e => {
             return [
-                EFFECTS.HP_RECOVERY.CODE,
-                EFFECTS.MP_RECOVERY.CODE,
-                EFFECTS.ADD_STATE.CODE,
-                EFFECTS.REMOVE_STATE.CODE,
-                EFFECTS.GROW.CODE
+                EFFECTS.HP_RECOVERY,
+                EFFECTS.MP_RECOVERY,
+                EFFECTS.ADD_STATE,
+                EFFECTS.REMOVE_STATE,
+                EFFECTS.GROW
             ].includes(e.code);
         });
         if (!effect) return;

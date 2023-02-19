@@ -627,37 +627,37 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
             if (!trait) continue;
 
             switch (trait.code) {
-                case TRAITS.PARAM.CODE:
+                case Game_BattlerBase.TRAIT_PARAM:
                     paramValues[trait.dataId].push(trait);
                     break;
-                case TRAITS.ADDITIONAL_PARAM.CODE:
+                case Game_BattlerBase.TRAIT_XPARAM:
                     addParamValues[trait.dataId].push(trait);
                     break;
-                case TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE:
+                case Game_BattlerBase.TRAIT_ATTACK_TIMES:
                     addAttacks++;
                     break;
-                case TRAITS.ADDITIONAL_ACTION_RATE.CODE:
+                case Game_BattlerBase.TRAIT_ACTION_PLUS:
                     addActions++;
-                case TRAITS.DEBUFF_EFFECTIVENESS.CODE:
+                case Game_BattlerBase.TRAIT_DEBUFF_RATE:
                     debuffValues[trait.dataId].push(trait);
                     break;
-                case TRAITS.ELEMENT_EFFECTIVENESS.CODE:
+                case Game_BattlerBase.TRAIT_ELEMENT_RATE:
                     if (elementValues[trait.dataId - 1]) {
                         elementValues[trait.dataId - 1].push(trait);
                     }
                     break;
-                case TRAITS.STATE_EFFECTIVENESS.CODE:
+                case Game_BattlerBase.TRAIT_STATE_RATE:
                     ix = STATES.indexOf(trait.dataId);
                     if (ix != -1) stateParams[ix].push(trait);
                     break;
-                case TRAITS.STATE_NO_EFFECT.CODE:
+                case Game_BattlerBase.TRAIT_STATE_RESIST:
                     ix = STATES.indexOf(trait.dataId);
                     if (ix != -1) stateNos[ix].push(trait);
                     break;
-                case TRAITS.PARTY_ABILITIES.CODE:
+                case Game_BattlerBase.TRAIT_PARTY_ABILITY:
                     parties[trait.dataId]++;
                     break;
-                case TRAITS.SPECIAL_PARAM.CODE:
+                case Game_BattlerBase.TRAIT_SPARAM:
                     specialParams[trait.dataId].push(trait);
                     break;
             }
@@ -676,7 +676,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
 
         if (addAttacks > 0) {
             ctr = this.drawTraitCount(
-                TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE,
+                Game_BattlerBase.TRAIT_ATTACK_TIMES,
                 addAttacks,
                 slot,
                 ctr,
@@ -686,7 +686,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
 
         if (addActions > 0) {
             ctr = this.drawTraitCount(
-                TRAITS.ADDITIONAL_ACTION_RATE.CODE,
+                Game_BattlerBase.TRAIT_ACTION_PLUS,
                 addActions,
                 slot,
                 ctr,
@@ -722,7 +722,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         for (let i = 0; i < 6; i++) {
             if (parties[i] > 0) {
                 trait = {
-                    code: TRAITS.PARTY_ABILITIES.CODE,
+                    code: Game_BattlerBase.TRAIT_PARTY_ABILITY,
                     dataId: i
                 };
                 this.drawText(
@@ -854,7 +854,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         for (let i = 0; i < sa.length; i++) {
             if (sa[i] > 0) {
                 trait = {
-                    code: TRAITS.PARTY_ABILITIES.CODE,
+                    code: Game_BattlerBase.TRAIT_PARTY_ABILITY,
                     dataId: i
                 };
                 this.drawText(
@@ -1037,46 +1037,46 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         let value = null;
 
         switch (trait.code) {
-            case TRAITS.PARAM.CODE:
+            case Game_BattlerBase.TRAIT_PARAM:
                 param = TextManager.param(trait.dataId);
                 value = valueStringMultiply(trait.value);
                 break;
-            case TRAITS.ADDITIONAL_PARAM.CODE:
+            case Game_BattlerBase.TRAIT_XPARAM:
                 param = TextManager.additionalParam(trait.dataId);
                 value = valueStringAddSub(trait.value);
                 break;
-            case TRAITS.ATTACK_ELEMENT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_ELEMENT:
                 return "攻撃属性: " + $dataSystem.elements[trait.dataId];
                 break;
-            case TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_TIMES:
                 return TextManager.trait(trait.code) + trait.value;
                 break;
-            case TRAITS.ADDITIONAL_ACTION_RATE.CODE:
+            case Game_BattlerBase.TRAIT_ACTION_PLUS:
                 return TextManager.trait(trait.code) + trait.value;
                 break;
-            case TRAITS.ELEMENT_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_ELEMENT_RATE:
                 elementState = $dataSystem.elements[trait.dataId];
                 value = valueStringMultiply(trait.value);
                 return value ? tmplElement.replace("{{element}}", elementState).replace("{{value}}", value) : "";
                 break;
-            case TRAITS.DEBUFF_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_DEBUFF_RATE:
                 param = TextManager.param(trait.dataId);
                 value = valueStringMultiply(trait.value);
                 return value ? tmplDebuff.replace("{{param}}", param).replace("{{value}}", value) : "";
                 break;
-            case TRAITS.STATE_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_STATE_RATE:
                 elementState = $dataStates[trait.dataId].name;
                 value = valueStringMultiply(trait.value);
                 return value ? tmplState.replace("{{state}}", elementState).replace("{{value}}", value) : "";
                 break;
-            case TRAITS.STATE_NO_EFFECT.CODE:
+            case Game_BattlerBase.TRAIT_STATE_RESIST:
                 elementState = $dataStates[trait.dataId].name;
                 return elementState + "無効";
                 break;
-            case TRAITS.PARTY_ABILITIES.CODE:
+            case Game_BattlerBase.TRAIT_PARTY_ABILITY:
                 return TextManager.trait(trait.code, trait.dataId);
                 break;
-            case TRAITS.SPECIAL_PARAM.CODE:
+            case Game_BattlerBase.TRAIT_SPARAM:
                 param = TextManager.trait(trait.code, trait.dataId);
                 value = valueStringMultiply(trait.value);
                 break;

@@ -346,7 +346,7 @@
      */
     function getSuitableWtypeIds(classId) {
         const suitables = $dataClasses[classId].traits.filter(t => {
-            return t.code === TRAITS.WEAPON_TYPE.CODE;
+            return t.code === Game_BattlerBase.TRAIT_EQUIP_WTYPE;
         });
         let suitableWtypeIds = [];
         for (const t of suitables) {
@@ -382,7 +382,7 @@
      */
     function getSuitableAtypeIds(classId) {
         const suitables = $dataClasses[classId].traits.filter(t => {
-            return t.code === TRAITS.ARMOR_TYPE.CODE;
+            return t.code === Game_BattlerBase.TRAIT_EQUIP_ATYPE;
         });
         let suitableAtypeIds = [];
         for (const t of suitables) {

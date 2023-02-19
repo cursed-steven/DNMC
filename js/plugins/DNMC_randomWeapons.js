@@ -114,7 +114,7 @@ function DNMC_randomWeapons() {
      */
     function randomWtype(classId) {
         const suitables = $dataClasses[classId].traits.filter(t => {
-            return t.code === TRAITS.WEAPON_TYPE.CODE;
+            return t.code === Game_BattlerBase.TRAIT_EQUIP_WTYPE;
         });
         const wtypeId = suitables[Math.randomInt(suitables.length)].dataId;
 
@@ -220,22 +220,22 @@ function DNMC_randomWeapons() {
                 trait = new Trait_Effect();
                 if (i < 12) {
                     // 通常能力値
-                    trait.code = TRAITS.PARAM.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_PARAM;
                     trait.dataId = traitsParamDataIdTable(i);
                     trait.value = 1 + value / 100;
                 } else if (12 <= i && i < 20) {
                     // 追加能力値
-                    trait.code = TRAITS.ADDITIONAL_PARAM.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_XPARAM;
                     trait.dataId = traitsParamDataIdTable(i);
                     trait.value = value / 100;
                 } else if (i === 20) {
                     // 攻撃追加回数
-                    trait.code = TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_ATTACK_TIMES;
                     trait.dataId = 0;
                     trait.value = 1;
                 } else if (i === 21) {
                     // 行動追加率
-                    trait.code = TRAITS.ADDITIONAL_ACTION_RATE.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_ACTION_PLUS;
                     trait.dataId = 0;
                     trait.value = 1;
                 }
@@ -280,23 +280,23 @@ function DNMC_randomWeapons() {
         let value = null;
 
         switch (trait.code) {
-            case TRAITS.PARAM.CODE:
+            case Game_BattlerBase.TRAIT_PARAM:
                 if (trait.value === 1) return "";
                 param = TextManager.param(trait.dataId);
                 value = valueStringMultiply(trait.value);
                 break;
-            case TRAITS.ADDITIONAL_PARAM.CODE:
+            case Game_BattlerBase.TRAIT_XPARAM:
                 if (trait.value === 0) return "";
                 param = TextManager.additionalParam(trait.dataId);
                 value = valueStringAddSub(trait.value);
                 break;
-            case TRAITS.ATTACK_ELEMENT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_ELEMENT:
                 return $dataSystem.elements[trait.dataId];
                 break;
-            case TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_TIMES:
                 return TextManager.trait(trait.code);
                 break;
-            case TRAITS.ADDITIONAL_ACTION_RATE.CODE:
+            case Game_BattlerBase.TRAIT_ACTION_PLUS:
                 return TextManager.trait(trait.code);
                 break;
         }
@@ -349,37 +349,37 @@ function DNMC_randomWeapons() {
         let price = 0;
 
         switch (trait.code) {
-            case TRAITS.ELEMENT_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_ELEMENT_RATE:
                 price = elementEffectivenessToPrice(trait);
                 break;
-            case TRAITS.DEBUFF_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_DEBUFF_RATE:
                 price = debuffEffectivenessToPrice(trait);
                 break;
-            case TRAITS.STATE_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_STATE_RATE:
                 price = stateEffectivenessToPrice(trait);
                 break;
-            case TRAITS.STATE_NO_EFFECT.CODE:
+            case Game_BattlerBase.TRAIT_STATE_RESIST:
                 price = stateNoEffectToPrice(trait);
                 break;
-            case TRAITS.PARAM.CODE:
+            case Game_BattlerBase.TRAIT_PARAM:
                 price = paramToPrice(trait);
                 break;
-            case TRAITS.ADDITIONAL_PARAM.CODE:
+            case Game_BattlerBase.TRAIT_XPARAM:
                 price = additionalParamToPrice(trait);
                 break;
-            case TRAITS.SPECIAL_PARAM.CODE:
+            case Game_BattlerBase.TRAIT_SPARAM:
                 price = specialParamToPrice(trait);
                 break;
-            case TRAITS.ATTACK_ELEMENT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_ELEMENT:
                 price = attackElementToPrice(trait);
                 break;
-            case TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_TIMES:
                 price = 5000;
                 break;
-            case TRAITS.ADDITIONAL_ACTION_RATE.CODE:
+            case Game_BattlerBase.TRAIT_ACTION_PLUS:
                 price = 10000;
                 break;
-            case TRAITS.PARTY_ABILITIES.CODE:
+            case Game_BattlerBase.TRAIT_PARTY_ABILITY:
                 price = partyAbilityToPrice(trait);
                 break;
         }

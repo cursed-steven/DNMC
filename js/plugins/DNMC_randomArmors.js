@@ -136,7 +136,7 @@ function DNMC_randomArmors() {
      */
     function randomTypeId(classId) {
         const suitables = $dataClasses[classId].traits.filter(t => {
-            return t.code === TRAITS.ARMOR_TYPE.CODE;
+            return t.code === Game_BattlerBase.TRAIT_EQUIP_ATYPE;
         });
         const atypeId = suitables[Math.randomInt(suitables.length)].dataId;
 
@@ -232,42 +232,42 @@ function DNMC_randomArmors() {
                 trait = new Trait_Effect();
                 if (i < 12) {
                     // 通常能力値
-                    trait.code = TRAITS.PARAM.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_PARAM;
                     trait.dataId = traitsParamDataIdTable(slot, i);
                     trait.value = 1 + value / 100;
                 } else if (12 <= i && i < 20) {
                     // 追加能力値
-                    trait.code = TRAITS.ADDITIONAL_PARAM.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_XPARAM;
                     trait.dataId = traitsParamDataIdTable(slot, i);
                     trait.value = value / 100;
                 } else if (i === 20) {
                     // 攻撃追加回数
-                    trait.code = TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_ATTACK_TIMES;
                     trait.dataId = 0;
                     trait.value = 1;
                 } else if (i === 21) {
                     // 行動追加率
-                    trait.code = TRAITS.ADDITIONAL_ACTION_RATE.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_ACTION_PLUS;
                     trait.dataId = 0;
                     trait.value = 1;
                 } else if (22 <= i && i < 44) {
                     // 属性有効度
-                    trait.code = TRAITS.ELEMENT_EFFECTIVENESS.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_ELEMENT_RATE;
                     trait.dataId = (i % 11) + 1;
                     trait.value = 1 - value / 100;
                 } else if (44 <= i && i < 52) {
                     // 弱体有効度
-                    trait.code = TRAITS.DEBUFF_EFFECTIVENESS.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_DEBUFF_RATE;
                     trait.dataId = i - 44;
                     trait.value = 1 - value / 100;
                 } else if (52 <= i && i < 64) {
                     // ステート有効度
-                    trait.code = TRAITS.STATE_EFFECTIVENESS.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_STATE_RATE;
                     trait.dataId = traitsParamDataIdTable(slot, i);
                     trait.value = 1 - value / 100;
                 } else if (64 <= i && i < 78) {
                     // ステート無効化
-                    trait.code = TRAITS.STATE_NO_EFFECT.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_STATE_RESIST;
                     trait.dataId = traitsParamDataIdTable(slot, i);
                     if (trait.dataId === STATE.DEAD) {
                         // 戦闘不能無効はナシ
@@ -275,11 +275,11 @@ function DNMC_randomArmors() {
                     }
                 } else if (78 <= i && i < 84) {
                     // パーティー能力
-                    trait.code = TRAITS.PARTY_ABILITIES.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_PARTY_ABILITY;
                     trait.dataId = i - 78;
                 } else if (84 <= i) {
                     // 特殊能力値
-                    trait.code = TRAITS.SPECIAL_PARAM.CODE;
+                    trait.code = Game_BattlerBase.TRAIT_SPARAM;
                     trait.dataId = traitsParamDataIdTable(slot, i);
                     switch (trait.dataId) {
                         case 0:
@@ -395,7 +395,7 @@ function DNMC_randomArmors() {
 
         // 通常能力値を3件以内に絞る
         let normals = traits.filter(t => {
-            return t.code === TRAITS.PARAM.CODE;
+            return t.code === Game_BattlerBase.TRAIT_PARAM;
         });
         let pickedNormals = [];
         if (normals.length > 3) {
@@ -412,9 +412,9 @@ function DNMC_randomArmors() {
 
         // 追加能力値・攻撃回数追加・行動回数追加の全体で1件に絞る
         let additionals = traits.filter(t => {
-            return t.code === TRAITS.ADDITIONAL_PARAM.CODE
-                || t.code === TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE
-                || t.code === TRAITS.ADDITIONAL_ACTION_RATE.CODE;
+            return t.code === Game_BattlerBase.TRAIT_XPARAM
+                || t.code === Game_BattlerBase.TRAIT_ATTACK_TIMES
+                || t.code === Game_BattlerBase.TRAIT_ACTION_PLUS;
         });
         let pickedAdditionals = [];
         if (additionals.length > 1) {
@@ -431,7 +431,7 @@ function DNMC_randomArmors() {
 
         // 属性有効度を2件以内に絞る
         let elements = traits.filter(t => {
-            return t.code === TRAITS.ELEMENT_EFFECTIVENESS.CODE;
+            return t.code === Game_BattlerBase.TRAIT_ELEMENT_RATE;
         });
         // 材質に属性がある場合はその属性を優先してピックする
         let pickedElements = elements.filter(e => {
@@ -451,7 +451,7 @@ function DNMC_randomArmors() {
 
         // 弱体有効度を1件に絞る
         let debuffs = traits.filter(t => {
-            return t.code === TRAITS.DEBUFF_EFFECTIVENESS.CODE;
+            return t.code === Game_BattlerBase.TRAIT_DEBUFF_RATE;
         });
         let pickedDebuffs = [];
         if (debuffs.length > 1) {
@@ -468,7 +468,7 @@ function DNMC_randomArmors() {
 
         // ステート無効を1件以下に絞る
         let pickedStateNos = traits.find(t => {
-            return t.code === TRAITS.STATE_NO_EFFECT.CODE;
+            return t.code === Game_BattlerBase.TRAIT_STATE_RESIST;
         });
         if (pickedStateNos) {
             picked.push(pickedStateNos);
@@ -476,7 +476,7 @@ function DNMC_randomArmors() {
 
         // ステート有効度を2件以下に絞る／ここまでで9件あれば削除
         let pickedStates = traits.filter(t => {
-            return t.code === TRAITS.STATE_EFFECTIVENESS.CODE;
+            return t.code === Game_BattlerBase.TRAIT_STATE_RATE;
         });
         if ((pickedStateNos && pickedStates.length > 1)
             || pickedStates.length > 2) {
@@ -492,7 +492,7 @@ function DNMC_randomArmors() {
         // パーティー能力を1件に絞る／ここまでで9件あれば削除
         if (picked.length < 9) {
             let party = traits.filter(t => {
-                return t.code === TRAITS.PARTY_ABILITIES.CODE;
+                return t.code === Game_BattlerBase.TRAIT_PARTY_ABILITY;
             });
             let pickedParty = [];
             if (party.length > 1) {
@@ -511,7 +511,7 @@ function DNMC_randomArmors() {
         // 特殊能力値を1件に絞る／ここまでで9件あれば削除
         if (picked.length < 9) {
             let sp = traits.filter(t => {
-                return t.code === TRAITS.SPECIAL_PARAM.CODE;
+                return t.code === Game_BattlerBase.TRAIT_SPARAM;
             });
             let pickedSp = [];
             if (sp.length > 1) {
@@ -545,43 +545,43 @@ function DNMC_randomArmors() {
         let value = null;
 
         switch (trait.code) {
-            case TRAITS.PARAM.CODE:
+            case Game_BattlerBase.TRAIT_PARAM:
                 param = TextManager.param(trait.dataId);
                 value = valueStringMultiply(trait.value);
                 break;
-            case TRAITS.ADDITIONAL_PARAM.CODE:
+            case Game_BattlerBase.TRAIT_XPARAM:
                 param = TextManager.additionalParam(trait.dataId);
                 value = valueStringAddSub(trait.value);
                 break;
-            case TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_TIMES:
                 return TextManager.trait(trait.code);
                 break;
-            case TRAITS.ADDITIONAL_ACTION_RATE.CODE:
+            case Game_BattlerBase.TRAIT_ACTION_PLUS:
                 return TextManager.trait(trait.code);
                 break;
-            case TRAITS.ELEMENT_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_ELEMENT_RATE:
                 elementState = $dataSystem.elements[trait.dataId];
                 value = valueStringMultiply(trait.value);
                 return value ? tmplElement.replace("{{element}}", elementState).replace("{{value}}", value) : "";
                 break;
-            case TRAITS.DEBUFF_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_DEBUFF_RATE:
                 param = TextManager.param(trait.dataId);
                 value = valueStringMultiply(trait.value);
                 return value ? tmplDebuff.replace("{{param}}", param).replace("{{value}}", value) : "";
                 break;
-            case TRAITS.STATE_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_STATE_RATE:
                 elementState = $dataStates[trait.dataId].name;
                 value = valueStringMultiply(trait.value);
                 return value ? tmplState.replace("{{state}}", elementState).replace("{{value}}", value) : "";
                 break;
-            case TRAITS.STATE_NO_EFFECT.CODE:
+            case Game_BattlerBase.TRAIT_STATE_RESIST:
                 elementState = $dataStates[trait.dataId].name;
                 return elementState + "無効";
                 break;
-            case TRAITS.PARTY_ABILITIES.CODE:
+            case Game_BattlerBase.TRAIT_PARTY_ABILITY:
                 return TextManager.trait(trait.code, trait.dataId);
                 break;
-            case TRAITS.SPECIAL_PARAM.CODE:
+            case Game_BattlerBase.TRAIT_SPARAM:
                 param = TextManager.trait(trait.code, trait.dataId);
                 value = valueStringMultiply(trait.value);
                 break;
@@ -635,37 +635,37 @@ function DNMC_randomArmors() {
         let price = 0;
 
         switch (trait.code) {
-            case TRAITS.ELEMENT_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_ELEMENT_RATE:
                 price = elementEffectivenessToPrice(trait);
                 break;
-            case TRAITS.DEBUFF_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_DEBUFF_RATE:
                 price = debuffEffectivenessToPrice(trait);
                 break;
-            case TRAITS.STATE_EFFECTIVENESS.CODE:
+            case Game_BattlerBase.TRAIT_STATE_RATE:
                 price = stateEffectivenessToPrice(trait);
                 break;
-            case TRAITS.STATE_NO_EFFECT.CODE:
+            case Game_BattlerBase.TRAIT_STATE_RESIST:
                 price = stateNoEffectToPrice(trait);
                 break;
-            case TRAITS.PARAM.CODE:
+            case Game_BattlerBase.TRAIT_PARAM:
                 price = paramToPrice(trait);
                 break;
-            case TRAITS.ADDITIONAL_PARAM.CODE:
+            case Game_BattlerBase.TRAIT_XPARAM:
                 price = additionalParamToPrice(trait);
                 break;
-            case TRAITS.SPECIAL_PARAM.CODE:
+            case Game_BattlerBase.TRAIT_SPARAM:
                 price = specialParamToPrice(trait);
                 break;
-            case TRAITS.ATTACK_ELEMENT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_ELEMENT:
                 price = attackElementToPrice(trait);
                 break;
-            case TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_TIMES:
                 price = 5000;
                 break;
-            case TRAITS.ADDITIONAL_ACTION_RATE.CODE:
+            case Game_BattlerBase.TRAIT_ACTION_PLUS:
                 price = 10000;
                 break;
-            case TRAITS.PARTY_ABILITIES.CODE:
+            case Game_BattlerBase.TRAIT_PARTY_ABILITY:
                 price = partyAbilityToPrice(trait);
                 break;
         }

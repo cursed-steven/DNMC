@@ -144,7 +144,7 @@
         if (!this.isItem(item)) return false;
 
         return item.effects.some(effect => {
-            return effect.code === EFFECTS.REMOVE_STATE.CODE;
+            return effect.code === EFFECTS.REMOVE_STATE;
         });
     }
 
@@ -196,7 +196,7 @@
         if (!this.isSkill(skill)) return false;
 
         return skill.effects.some(effect => {
-            return effect.code === EFFECTS.REMOVE_STATE.CODE;
+            return effect.code === EFFECTS.REMOVE_STATE;
         });
     };
 
@@ -266,16 +266,16 @@
     TextManager.trait = function (code, i) {
         let text = "";
         switch (code) {
-            case TRAITS.ATTACK_ELEMENT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_ELEMENT:
                 text = "攻撃属性";
                 break;
-            case TRAITS.ADDITIONAL_ATTACKS_COUNT.CODE:
+            case Game_BattlerBase.TRAIT_ATTACK_TIMES:
                 text = "追加攻撃";
                 break;
-            case TRAITS.ADDITIONAL_ACTION_RATE.CODE:
+            case Game_BattlerBase.TRAIT_ACTION_PLUS:
                 text = "追加行動";
                 break;
-            case TRAITS.PARTY_ABILITIES.CODE:
+            case Game_BattlerBase.TRAIT_PARTY_ABILITY:
                 const partyAbilitiesNames = [
                     "遭遇半減",
                     "遭遇無効",
@@ -286,7 +286,7 @@
                 ];
                 text = partyAbilitiesNames[i];
                 break;
-            case TRAITS.SPECIAL_PARAM.CODE:
+            case Game_BattlerBase.TRAIT_SPARAM:
                 const specialParamNames = [
                     "狙われ",
                     "防御効果率",

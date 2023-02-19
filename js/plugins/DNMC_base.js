@@ -104,7 +104,7 @@ class Trait_Effect {
      */
     DNMC_base.getClassWeaponTypes = function (classId) {
         const weaponTraits = $dataClasses[classId].traits.filter(t => {
-            return t.code === TRAITS.WEAPON_TYPE.CODE;
+            return t.code === Game_BattlerBase.TRAIT_EQUIP_WTYPE;
         });
 
         let wtypeIds = [];

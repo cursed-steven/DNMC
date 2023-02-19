@@ -112,160 +112,18 @@ const COLLAPSE_EFFECT = {
     NO_EFFECT: 3
 };
 
-const TRAITS = {
-    ELEMENT_EFFECTIVENESS: {
-        CODE: 11,
-        note: "dataId = 属性ID"
-    },
-    DEBUFF_EFFECTIVENESS: {
-        CODE: 12,
-        note: "dataId = PARAM[i]"
-    },
-    STATE_EFFECTIVENESS: {
-        CODE: 13,
-        note: "dataId = ステートID"
-    },
-    STATE_NO_EFFECT: {
-        CODE: 14,
-        note: "dataId = ステートID, value = 1固定"
-    },
-    PARAM: {
-        CODE: 21,
-        note: "dataId = PARAM[i]"
-    },
-    ADDITIONAL_PARAM: {
-        CODE: 22,
-        note: "dataId = ADDITIONAL_PARAM[i]"
-    },
-    SPECIAL_PARAM: {
-        CODE: 23,
-        note: "dataId = SPECIAL_PARAM[i]"
-    },
-    ATTACK_ELEMENT: {
-        CODE: 31,
-        note: "dataId = 属性ID, value = 0固定"
-    },
-    ATTACK_ADDING_STATE: {
-        CODE: 32,
-        note: "dataId = ステートID"
-    },
-    ATTACK_SPEED_ADJUST: {
-        CODE: 33,
-        note: "dataId = 0固定"
-    },
-    ADDITIONAL_ATTACKS_COUNT: {
-        CODE: 34,
-        note: "dataId = 0固定"
-    },
-    ATTACKING_SKILL: {
-        CODE: 35,
-        note: "dataId = スキルID"
-    },
-    ADD_SKILL_TYPE: {
-        CODE: 41,
-        note: "dataId = スキルタイプ, value = 1固定"
-    },
-    SEAL_SKILL_TYPE: {
-        CODE: 42,
-        note: "dataId = スキルタイプ, value = 1固定"
-    },
-    ADD_SKILL: {
-        CODE: 43,
-        note: "dataId = スキルID, value = 1固定"
-    },
-    SEAL_SKILL: {
-        CODE: 44,
-        note: "dataId = スキルID, value = 1固定"
-    },
-    WEAPON_TYPE: {
-        CODE: 51,
-        note: "dataId = 武器タイプID, value = 1固定"
-    },
-    ARMOR_TYPE: {
-        CODE: 52,
-        note: "dataId = 防具タイプID, value = 1固定"
-    },
-    FIX_EQUIP_TYPE: {
-        CODE: 53,
-        note: "dataId = 装備タイプID, value = 1固定"
-    },
-    SEAL_EQUIP_TYPE: {
-        CODE: 54,
-        note: "dataId = 装備タイプID, value = 1固定"
-    },
-    SLOT_TYPE: {
-        CODE: 55,
-        note: "dataId = SLOT_TYPE[i], value = 1固定"
-    },
-    ADDITIONAL_ACTION_RATE: {
-        CODE: 61,
-        note: "dataId = 0固定"
-    },
-    SPECIAL_FLAG: {
-        CODE: 62,
-        note: "dataId = SPECIAL_FLAG[i], value = 1固定"
-    },
-    COLLAPSE_EFFECT: {
-        CODE: 63,
-        note: "dataId = COLLAPSE_EFFECT[i], value = 1固定"
-    },
-    PARTY_ABILITIES: {
-        CODE: 64,
-        note: "dataId = PARTY_ABILITY[i], value = 1固定"
-    }
-};
-
 const EFFECTS = {
-    HP_RECOVERY: {
-        CODE: 11,
-        note: "value1 = 回復率, value2 = 回復量"
-    },
-    MP_RECOVERY: {
-        CODE: 12,
-        note: "value1 = 回復率, value2 = 回復量"
-    },
-    TP_RECOVERY: {
-        CODE: 13,
-        note: "value1 = 回復率"
-    },
-    ADD_STATE: {
-        CODE: 21,
-        note: "dataId = ステートID, value1 = 確率"
-    },
-    REMOVE_STATE: {
-        CODE: 22,
-        note: "dataId = ステートID, value1 = 確率"
-    },
-    BUFF: {
-        CODE: 31,
-        note: "dataId = PARAM[i], value2 = ターン数"
-    },
-    DEBUFF: {
-        CODE: 32,
-        note: "dataId = PARAM[i], value2 = ターン数"
-    },
-    REMOVE_BUFF: {
-        CODE: 33,
-        note: "dataId = PARAM[i]"
-    },
-    REMOVE_DEBUFF: {
-        CODE: 34,
-        note: "dataId = PARAM[i]"
-    },
-    SPECIAL_EFFECT: {
-        CODE: 41,
-        note: "dataId = 0(逃げる)"
-    },
-    GROW: {
-        CODE: 42,
-        note: "dataId = PARAM[i], value2 =変化量"
-    },
-    ADD_SKILL: {
-        CODE: 43,
-        note: "dataId = スキルID"
-    },
-    COMMON_EVENT: {
-        CODE: 44,
-        note: "dataId = CEV_ID"
-    }
+    HP_RECOVERY: 11,
+    MP_RECOVERY: 12,
+    TP_RECOVERY: 13,
+    ADD_STATE: 21,
+    REMOVE_STATE: 22,
+    BUFF: 31,
+    DEBUFF: 32,
+    REMOVE_BUFF: 33,
+    REMOVE_DEBUFF: 34,
+    SPECIAL_EFFECT: 41,
+    GROW: 42,
+    ADD_SKILL: 43,
+    COMMON_EVENT: 44,
 };

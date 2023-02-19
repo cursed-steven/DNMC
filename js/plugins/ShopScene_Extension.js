@@ -632,7 +632,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
         // CSVN_base.logGroup("value from newItem");
         const newItemValue = newItem.params[paramId];
         const newItemTraitsValue = newItem.traits.reduce((nitv, t) => {
-            if (t && t.code === TRAITS.PARAM.CODE
+            if (t && t.code === Game_BattlerBase.TRAIT_PARAM
                 && t.dataId === paramId) {
                 return nitv * t.value;
             } else {
