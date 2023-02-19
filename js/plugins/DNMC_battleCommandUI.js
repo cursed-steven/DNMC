@@ -211,21 +211,25 @@
             return;
         }
 
+        const skill = $dataSkills[skillId];
         switch (skillId) {
             case COMMON_SKILL_IDS.ATTACK:
                 this.commandAttack();
+                BattleManager.actor().setLastBattleSkill(skill);
                 break;
             case COMMON_SKILL_IDS.DEFEND:
                 this.commandGuard();
+                BattleManager.actor().setLastBattleSkill(skill);
                 break;
             case COMMON_SKILL_IDS.ESCAPE:
                 this.commandEscape();
+                BattleManager.actor().setLastBattleSkill(skill);
                 break;
             case COMMON_SKILL_IDS.ITEM:
                 this.commandItem();
+                BattleManager.actor().setLastBattleSkill(skill);
                 break;
             default:
-                const skill = $dataSkills[skillId];
                 if (!skill) {
                     CSVN_base.log("unknown skill.");
                     return;
