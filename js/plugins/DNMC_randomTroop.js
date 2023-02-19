@@ -41,7 +41,7 @@
     const MAX_NG_COUNT = 10;
 
     const EXP_RATE = 20;
-    const LV_DIFF = 5;
+    const LV_DIFF = 3;
     const STATE_IDS = {
         INTERESTED: param.stateInterested
     };
