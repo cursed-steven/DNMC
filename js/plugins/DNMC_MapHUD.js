@@ -21,6 +21,18 @@
  * @help DNMC_MapHUD.js
  */
 
+//-----------------------------------------------------------------------------
+// Window_MapHUD
+//
+// The window for displaying party member status on the map scene.
+
+function Window_MapHUD() {
+    this.initialize(...arguments);
+}
+
+Window_MapHUD.prototype = Object.create(Window_MenuStatus.prototype);
+Window_MapHUD.prototype.constructor = Window_MapHUD;
+
 (() => {
 
     'use strict';
@@ -81,18 +93,6 @@
         this._mapHUD.hide();
         _Scene_Menu_terminate.call(this);
     };
-
-    //-----------------------------------------------------------------------------
-    // Window_MapHUD
-    //
-    // The window for displaying party member status on the map scene.
-
-    function Window_MapHUD() {
-        this.initialize(...arguments);
-    }
-
-    Window_MapHUD.prototype = Object.create(Window_MenuStatus.prototype);
-    Window_MapHUD.prototype.constructor = Window_MapHUD;
 
     /**
      * HUDを初期化する。
