@@ -94,7 +94,7 @@ class Enemy_Type {
 }
 
 let ENTYPE_SLIME = new Enemy_Type(1, "slime");
-ENTYPE_SLIME.setElement({
+ENTYPE_SLIME.element = {
     resist: [],
     reduce: [
         ELEMENT.BASH,
@@ -105,8 +105,8 @@ ENTYPE_SLIME.setElement({
     weak: [
         ELEMENT.FIRE
     ]
-});
-ENTYPE_SLIME.setState({
+};
+ENTYPE_SLIME.state = {
     resist: [
         STATE.BERSERK,
         STATE.CONFUSE,
@@ -115,15 +115,15 @@ ENTYPE_SLIME.setState({
     ],
     reduce: [],
     weak: []
-});
-ENTYPE_SLIME.setDebuff({
+};
+ENTYPE_SLIME.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_DEMON = new Enemy_Type(2, "demon");
-ENTYPE_DEMON.setElement({
+ENTYPE_DEMON.element = {
     resist: [
         ELEMENT.DARKNESS
     ],
@@ -131,22 +131,22 @@ ENTYPE_DEMON.setElement({
     weak: [
         ELEMENT.LIGHT
     ]
-});
-ENTYPE_DEMON.setState({
+};
+ENTYPE_DEMON.state = {
     resist: [],
     reduce: [
         STATE.DEAD
     ],
     weak: []
-});
-ENTYPE_DEMON.setDebuff({
+};
+ENTYPE_DEMON.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_INSECT = new Enemy_Type(3, "insect");
-ENTYPE_INSECT.setElement({
+ENTYPE_INSECT.element = {
     resist: [],
     reduce: [
         ELEMENT.EARTH
@@ -155,8 +155,8 @@ ENTYPE_INSECT.setElement({
         ELEMENT.FIRE,
         ELEMENT.ICE
     ]
-});
-ENTYPE_INSECT.setState({
+};
+ENTYPE_INSECT.state = {
     resist: [],
     reduce: [
         STATE.POISON,
@@ -168,22 +168,22 @@ ENTYPE_INSECT.setState({
         STATE.TEMPTATION,
         STATE.SLEEP
     ]
-});
-ENTYPE_INSECT.setDebuff({
+};
+ENTYPE_INSECT.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_BIRD = new Enemy_Type(4, "bird");
-ENTYPE_BIRD.setElement({
+ENTYPE_BIRD.element = {
     resist: [],
     reduce: [
         ELEMENT.WIND
     ],
     weak: []
-});
-ENTYPE_BIRD.setState({
+};
+ENTYPE_BIRD.state = {
     resist: [],
     reduce: [
         STATE.TEMPTATION
@@ -194,17 +194,17 @@ ENTYPE_BIRD.setState({
         STATE.DEADLY_POISON,
         STATE.SLEEP
     ]
-});
-ENTYPE_BIRD.setDebuff({
+};
+ENTYPE_BIRD.debuff = {
     resist: [],
     reduce: [],
     weak: [
         PARAM.AGI
     ]
-});
+};
 
 let ENTYPE_SUBSTANCE = new Enemy_Type(5, "substance");
-ENTYPE_SUBSTANCE.setElement({
+ENTYPE_SUBSTANCE.element = {
     resist: [
         ELEMENT.DARKNESS
     ],
@@ -214,8 +214,8 @@ ENTYPE_SUBSTANCE.setElement({
         ELEMENT.EARTH
     ],
     weak: []
-});
-ENTYPE_SUBSTANCE.setState({
+};
+ENTYPE_SUBSTANCE.state = {
     resist: [
         STATE.BERSERK,
         STATE.CONFUSE,
@@ -232,8 +232,8 @@ ENTYPE_SUBSTANCE.setState({
         STATE.MAGICAL_POISON,
         STATE.MP_DOUBLECOST
     ]
-});
-ENTYPE_SUBSTANCE.setDebuff({
+};
+ENTYPE_SUBSTANCE.debuff = {
     resist: [],
     reduce: [],
     weak: [
@@ -244,17 +244,17 @@ ENTYPE_SUBSTANCE.setDebuff({
         PARAM.AGI,
         PARAM.LUK
     ]
-});
+};
 
 let ENTYPE_REPTILIAN = new Enemy_Type(6, "reptilian");
-ENTYPE_REPTILIAN.setElement({
+ENTYPE_REPTILIAN.element = {
     resist: [],
     reduce: [],
     weak: [
         ELEMENT.ICE
     ]
-});
-ENTYPE_REPTILIAN.setState({
+};
+ENTYPE_REPTILIAN.state = {
     resist: [],
     reduce: [
         STATE.POISON,
@@ -267,20 +267,20 @@ ENTYPE_REPTILIAN.setState({
         STATE.PHANTOM,
         STATE.PARALYZE
     ]
-});
-ENTYPE_REPTILIAN.setDebuff({
+};
+ENTYPE_REPTILIAN.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_DRAGON = new Enemy_Type(7, "dragon");
-ENTYPE_DRAGON.setElement({
+ENTYPE_DRAGON.element = {
     resist: [],
     reduce: [],
     weak: []
-});
-ENTYPE_DRAGON.setState({
+};
+ENTYPE_DRAGON.state = {
     resist: [
         STATE.DEAD,
         STATE.BERSERK,
@@ -296,15 +296,15 @@ ENTYPE_DRAGON.setState({
     weak: [
         STATE.SLEEP
     ]
-});
-ENTYPE_DRAGON.setDebuff({
+};
+ENTYPE_DRAGON.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_SPIRIT = new Enemy_Type(8, "spirit");
-ENTYPE_SPIRIT.setElement({
+ENTYPE_SPIRIT.element = {
     resist: [
         ELEMENT.SLASH,
         ELEMENT.PENETRATE,
@@ -319,8 +319,8 @@ ENTYPE_SPIRIT.setElement({
         ELEMENT.WIND,
         ELEMENT.LIGHT
     ]
-});
-ENTYPE_SPIRIT.setState({
+};
+ENTYPE_SPIRIT.state = {
     resist: [
         STATE.DEAD,
         STATE.PARALYZE,
@@ -340,35 +340,35 @@ ENTYPE_SPIRIT.setState({
         STATE.MAGICAL_POISON,
         STATE.MP_DOUBLECOST
     ]
-});
-ENTYPE_SPIRIT.setDebuff({
+};
+ENTYPE_SPIRIT.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_BEAST = new Enemy_Type(9, "beast");
-ENTYPE_BEAST.setElement({
+ENTYPE_BEAST.element = {
     resist: [],
     reduce: [],
     weak: [
         ELEMENT.FIRE,
         ELEMENT.THUNDER
     ]
-});
-ENTYPE_BEAST.setState({
+};
+ENTYPE_BEAST.state = {
     resist: [],
     reduce: [],
     weak: []
-});
-ENTYPE_BEAST.setDebuff({
+};
+ENTYPE_BEAST.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_BOTANICAL = new Enemy_Type(10, "botanical");
-ENTYPE_BOTANICAL.setElement({
+ENTYPE_BOTANICAL.element = {
     resist: [
         ELEMENT.WATER,
         ELEMENT.EARTH
@@ -380,20 +380,20 @@ ENTYPE_BOTANICAL.setElement({
         ELEMENT.FIRE,
         ELEMENT.ICE
     ]
-});
-ENTYPE_BOTANICAL.setState({
+};
+ENTYPE_BOTANICAL.state = {
     resist: [],
     reduce: [],
     weak: []
-});
-ENTYPE_BOTANICAL.setDebuff({
+};
+ENTYPE_BOTANICAL.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_UNDEAD = new Enemy_Type(11, "undead");
-ENTYPE_UNDEAD.setElement({
+ENTYPE_UNDEAD.element = {
     resist: [
         ELEMENT.DARKNESS
     ],
@@ -402,8 +402,8 @@ ENTYPE_UNDEAD.setElement({
         ELEMENT.FIRE,
         ELEMENT.LIGHT
     ]
-});
-ENTYPE_UNDEAD.setState({
+};
+ENTYPE_UNDEAD.state = {
     resist: [
         STATE.DEAD,
         STATE.BERSERK,
@@ -416,22 +416,22 @@ ENTYPE_UNDEAD.setState({
     ],
     reduce: [],
     weak: []
-});
-ENTYPE_UNDEAD.setDebuff({
+};
+ENTYPE_UNDEAD.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_FAIRY = new Enemy_Type(12, "fairy");
-ENTYPE_FAIRY.setElement({
+ENTYPE_FAIRY.element = {
     resist: [],
     reduce: [
         ELEMENT.WIND
     ],
     weak: []
-});
-ENTYPE_FAIRY.setState({
+};
+ENTYPE_FAIRY.state = {
     resist: [
         STATE.PHANTOM
     ],
@@ -440,15 +440,15 @@ ENTYPE_FAIRY.setState({
         STATE.MP_DOUBLECOST
     ],
     weak: []
-});
-ENTYPE_FAIRY.setDebuff({
+};
+ENTYPE_FAIRY.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_AQUATIC = new Enemy_Type(13, "aquatic");
-ENTYPE_AQUATIC.setElement({
+ENTYPE_AQUATIC.element = {
     resist: [
         ELEMENT.WATER
     ],
@@ -461,25 +461,25 @@ ENTYPE_AQUATIC.setElement({
     weak: [
         ELEMENT.THUNDER
     ]
-});
-ENTYPE_AQUATIC.setState({
+};
+ENTYPE_AQUATIC.state = {
     resist: [],
     reduce: [],
     weak: []
-});
-ENTYPE_AQUATIC.setDebuff({
+};
+ENTYPE_AQUATIC.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_FIGHTER = new Enemy_Type(14, "fighter");
-ENTYPE_FIGHTER.setElement({
+ENTYPE_FIGHTER.element = {
     resist: [],
     reduce: [],
     weak: []
-});
-ENTYPE_FIGHTER.setState({
+};
+ENTYPE_FIGHTER.state = {
     resist: [],
     reduce: [],
     weak: [
@@ -489,20 +489,20 @@ ENTYPE_FIGHTER.setState({
         STATE.PHANTOM,
         STATE.SLEEP
     ]
-});
-ENTYPE_FIGHTER.setDebuff({
+};
+ENTYPE_FIGHTER.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
 let ENTYPE_MAGICIAN = new Enemy_Type(15, "magician");
-ENTYPE_MAGICIAN.setElement({
+ENTYPE_MAGICIAN.element = {
     resist: [],
     reduce: [],
     weak: []
-});
-ENTYPE_MAGICIAN.setState({
+};
+ENTYPE_MAGICIAN.state = {
     resist: [],
     reduce: [
         STATE.BERSERK,
@@ -512,30 +512,120 @@ ENTYPE_MAGICIAN.setState({
         STATE.SLEEP
     ],
     weak: []
-});
-ENTYPE_MAGICIAN.setDebuff({
+};
+ENTYPE_MAGICIAN.debuff = {
     resist: [],
     reduce: [],
     weak: []
-});
+};
 
-const ENEMY_TYPES = [
-    ENTYPE_AQUATIC,
-    ENTYPE_BEAST,
-    ENTYPE_BIRD,
-    ENTYPE_BOTANICAL,
-    ENTYPE_DEMON,
-    ENTYPE_DRAGON,
-    ENTYPE_FAIRY,
-    ENTYPE_FIGHTER,
-    ENTYPE_INSECT,
-    ENTYPE_MAGICIAN,
-    ENTYPE_REPTILIAN,
-    ENTYPE_SLIME,
-    ENTYPE_SPIRIT,
-    ENTYPE_SUBSTANCE,
-    ENTYPE_UNDEAD
-];
+const ENEMY_TYPES = {
+    aquatic: ENTYPE_AQUATIC,
+    beast: ENTYPE_BEAST,
+    bird: ENTYPE_BIRD,
+    botanical: ENTYPE_BOTANICAL,
+    demon: ENTYPE_DEMON,
+    dragon: ENTYPE_DRAGON,
+    fairy: ENTYPE_FAIRY,
+    fighter: ENTYPE_FIGHTER,
+    insect: ENTYPE_INSECT,
+    magician: ENTYPE_MAGICIAN,
+    reptilian: ENTYPE_REPTILIAN,
+    slime: ENTYPE_SLIME,
+    spirit: ENTYPE_SPIRIT,
+    substance: ENTYPE_SUBSTANCE,
+    undead: ENTYPE_UNDEAD
+};
+
+/**
+ * Element_Enemy_Type
+ * 
+ * The class that contains resistance for element.
+ */
+class Element_Enemy_Type {
+    id = 0;
+    name = "";
+    resist = [];
+    reduce = [];
+    weak = [];
+
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    get id() {
+        return this.id;
+    }
+
+    set id(id) {
+        this.id = id;
+    }
+
+    get resist() {
+        return this.resist;
+    }
+
+    set resist(resist) {
+        this.resist = resist;
+    }
+
+    get reduce() {
+        return this.reduce;
+    }
+
+    set reduce(reduce) {
+        this.reduce = reduce;
+    }
+
+    get weak() {
+        return this.weak;
+    }
+
+    set weak(weak) {
+        this.weak = weak;
+    }
+
+}
+
+let FIRE_ENEMY_TYPE = new Element_Enemy_Type(4, "fire");
+FIRE_ENEMY_TYPE.resist = [4];
+FIRE_ENEMY_TYPE.reduce = [8];
+FIRE_ENEMY_TYPE.weak = [5, 7];
+
+let ICE_ENEMY_TYPE = new Element_Enemy_Type(5, "ice");
+ICE_ENEMY_TYPE.resist = [5];
+ICE_ENEMY_TYPE.reduce = [7];
+ICE_ENEMY_TYPE.weak = [4];
+
+let THUNDER_ENEMY_TYPE = new Element_Enemy_Type(6, "thunder");
+THUNDER_ENEMY_TYPE.resist = [6];
+THUNDER_ENEMY_TYPE.reduce = [4, 9];
+THUNDER_ENEMY_TYPE.weak = [];
+
+let EARTH_ENEMY_TYPE = new Element_Enemy_Type(8, "earth");
+EARTH_ENEMY_TYPE.resist = [8];
+EARTH_ENEMY_TYPE.reduce = [4, 5, 6];
+EARTH_ENEMY_TYPE.weak = [7];
+
+let WIND_ENEMY_TYPE = new Element_Enemy_Type(9, "wind");
+WIND_ENEMY_TYPE.resist = [4, 5, 6, 7, 8];
+WIND_ENEMY_TYPE.reduce = [];
+WIND_ENEMY_TYPE.weak = [9];
+
+let DARK_ENEMY_TYPE = new Element_Enemy_Type(11, "dark");
+DARK_ENEMY_TYPE.resist = [11];
+DARK_ENEMY_TYPE.reduce = [];
+DARK_ENEMY_TYPE.weak = [10];
+
+const ELEMENT_ENEMY_TYPES = {
+    4: FIRE_ENEMY_TYPE,
+    5: ICE_ENEMY_TYPE,
+    6: THUNDER_ENEMY_TYPE,
+    8: EARTH_ENEMY_TYPE,
+    9: WIND_ENEMY_TYPE,
+    11: DARK_ENEMY_TYPE
+};
 
 (() => {
 
