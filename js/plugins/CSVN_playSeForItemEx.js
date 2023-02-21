@@ -146,7 +146,7 @@
                 } else {
                     const effects = skill.effects;
                     //CSVN_base.log(effects);
-                    const setting = this.findItemSESetting(effects);
+                    const setting = this.findSkillSESetting(effects);
                     //CSVN_base.log(setting);
                     this.playAdditionalSeForItem(setting);
                 }
