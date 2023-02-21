@@ -186,10 +186,33 @@
     //-------------------------------------------------------------------------
     // Game_BattlerBase
 
+    /**
+     * objにundefinedが混入する場合があることへの対策
+     * @returns any[]
+     */
+    Game_BattlerBase.prototype.allTraits = function () {
+        return this.traitObjects().reduce((r, obj) => {
+            return obj
+                ? r.concat(obj.traits)
+                : r.concat();
+        }, []);
+    };
+
+    /**
+     * traitがundefined/nullになる場合の対策
+     * @param {number} code 
+     * @returns any[]
+     */
     Game_BattlerBase.prototype.traits = function (code) {
         return this.allTraits().filter(trait => trait && trait.code === code);
     };
 
+    /**
+     * 特定項目の特徴を抽出
+     * @param {number} code 
+     * @param {number} id 
+     * @returns any[]
+     */
     Game_BattlerBase.prototype.traitsWithId = function (code, id) {
         return this.allTraits().filter(
             trait => trait && trait.code === code && trait.dataId === id

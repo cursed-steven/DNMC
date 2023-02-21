@@ -36,6 +36,7 @@ class Trait_Effect {
     constructor(code, dataId, value1, value2) {
         this.code = code;
         this.dataId = dataId;
+        this.value = value1;
         this.value1 = value1;
         this.value2 = value2;
     }

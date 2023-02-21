@@ -169,7 +169,7 @@
     /**
      * パーティーの最高LVのメンバーよりn以上離れていたら
      * スキル「興味がない」を行動リストに追加
-     * @returns any
+     * @returns Game_Enemy
      */
     Game_Enemy.prototype.enemy = function () {
         let enemy = _Game_Enemy_enemy.call(this);

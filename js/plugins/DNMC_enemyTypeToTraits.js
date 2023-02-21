@@ -632,5 +632,190 @@ const ELEMENT_ENEMY_TYPES = {
     'use strict';
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
+    const REDUCE_RATE = 0.5;
+    const WEAK_RATE = 2;
 
+    //-----------------------------------------------------------------------------
+    // Game_Enemy
+
+    const _Game_Enemy_enemy = Game_Enemy.prototype.enemy;
+    /**
+     * meta.type, meta.attr の値に応じて特徴を自動追加する
+     * @returns Game_Enemy
+     */
+    Game_Enemy.prototype.enemy = function () {
+        let enemy = _Game_Enemy_enemy.call(this);
+
+        enemy = this.addTraitsByType(enemy);
+        enemy = this.addTraitsByAttr(enemy);
+
+        return enemy;
+    };
+
+    /**
+     * meta.type の値によって特徴を自動追加する
+     * @param {Game_Enemy} enemy 
+     * @returns Game_Enemy
+     */
+    Game_Enemy.prototype.addTraitsByType = function (enemy) {
+        if (this._addedTraitsByType) return enemy;
+
+        enemy = this.addTraitsByTypeSub(enemy, "element");
+        enemy = this.addTraitsByTypeSub(enemy, "state");
+        enemy = this.addTraitsByTypeSub(enemy, "debuff");
+
+        CSVN_base.log(">>>> " + this.constructor.name + " addTraitsByType");
+        CSVN_base.log(enemy.traits);
+
+        this._addedTraitsByType = true;
+
+        return enemy;
+    };
+
+    /**
+     * meta.type の値によって特徴を自動追加する(内部処理)
+     * @param {Game_Enemy} enemy 
+     * @param {string} sub 
+     * @returns Game_Enemy
+     */
+    Game_Enemy.prototype.addTraitsByTypeSub = function (enemy, sub) {
+        const types = enemy.meta.type.split(",");
+        let entype = null;
+        let res = {};
+        let red = {};
+        let wek = {};
+        const codeBySub = this.traitCodeBySub(sub);
+        let entypeSub = null;
+
+        for (const type of types) {
+            if (!type) continue;
+
+            entype = ENEMY_TYPES[type];
+            entypeSub = this.getEntypeSub(entype, sub);
+
+            for (const e of entypeSub.resist) {
+                res = new Trait_Effect(
+                    codeBySub,
+                    e,
+                    0
+                );
+                enemy.traits.push(res);
+            }
+
+            for (const e of entypeSub.reduce) {
+                red = new Trait_Effect(
+                    codeBySub,
+                    e,
+                    REDUCE_RATE
+                );
+                enemy.traits.push(red);
+            }
+
+            for (const e of entypeSub.weak) {
+                wek = new Trait_Effect(
+                    codeBySub,
+                    e,
+                    WEAK_RATE
+                );
+                enemy.traits.push(wek);
+            }
+        }
+
+        return enemy;
+    }
+
+    /**
+     * タイプ指定に対応した特徴コードを返す
+     * @param {string} sub 
+     * @returns number
+     */
+    Game_Enemy.prototype.traitCodeBySub = function (sub) {
+        let result = 0;
+        switch (sub) {
+            case "element":
+                result = Game_BattlerBase.TRAIT_ELEMENT_RATE;
+                break;
+            case "state":
+                result = Game_BattlerBase.TRAIT_STATE_RATE;
+                break;
+            case "debuff":
+                result = Game_BattlerBase.TRAIT_DEBUFF_RATE;
+                break;
+        }
+
+        return result;
+    };
+
+    /**
+     * subの指定に応じてEnemy_Typeのプロパティを返す
+     * @param {Enemy_Type} entype 
+     * @param {string} sub 
+     * @returns any
+     */
+    Game_Enemy.prototype.getEntypeSub = function (entype, sub) {
+        let result = null;
+        switch (sub) {
+            case "element":
+                result = entype.element;
+                break;
+            case "state":
+                result = entype.state;
+                break;
+            case "debuff":
+                result = entype.debuff;
+                break;
+        }
+
+        return result;
+    };
+
+    /**
+     * meta.attr の値によって特徴を自動追加する
+     * @param {Game_Enemy} enemy 
+     * @returns Game_Enemy
+     */
+    Game_Enemy.prototype.addTraitsByAttr = function (enemy) {
+        if (this._addedTraitsByAttr) return enemy;
+
+        const type = ELEMENT_ENEMY_TYPES[enemy.meta.attr];
+        let res = {};
+        let red = {};
+        let wek = {};
+
+        if (type) {
+            for (const e of type.resist) {
+                res = new Trait_Effect(
+                    Game_BattlerBase.TRAIT_ELEMENT_RATE,
+                    e,
+                    0
+                );
+                enemy.traits.push(res);
+            }
+
+            for (const e of type.reduce) {
+                red = new Trait_Effect(
+                    Game_BattlerBase.TRAIT_ELEMENT_RATE,
+                    e,
+                    REDUCE_RATE
+                );
+                enemy.traits.push(red);
+            }
+
+            for (const e of type.weak) {
+                wek = new Trait_Effect(
+                    Game_BattlerBase.TRAIT_ELEMENT_RATE,
+                    e,
+                    WEAK_RATE
+                );
+                enemy.traits.push(wek);
+            }
+        }
+
+        CSVN_base.log(">>>> " + this.constructor.name + " addTraitsByAttr");
+        CSVN_base.log(enemy.traits);
+
+        this._addedTraitsByAttr = true;
+
+        return enemy;
+    };
 })();
