@@ -249,6 +249,24 @@
         this.resetSuspendedFrames();
     };
 
+    const _Scene_Battle_commandItem = Scene_Battle.prototype.commandItem;
+    /**
+     * アイテム選択中はコマンドウィンドウに入力がいかないようにする
+     */
+    Scene_Battle.prototype.commandItem = function () {
+        _Scene_Battle_commandItem.call(this);
+        this._actorCommandWindow.deactivate();
+    };
+
+    const _Scene_Battle_onItemOk = Scene_Battle.prototype.onItemOk;
+    /**
+     * アイテム決定後にも入力受付禁止フレームをリセット
+     */
+    Scene_Battle.prototype.onItemOk = function () {
+        _Scene_Battle_onItemOk.call(this);
+        this.resetSuspendedFrames();
+    };
+
     const _Scene_Battle_onActorOk = Scene_Battle.prototype.onActorOk;
     /**
      * 敵選択後も入力受付禁止フレームをリセット
