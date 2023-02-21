@@ -818,4 +818,57 @@ const ELEMENT_ENEMY_TYPES = {
 
         return enemy;
     };
+
+    //-----------------------------------------------------------------------------
+    // Game_Action
+
+    /**
+     * ダメージ計算(ログ追加)
+     * @param {Game_Battler} target 
+     * @param {boolean} critical 
+     * @returns number
+     */
+    Game_Action.prototype.makeDamageValue = function (target, critical) {
+        CSVN_base.logGroup("makeDamageValue");
+        const item = this.item();
+        const baseValue = this.evalDamageFormula(target);
+        CSVN_base.log(`formula: ${item.damage.formula}`);
+        CSVN_base.log(`baseValue: ${baseValue}`);
+        let value = baseValue * this.calcElementRate(target);
+        CSVN_base.log(`element(${item.damage.elementId}): ${value}`);
+        if (this.isPhysical()) {
+            value *= target.pdr;
+            CSVN_base.log(`formula: ${item.damage.formula}`);
+            CSVN_base.log(`atk: ${this.subject().atk} | def: ${target.def}`);
+            CSVN_base.log(`physical: ${value}`);
+        }
+        if (this.isMagical()) {
+            value *= target.mdr;
+            CSVN_base.log(`formula: ${item.damage.formula}`);
+            CSVN_base.log(`mat: ${this.subject().mat} | mdf: ${target.mdf}`);
+            CSVN_base.log(`magical: ${value}`);
+        }
+        if (baseValue < 0) {
+            value *= target.rec;
+            CSVN_base.log(`formula: ${item.damage.formula}`);
+            CSVN_base.log(`mat: ${this.subject().mat}`);
+            CSVN_base.log(`recovery: ${value}`);
+        }
+        if (critical) {
+            value = this.applyCritical(value);
+            CSVN_base.log(`critical: ${value}`);
+        }
+
+        value = this.applyVariance(value, item.damage.variance);
+        CSVN_base.log(`variance: ${item.damage.variance} > ${value}`);
+
+        value = this.applyGuard(value, target);
+        CSVN_base.log(`guard: ${value}`);
+        CSVN_base.logGroupEnd("makeDamageValue");
+
+        value = Math.round(value);
+        return value;
+    };
+
+
 })();
