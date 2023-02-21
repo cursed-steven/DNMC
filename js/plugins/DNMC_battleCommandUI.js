@@ -249,6 +249,16 @@
         this.resetSuspendedFrames();
     };
 
+    const _Scene_Battle_commandCancel = Scene_Battle.prototype.commandCancel;
+    /**
+     * アクターコマンドでキャンセルしたときには一旦アクターコマンドウィンドウは無効化
+     */
+    Scene_Battle.prototype.commandCancel = function () {
+        this._actorCommandWindow.deactivate();
+        this._actorCommandWindow.hide();
+        _Scene_Battle_commandCancel.call(this);
+    };
+
     const _Scene_Battle_commandItem = Scene_Battle.prototype.commandItem;
     /**
      * アイテム選択中はコマンドウィンドウに入力がいかないようにする
