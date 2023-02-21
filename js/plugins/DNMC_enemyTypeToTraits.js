@@ -664,8 +664,8 @@ const ELEMENT_ENEMY_TYPES = {
         enemy = this.addTraitsByTypeSub(enemy, "state");
         enemy = this.addTraitsByTypeSub(enemy, "debuff");
 
-        CSVN_base.log(">>>> " + this.constructor.name + " addTraitsByType");
-        CSVN_base.log(enemy.traits);
+        // CSVN_base.log(">>>> " + this.constructor.name + " addTraitsByType");
+        // CSVN_base.log(enemy.traits);
 
         this._addedTraitsByType = true;
 
@@ -811,8 +811,8 @@ const ELEMENT_ENEMY_TYPES = {
             }
         }
 
-        CSVN_base.log(">>>> " + this.constructor.name + " addTraitsByAttr");
-        CSVN_base.log(enemy.traits);
+        // CSVN_base.log(">>>> " + this.constructor.name + " addTraitsByAttr");
+        // CSVN_base.log(enemy.traits);
 
         this._addedTraitsByAttr = true;
 
