@@ -1,5 +1,5 @@
 //=============================================================================
-// RPG Maker MZ - CSVN_randomShop
+// RPG Maker MZ - DNMC_randomShop
 // ----------------------------------------------------------------------------
 // (C)2023 cursed_twitch
 // This software is released under the MIT License.
@@ -18,7 +18,7 @@
  * @base CSVN_base
  * @orderAfter CSVN_base
  * 
- * @help CSVN_randomShop.js
+ * @help DNMC_randomShop.js
  *
  * @command generate
  * @text ショップ生成
