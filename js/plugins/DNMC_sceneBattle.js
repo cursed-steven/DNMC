@@ -22,6 +22,18 @@
  * @help DNMC_sceneBattle.js
  */
 
+//-----------------------------------------------------------------------------
+// Window_BattleHUD
+//
+// The window for displaying party member status on the battle scene.
+
+function Window_BattleHUD() {
+    this.initialize(...arguments);
+}
+
+Window_BattleHUD.prototype = Object.create(Window_MapHUD.prototype);
+Window_BattleHUD.prototype.constructor = Window_BattleHUD;
+
 (() => {
 
     'use strict';
@@ -88,15 +100,6 @@
 
     //-----------------------------------------------------------------------------
     // Window_BattleHUD
-    //
-    // The window for displaying party member status on the battle scene.
-
-    function Window_BattleHUD() {
-        this.initialize(...arguments);
-    }
-
-    Window_BattleHUD.prototype = Object.create(Window_MapHUD.prototype);
-    Window_BattleHUD.prototype.constructor = Window_BattleHUD;
 
     Window_BattleHUD.prototype.drawItem = function (index) {
         const actor = this.actor(index);

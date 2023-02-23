@@ -16,7 +16,9 @@
  * @plugindesc Donut Machine 専用戦闘コマンドUI
  * @author cursed_twitch
  * @base DNMC_sceneOperation
+ * @base DNMC_sceneBattle
  * @orderAfter DNMC_sceneOperation
+ * @orderAfter DNMC_sceneBattle
  * 
  * @help DNMC_battleCommandUI.js
  * 
@@ -338,6 +340,22 @@
             if (!$gameParty.inBattle()) this.playBuzzerSound();
         }
     };
+
+    //-----------------------------------------------------------------------------
+    // Window_BattleActor
+
+    const _Window_BattleActor_initialize = Window_BattleActor.prototype.initialize;
+    /**
+     * 透明化
+     * @param {Rectangle} rect 
+     */
+    Window_BattleActor.prototype.initialize = function (rect) {
+        _Window_BattleActor_initialize.call(this, rect);
+        this.setBackgroundType(2);
+    };
+
+    // HUDと同じ内容にする
+    Window_BattleActor.prototype.drawItem = Window_BattleHUD.prototype.drawItem;
 
     //-----------------------------------------------------------------------------
     // Window_CustomActorCommand
