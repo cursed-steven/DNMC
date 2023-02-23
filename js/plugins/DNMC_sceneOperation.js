@@ -272,6 +272,7 @@ Scene_Operation.prototype.initialize = function () {
         const wh = this.mainAreaBottom() - stwr.y
         this._itemWindow.y = wy;
         this._itemWindow.height = wh;
+        this._itemWindow.createContents();
     };
 
     /**
@@ -282,6 +283,7 @@ Scene_Operation.prototype.initialize = function () {
         const wh = this.mainAreaBottom() - wy;
         this._itemWindow.y = wy;
         this._itemWindow.height = wh;
+        this._itemWindow.createContents();
     };
 
     /**
