@@ -217,19 +217,15 @@
         switch (skillId) {
             case COMMON_SKILL_IDS.ATTACK:
                 this.commandAttack();
-                BattleManager.actor().setLastBattleSkill(skill);
                 break;
             case COMMON_SKILL_IDS.DEFEND:
                 this.commandGuard();
-                BattleManager.actor().setLastBattleSkill(skill);
                 break;
             case COMMON_SKILL_IDS.ESCAPE:
                 this.commandEscape();
-                BattleManager.actor().setLastBattleSkill(skill);
                 break;
             case COMMON_SKILL_IDS.ITEM:
                 this.commandItem();
-                BattleManager.actor().setLastBattleSkill(skill);
                 break;
             default:
                 if (!skill) {
@@ -244,7 +240,6 @@
                 }
 
                 action.setSkill(skillId);
-                BattleManager.actor().setLastBattleSkill(skill);
                 this.onSelectAction();
                 break;
         }

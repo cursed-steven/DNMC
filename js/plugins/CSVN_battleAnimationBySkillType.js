@@ -57,6 +57,36 @@
     }
 
     //-----------------------------------------------------------------------------
+    // Scene_Battle
+
+    const _Scene_Battle_commandAttack = Scene_Battle.prototype.commandAttack;
+    /**
+     * 最後に使用したスキルのリセット
+     */
+    Scene_Battle.prototype.commandAttack = function () {
+        BattleManager.actor().setLastBattleSkill(null);
+        _Scene_Battle_commandAttack.call(this);
+    };
+
+    const _Scene_Battle_commandGuard = Scene_Battle.prototype.commandGuard;
+    /**
+     * 最後に使用したスキルのリセット
+     */
+    Scene_Battle.prototype.commandGuard = function () {
+        BattleManager.actor().setLastBattleSkill(null);
+        _Scene_Battle_commandGuard.call(this);
+    };
+
+    const _Scene_Battle_onItemOk = Scene_Battle.prototype.onItemOk;
+    /**
+     * 最後に使用したスキルのリセット
+     */
+    Scene_Battle.prototype.onItemOk = function () {
+        BattleManager.actor().setLastBattleSkill(null);
+        _Scene_Battle_onItemOk.call(this);
+    };
+
+    //-----------------------------------------------------------------------------
     // Window_BattleLog
 
     const _Window_BattleLog_startAction = Window_BattleLog.prototype.startAction;
@@ -68,7 +98,7 @@
      */
     Window_BattleLog.prototype.startAction = function (subject, action, targets) {
         if (subject._actorId) {
-            const skill = $dataSkills[subject._lastBattleSkill._itemId];
+            const skill = $dataSkills[subject.currentAction()._item._itemId];
             const stypeId = skill ? skill.stypeId : 0;
 
             if (stypeId !== 0) {
