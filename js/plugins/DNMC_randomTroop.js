@@ -38,7 +38,7 @@
     const param = PluginManagerEx.createParameter(script);
     const BOX_WIDTH = Graphics.boxWidth ? Graphics.boxWidth : 816;
     const BOX_HEIGHT = Graphics.boxHeight ? Graphics.boxHeight : 624;
-    const MAX_NG_COUNT = 10;
+    const MAX_NG_COUNT = 7;
 
     const EXP_RATE = 20;
     const LV_DIFF = 3;
