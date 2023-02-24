@@ -354,8 +354,24 @@
         this.setBackgroundType(2);
     };
 
-    // HUDと同じ内容にする
+    // HUDと同じ内容に
     Window_BattleActor.prototype.drawItem = Window_BattleHUD.prototype.drawItem;
+
+    /**
+     * HUDに合わせて修正
+     * @returns number
+     */
+    Window_BattleActor.prototype.maxCols = function () {
+        return 1;
+    };
+
+    /**
+     * HUDに合わせて修正
+     * @returns number
+     */
+    Window_BattleActor.prototype.numVisibleRows = function () {
+        return $gameParty.battleMembers().length;
+    };
 
     //-----------------------------------------------------------------------------
     // Window_CustomActorCommand
