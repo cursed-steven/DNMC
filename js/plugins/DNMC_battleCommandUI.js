@@ -246,6 +246,18 @@
         this.resetSuspendedFrames();
     };
 
+    const _Scene_Battle_commanAttack = Scene_Battle.prototype.commandAttack;
+    /**
+     * 先制時、決定ボタンをおすと通常攻撃が勝手に選ばれてしまう不具合の対策
+     */
+    Scene_Battle.prototype.commandAttack = function () {
+        if (BattleManager._preemptive) {
+            this.startActorCommandSelection();
+        } else {
+            _Scene_Battle_commanAttack.call(this);
+        }
+    };
+
     const _Scene_Battle_commandCancel = Scene_Battle.prototype.commandCancel;
     /**
      * アクターコマンドでキャンセルしたときには一旦アクターコマンドウィンドウは無効化
