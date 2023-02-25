@@ -48,6 +48,15 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
      */
     Scene_Battle.prototype.updateStatusWindowPosition = function () { };
 
+    const _Scene_Battle_update = Scene_Battle.prototype.update;
+    /**
+     * ステートアイコンがリフレッシュされない問題の対策
+     */
+    Scene_Battle.prototype.update = function () {
+        _Scene_Battle_update.call(this);
+        this._statusWindow.refresh();
+    };
+
     /**
      * 固定
      * @returns number
