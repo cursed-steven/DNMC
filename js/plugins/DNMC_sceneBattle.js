@@ -48,15 +48,6 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
      */
     Scene_Battle.prototype.updateStatusWindowPosition = function () { };
 
-    const _Scene_Battle_update = Scene_Battle.prototype.update;
-    /**
-     * ステートアイコンがリフレッシュされない問題の対策
-     */
-    Scene_Battle.prototype.update = function () {
-        _Scene_Battle_update.call(this);
-        this._statusWindow.refresh();
-    };
-
     /**
      * 固定
      * @returns number
@@ -123,7 +114,11 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
         this.drawActorName(actor, x, y);
         this.placeTimeGauge(actor, x, y + lineHeight);
         this.placeBasicGauges(actor, x, y + lineHeight * 2);
-        this.drawActorIcons(actor, x, y + lineHeight * 3 + this.gaugeLineHeight() * 2 + this.itemPadding());
+        this.placeStateIcon(
+            actor,
+            x + 14,
+            y + lineHeight * 3 + this.gaugeLineHeight() * 3 + this.itemPadding()
+        );
     };
 
     /**
