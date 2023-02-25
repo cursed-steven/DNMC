@@ -95,7 +95,7 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
      * @returns number
      */
     Scene_Battle.prototype.HUDHeight = function () {
-        return this.calcWindowHeight(4 * $gameParty.size(), true);
+        return this.calcWindowHeight(2.7 * $gameParty.size(), true);
     };
 
     //-----------------------------------------------------------------------------
@@ -106,7 +106,7 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
         const rect = this.itemRect(index);
         const x = rect.x;
         const y = rect.y;
-        const lineHeight = this.lineHeight();
+        const lineHeight = this.lineHeight() * 0.6;
         this.drawActorName(actor, x, y);
         this.placeTimeGauge(actor, x, y + lineHeight);
         this.placeBasicGauges(actor, x, y + lineHeight * 2);
