@@ -95,12 +95,16 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
      * @returns number
      */
     Scene_Battle.prototype.HUDHeight = function () {
-        return this.calcWindowHeight(2.7 * $gameParty.size(), true);
+        return this.calcWindowHeight(3.7 * $gameParty.size(), true);
     };
 
     //-----------------------------------------------------------------------------
     // Window_BattleHUD
 
+    /**
+     * ゲージを増やして行高を調整
+     * @param {number} index 
+     */
     Window_BattleHUD.prototype.drawItem = function (index) {
         const actor = this.actor(index);
         const rect = this.itemRect(index);
@@ -110,9 +114,13 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
         this.drawActorName(actor, x, y);
         this.placeTimeGauge(actor, x, y + lineHeight);
         this.placeBasicGauges(actor, x, y + lineHeight * 2);
-        this.drawActorIcons(actor, x, y + lineHeight + this.gaugeLineHeight() * 2 + this.itemPadding());
+        this.drawActorIcons(actor, x, y + lineHeight * 3 + this.gaugeLineHeight() * 2 + this.itemPadding());
     };
 
+    /**
+     * 戦闘用の選択処理追加
+     * @param {Game_Actor} actor 
+     */
     Window_BattleHUD.prototype.selectActor = function (actor) {
         const members = $gameParty.battleMembers();
         this.select(members.indexOf(actor));
