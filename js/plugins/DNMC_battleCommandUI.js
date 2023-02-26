@@ -554,6 +554,7 @@
                 index
             );
             this.drawSkillCost(cmd, rect.x, rect.y, costWidth);
+            this.changePaintOpacity(1);
         }
     };
 
