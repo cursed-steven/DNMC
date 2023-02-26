@@ -287,7 +287,7 @@
 
         while (!this.checkRandomXY(xy)) {
             ngCount++;
-            CSN_base.log(`ng: ${ngCount}`)
+            CSVN_base.log(`ng: ${ngCount}`)
             if (ngCount === MAX_NG_COUNT) {
                 break;
             } else {
