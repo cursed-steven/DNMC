@@ -244,7 +244,7 @@
             return troop;
         }
 
-        const enemyCount = Math.randomInt(5);
+        const enemyCount = Math.randomInt(9);
         let indexes = [];
         let ix = -1;
         while (indexes.length < enemyCount) {
