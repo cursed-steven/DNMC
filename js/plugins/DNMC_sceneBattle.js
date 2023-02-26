@@ -134,6 +134,17 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
     // BattleManager
 
     /**
+     * 敵名称の読み上げカット
+     */
+    BattleManager.displayStartMessages = function () {
+        if (this._preemptive) {
+            $gameMessage.add(TextManager.preemptive.format($gameParty.name()));
+        } else if (this._surprise) {
+            $gameMessage.add(TextManager.surprise.format($gameParty.name()));
+        }
+    };
+
+    /**
      * 撤退成功率(限りなく高めに)
      */
     BattleManager.makeEscapeRatio = function () {
