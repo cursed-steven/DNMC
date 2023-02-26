@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2023/02/05 初版
+// 1.1.0  2023/02/26 座標決定ロジック見直し
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -38,7 +39,7 @@
     const param = PluginManagerEx.createParameter(script);
     const BOX_WIDTH = Graphics.boxWidth ? Graphics.boxWidth : 816;
     const BOX_HEIGHT = Graphics.boxHeight ? Graphics.boxHeight : 624;
-    const MAX_NG_COUNT = 7;
+    const MAX_NG_COUNT = 99;
 
     const EXP_RATE = 20;
     const LV_DIFF = 3;
@@ -103,6 +104,26 @@
         // 補正
         return randY + 180;
     }
+
+    //-----------------------------------------------------------------------------
+    // Scene_Map
+
+    const _Scene_Map_create = Scene_Map.prototype.create;
+    Scene_Map.prototype.create = function () {
+        _Scene_Map_create.call(this);
+        ImageManager.preloadEnemyImages();
+    };
+
+    //-----------------------------------------------------------------------------
+    // ImageManager
+
+    ImageManager.preloadEnemyImages = function () {
+        for (const de of $dataEnemies) {
+            if (de && de.battlerName) {
+                this.loadEnemy(de.battlerName);
+            }
+        }
+    };
 
     //-----------------------------------------------------------------------------
     // DataManager
@@ -261,23 +282,22 @@
         let ngCount = 0;
         let xy = {
             x: getRandomX(dEnemy),
-            y: getRandomY(dEnemy),
+            y: getRandomY(dEnemy)
         };
 
-        if (this.checkRandomXY(xy)) {
-            // OKならそのまま返す
-            // CSVN_base.log('OK');
-            return xy;
-        } else {
-            // NGなら再抽選して返す
-            // CSVN_base.log('NG');
+        while (!this.checkRandomXY(xy)) {
             ngCount++;
+            CSN_base.log(`ng: ${ngCount}`)
             if (ngCount === MAX_NG_COUNT) {
-                return xy;
+                break;
             } else {
-                return this.getCheckedRandomXY(dEnemy);
+                xy = {
+                    x: getRandomX(dEnemy),
+                    y: getRandomY(dEnemy)
+                };
             }
         }
+        return xy;
     }
 
     /**
