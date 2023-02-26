@@ -25,6 +25,12 @@
  * @type string
  * @default BLOCK
  * 
+ * @param blockTextColor
+ * @text 無効表記色
+ * @desc 無効表記のテキスト色をRGBで指定
+ * @type string
+ * @default 808080
+ * 
  * @param reduceThreshold
  * @text 耐性閾値
  * @desc 属性によって{この数値}%以下までダメージが軽減されている場合に適用
@@ -38,6 +44,12 @@
  * @type string
  * @default RESIST
  * 
+ * @param reduceTextColor
+ * @text 耐性表記色
+ * @desc 耐性表記のテキスト色をRGBで指定
+ * @type string
+ * @default 0099FF
+ * 
  * @param weakThreshold
  * @text 弱点閾値
  * @desc 属性によって{この数値}%以上までダメージが増幅されている場合に適用
@@ -50,24 +62,11 @@
  * @type string
  * @default WEAK
  * 
- * @param damageOffsetX
- * @text ダメージ表示オフセットX
- * @desc 複数回ダメージが入る場合のX座標オフセット
- * @type number
- * @max 26
- * @min 0
- * 
- * @param damageOffsetY
- * @text ダメージ表示オフセットY
- * @desc 複数回ダメージが入る場合のY座標オフセット
- * @type number
- * @max 26
- * @min 0
- * 
- * @param damageOffsetRandomize
- * @text ランダマイズ
- * @desc ダメージ表示位置のランダム化
- * @type boolean
+ * @param weakTextColor
+ * @text 弱点表記色
+ * @desc 弱点表記のテキスト色をRGBで指定
+ * @type string
+ * @default FF9900
  */
 
 (() => {
@@ -75,6 +74,30 @@
     'use strict';
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
+
+    //-----------------------------------------------------------------------------
+    // ColorManager
+
+    ColorManager.damageColor = function (colorType) {
+        switch (colorType) {
+            case 0: // HP damage
+                return "#ffffff";
+            case 1: // HP recover
+                return "#b9ffb5";
+            case 2: // MP damage
+                return "#ffff90";
+            case 3: // MP recover
+                return "#80b0ff";
+            case 4: // BLOCK
+                return "#" + param.blockTextColor;
+            case 5: // REDUCE
+                return "#" + param.reduceTextColor;
+            case 6: // WEAK
+                return "#" + param.weakTextColor;
+            default:
+                return "#808080";
+        }
+    };
 
     //-----------------------------------------------------------------------------
     // Game_BattlerBase
@@ -132,23 +155,24 @@
         CSVN_base.log(`rate: ${target._calcuratedElementRate}`);
         if (target._calcuratedElementRate === 0) {
             // BLOCK
-            this.createAdditional(param.blockText);
+            this.createAdditional(param.blockText, 4);
         } else if (target._calcuratedElementRate <= param.reduceThreshold
             && target._calcuratedElementRate < 100) {
             // REDUCE
-            this.createAdditional(param.reduceText);
+            this.createAdditional(param.reduceText, 5);
         } else if (target._calcuratedElementRate >= param.weakThreshold) {
             // WEAK
-            this.createAdditional(param.weakText);
+            this.createAdditional(param.weakText, 6);
         }
     };
 
     /**
      * 追加分の文字生成
      * @param {string} text 
+     * @param {number} colorType 
      */
-    Sprite_Damage.prototype.createAdditional = function (text) {
-        this._colorType = 9;
+    Sprite_Damage.prototype.createAdditional = function (text, colorType) {
+        this._colorType = colorType;
         const offset = 16;
         const h = this.fontSize() + offset + 8;
         const w = Math.floor(h * 3.0);
