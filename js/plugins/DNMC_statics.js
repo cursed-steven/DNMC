@@ -523,7 +523,7 @@ const WEAPON_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5]
+                    [0]
                 ]
             },
             {
@@ -563,7 +563,7 @@ const WEAPON_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5]
+                    [0]
                 ]
             },
             {
@@ -603,7 +603,7 @@ const WEAPON_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5]
+                    [0]
                 ]
             },
             {
@@ -643,7 +643,7 @@ const WEAPON_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5]
+                    [0]
                 ]
             }
         ]
@@ -688,7 +688,7 @@ const WEAPON_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5]
+                    [0]
                 ]
             },
             {
@@ -728,7 +728,7 @@ const WEAPON_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5]
+                    [0]
                 ]
             },
             {
@@ -1731,7 +1731,7 @@ const SHIELD_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [20, 25, 45],
                     [20, 25, 45],
@@ -1881,7 +1881,7 @@ const SHIELD_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [20, 25, 45],
                     [20, 25, 45],
@@ -2181,7 +2181,7 @@ const SHIELD_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 25, 45],
                     [40, 25, 45],
@@ -2336,7 +2336,7 @@ const SHIELD_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 25, 45],
                     [40, 25, 45],
@@ -2486,7 +2486,7 @@ const SHIELD_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 25, 45],
                     [40, 25, 45],
@@ -4810,7 +4810,7 @@ const HEAD_BODY_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [20, 15, 30],
                     [20, 15, 30],
@@ -4960,7 +4960,7 @@ const HEAD_BODY_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 15, 30],
                     [40, 15, 30],
@@ -5110,7 +5110,7 @@ const HEAD_BODY_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 15, 30],
                     [40, 15, 30],
@@ -5265,7 +5265,7 @@ const HEAD_BODY_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 15, 30],
                     [40, 15, 30],
@@ -5415,7 +5415,7 @@ const HEAD_BODY_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 15, 30],
                     [40, 15, 30],
@@ -7539,7 +7539,7 @@ const ACCESORY_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [20, 5, 10],
                     [20, 5, 10],
@@ -7702,7 +7702,7 @@ const ACCESORY_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [20, 5, 10],
                     [20, 5, 10],
@@ -7865,7 +7865,7 @@ const ACCESORY_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 5, 10],
                     [40, 5, 10],
@@ -8028,7 +8028,7 @@ const ACCESORY_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 5, 10],
                     [40, 5, 10],
@@ -8196,7 +8196,7 @@ const ACCESORY_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 5, 10],
                     [40, 5, 10],
@@ -8359,7 +8359,7 @@ const ACCESORY_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 5, 10],
                     [40, 5, 10],
