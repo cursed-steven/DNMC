@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2022/12/22 初版
+// 1.1.0  2023/02/28 Mano_InputConfigの設定を読んでキー表示
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -16,6 +17,7 @@
  * @plugindesc Donut Machine 専用ボタンガイド
  * @author cursed_twitch
  * @base CSVN_base
+ * @base Mano_InputConfig
  * @orderAfter CSVN_base
  * 
  * @help DNMC_buttonGuide.js
@@ -26,6 +28,21 @@
     'use strict';
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
+
+    const NUMBER_KEY_MAP = {
+        NINTENDO: {
+            0: "B",
+            1: "A",
+            2: "Y",
+            3: "X",
+            4: "L",
+            5: "R",
+            12: "up",
+            13: "down",
+            14: "left",
+            15: "right"
+        }
+    };
 
     //-----------------------------------------------------------------------------
     // Scene_Map
@@ -99,6 +116,8 @@
         Window_Base.prototype.initialize.call(this, rect);
         this.setBackgroundType(2);
         this.fontSize = $gameSystem.mainFontSize() * 0.8;
+        console.log(Input.gamepadMapper);
+        console.log(Input.keyMapper);
     };
 
     /**
@@ -138,8 +157,8 @@
      * Scene_Mapのボタンガイド
      */
     Window_ButtonGuide.prototype.drawSceneMapGuide = function () {
-        this.drawButton("X", "Xdesc", 0, 0);
-        this.drawButton("Y", "Ydesc", 0, this.fontSize * 1.5);
+        this.drawButton("menu", "メニュー", 0, 0);
+        this.drawButton("shift", "ダッシュ切替", 0, this.fontSize * 1.5);
     };
 
     /**
@@ -149,12 +168,26 @@
      * @param {number} x 
      * @param {number} y 
      */
-    Window_ButtonGuide.prototype.drawButton = function (btn, desc, x, y) {
-        const btnWidth = this.fontSize / 2 * (btn.length + 3);
+    Window_ButtonGuide.prototype.drawButton = function (role, desc, x, y) {
+        const btnWidth = this.fontSize / 2 * 4;
         let width = 0;
-        this.drawText("[" + btn + "]", x, y, btnWidth);
+        this.drawText("[" + this.gamePadBtn(role) + "]", x, y, btnWidth);
         width += btnWidth;
         this.drawText(desc, x + width, y, this.width - width);
     };
+
+    /**
+     * ロールからキー番号を取得し、そこからパッドごとの対応ボタンを返す。
+     * @param {string} role 
+     * @returns string
+     */
+    Window_ButtonGuide.prototype.gamePadBtn = function (role) {
+        const btnNo = Object.keys(Input.gamepadMapper).find(
+            n => Input.gamepadMapper[n] === role
+        );
+
+        return NUMBER_KEY_MAP.NINTENDO[btnNo];
+    };
+
 
 })();
