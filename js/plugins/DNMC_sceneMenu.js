@@ -227,9 +227,11 @@
     /**
      * 専用コマンド追加。
      */
+    const _Window_MenuCommand_addOriginalCommands = Window_MenuCommand.prototype.addOriginalCommands;
     Window_MenuCommand.prototype.addOriginalCommands = function () {
         this.addCommand(TextManager.originalCommand(1), "operation", true);
         this.addCommand(TextManager.originalCommand(2), "comparison", true);
+        _Window_MenuCommand_addOriginalCommands.call(this);
     };
 
     //-----------------------------------------------------------------------------
