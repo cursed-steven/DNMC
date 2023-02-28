@@ -31,6 +31,9 @@
     // Scene_Map
 
     const _Scene_Map_createAllWindows = Scene_Map.prototype.createAllWindows;
+    /**
+     * ボタンガイド作成処理を追加
+     */
     Scene_Map.prototype.createAllWindows = function () {
         this.createButtonGuide();
         _Scene_Map_createAllWindows.call(this);
@@ -58,6 +61,9 @@
     };
 
     const _Scene_Map_update = Scene_Map.prototype.update;
+    /**
+     * ボタンガイドの更新処理を追加
+     */
     Scene_Map.prototype.update = function () {
         _Scene_Map_update.call(this);
         this._buttonGuide.show();
@@ -65,6 +71,9 @@
     };
 
     const _Scene_Map_terminate = Scene_Map.prototype.terminate;
+    /**
+     * ボタンガイド非表示化処理の追加
+     */
     Scene_Map.prototype.terminate = function () {
         this._buttonGuide.hide();
         _Scene_Map_terminate.call(this);
@@ -82,14 +91,70 @@
     Window_ButtonGuide.prototype = Object.create(Window_Base.prototype);
     Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
 
+    /**
+     * ボタンガイド初期化
+     * @param {Rectangle} rect 
+     */
     Window_ButtonGuide.prototype.initialize = function (rect) {
         Window_Base.prototype.initialize.call(this, rect);
         this.setBackgroundType(2);
+        this.fontSize = $gameSystem.mainFontSize() * 0.8;
     };
 
+    /**
+     * ボタンガイド更新
+     */
     Window_ButtonGuide.prototype.refresh = function () {
-        // TODO
-        this.drawText(SceneManager._scene.constructor.name, 0, 0, this.width);
+        this.contents.clear();
+        this.contents.fontSize = this.fontSize;
+        const sceneName = SceneManager._scene.constructor.name;
+        switch (sceneName) {
+            case "Scene_Map":
+                this.drawSceneMapGuide();
+                break;
+            case "Scene_Menu":
+                // this.drawSceneMenuGuide();
+                break;
+            case "Scene_Item":
+                // this.drawSceneItemGuide();
+                break;
+            case "Scene_Skill":
+                // this.drawSceneSkillGuide();
+                break;
+            case "Scene_EquipStatus":
+                // this.drawSceneEquipStatus();
+                break;
+            case "Scene_Operation":
+                // this.drawSceneOperationStatus();
+                break;
+            case "Scene_Battle":
+                // this.drawSceneBattleGuide();
+                break;
+        }
+        this.contents.fontSize = $gameSystem.mainFontSize();
+    };
+
+    /**
+     * Scene_Mapのボタンガイド
+     */
+    Window_ButtonGuide.prototype.drawSceneMapGuide = function () {
+        this.drawButton("X", "Xdesc", 0, 0);
+        this.drawButton("Y", "Ydesc", 0, this.fontSize * 1.5);
+    };
+
+    /**
+     * ボタンと説明を描画
+     * @param {string} btn 
+     * @param {string} desc 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    Window_ButtonGuide.prototype.drawButton = function (btn, desc, x, y) {
+        const btnWidth = this.fontSize / 2 * (btn.length + 3);
+        let width = 0;
+        this.drawText("[" + btn + "]", x, y, btnWidth);
+        width += btnWidth;
+        this.drawText(desc, x + width, y, this.width - width);
     };
 
 })();
