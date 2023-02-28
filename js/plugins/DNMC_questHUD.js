@@ -6,7 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
-// 1.0.0  2023/02/xx 初版
+// 1.0.0  2023/02/28 初版
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -114,6 +114,8 @@
     Window_QuestHUD.prototype.initialize = function (rect) {
         Window_Base.prototype.initialize.call(this, rect);
         this.setBackgroundType(2);
+
+        this.fontSize = $gameSystem.mainFontSize() * 0.8;
     };
 
     /**
@@ -121,12 +123,14 @@
      */
     Window_QuestHUD.prototype.refresh = function () {
         this.contents.clear();
+        this.contents.fontSize = this.fontSize;
         const qs = this.filterAndSortOngoing();
         if (qs) {
             this.drawQuestInfo(qs[0]);
         } else {
             this.drawText(param.noQuestOngoing, 0, 0, this.width);
         }
+        this.contents.fontSize = $gameSystem.mainFontSize();
     };
 
     /**
@@ -155,12 +159,13 @@
      * @param {QuestData} q 
      */
     Window_QuestHUD.prototype.drawQuestInfo = function (q) {
-        const fontSize = this.contents.fontSize;
+        const fontSize = this.fontSize;
         const yOffset = 8;
         const stateText = this.stateText(q._variableId);
         const stateTextWidth = fontSize * 5.5;
         const iconWidth = 20 + fontSize;
         let width = 0;
+
 
         this.drawText("【" + stateText + "】", 0, yOffset, stateTextWidth);
         width += stateTextWidth;
