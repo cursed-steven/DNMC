@@ -48,6 +48,7 @@
         this.createMenuStatusWindow();
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
+        this._buttonGuide.setActiveWindow("Window_SkillType");
         this._buttonGuide.refresh();
         this.createHelpWindow();
         this.createSkillTypeWindow();
@@ -179,6 +180,7 @@
     Scene_Skill.prototype.commandCategory = function () {
         this._categoryWindow.activate();
         this._categoryWindow.forceSelect(0);
+        this._buttonGuide.setActiveWindow("Window_SkillCategory");
     };
 
     /**
@@ -187,6 +189,7 @@
     Scene_Skill.prototype.onCategoryOk = function () {
         this._itemWindow.activate();
         this._itemWindow.forceSelect(0);
+        this._buttonGuide.setActiveWindow("Window_SkillList");
     };
 
     /**
@@ -195,6 +198,7 @@
     Scene_Skill.prototype.onCategoryCancel = function () {
         this._skillTypeWindow.activate();
         this._skillTypeWindow.selectLast();
+        this._buttonGuide.setActiveWindow("Window_SkillType");
     };
 
     /**
@@ -203,6 +207,7 @@
     Scene_Skill.prototype.onItemCancel = function () {
         this._itemWindow.deselect();
         this._categoryWindow.activate();
+        this._buttonGuide.setActiveWindow("Window_SkillCategory");
     };
 
     const _Scene_Skill_onActorChange = Scene_Skill.prototype.onActorChange;
@@ -212,6 +217,15 @@
     Scene_Skill.prototype.onActorChange = function () {
         _Scene_Skill_onActorChange.call(this);
         this._menuStatusWindow.select(this.user().index());
+    };
+
+    const _Scene_Skill_update = Scene_Skill.prototype.update;
+    /**
+     * ボタンガイドの描画更新処理を追加
+     */
+    Scene_Skill.prototype.update = function () {
+        _Scene_Skill_update.call(this);
+        this._buttonGuide.refresh();
     };
 
     //-----------------------------------------------------------------------------

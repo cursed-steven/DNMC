@@ -264,7 +264,7 @@
                 this.drawSceneItemGuide();
                 break;
             case "Scene_Skill":
-                // this.drawSceneSkillGuide();
+                this.drawSceneSkillGuide();
                 break;
             case "Scene_EquipStatus":
                 // this.drawSceneEquipStatus();
@@ -294,9 +294,31 @@
         switch (this.activeWindow) {
             case "Window_ItemCategory":
                 this.drawButton("left", "←カテゴリ", 0, 0);
-                this.drawButton("right", "カテゴリ→", 0, this.fontSize + 1.5);
+                this.drawButton("right", "カテゴリ→", 0, this.fontSize * 1.5);
                 break;
             case "Window_ItemList":
+                break;
+        }
+    };
+
+    /**
+     * Scene_Skillのボタンガイド
+     */
+    Window_ButtonGuide.prototype.drawSceneSkillGuide = function () {
+        switch (this.activeWindow) {
+            case "Window_SkillType":
+                this.drawButton("left", "←スキルタイプ", 0, 0);
+                this.drawButton("right", "スキルタイプ→", 0, this.fontSize * 1.5);
+                this.drawButton("pageup", "←キャラ", 0, this.fontSize * 3);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * 4.5);
+                break;
+            case "Window_SkillCategory":
+                this.drawButton("left", "←カテゴリ", 0, 0);
+                this.drawButton("right", "カテゴリ→", 0, this.fontSize * 1.5);
+                this.drawButton("pageup", "←キャラ", 0, this.fontSize * 3);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * 4.5);
+                break;
+            case "Window_SkillList":
                 break;
         }
     };
@@ -309,7 +331,7 @@
      * @param {number} y 
      */
     Window_ButtonGuide.prototype.drawButton = function (role, desc, x, y) {
-        const btnWidth = this.fontSize / 2 * 4;
+        const btnWidth = this.fontSize / 2 * (this.gamePadBtn(role).length + 3);
         let width = 0;
         this.drawText("[" + this.gamePadBtn(role) + "]", x, y, btnWidth);
         width += btnWidth;
