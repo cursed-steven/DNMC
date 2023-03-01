@@ -37,10 +37,10 @@
             3: "X",
             4: "L1",
             5: "R1",
-            12: "up",
-            13: "down",
-            14: "left",
-            15: "right"
+            12: "↑",
+            13: "↓",
+            14: "←",
+            15: "→"
         },
         PLAYSTATION: {
             0: "×",
@@ -49,10 +49,10 @@
             3: "△",
             4: "L1",
             5: "R1",
-            12: "up",
-            13: "down",
-            14: "left",
-            15: "right"
+            12: "↑",
+            13: "↓",
+            14: "←",
+            15: "→"
         },
         XBOX: {
             0: "A",
@@ -61,10 +61,10 @@
             3: "X",
             4: "L1",
             5: "R1",
-            12: "up",
-            13: "down",
-            14: "left",
-            15: "right"
+            12: "↑",
+            13: "↓",
+            14: "←",
+            15: "→"
         }
     };
 
@@ -235,7 +235,16 @@
         Window_Base.prototype.initialize.call(this, rect);
         this.setBackgroundType(2);
         this.fontSize = $gameSystem.mainFontSize() * 0.8;
+        this.activeWindow = "";
     };
+
+    /**
+     * アクティヴになっているウィンドウ名をセットする
+     * @param {string} name 
+     */
+    Window_ButtonGuide.prototype.setActiveWindow = function (name) {
+        this.activeWindow = name;
+    }
 
     /**
      * ボタンガイド更新
@@ -252,7 +261,7 @@
                 // this.drawSceneMenuGuide();
                 break;
             case "Scene_Item":
-                // this.drawSceneItemGuide();
+                this.drawSceneItemGuide();
                 break;
             case "Scene_Skill":
                 // this.drawSceneSkillGuide();
@@ -276,6 +285,20 @@
     Window_ButtonGuide.prototype.drawSceneMapGuide = function () {
         this.drawButton("menu", "メニュー", 0, 0);
         this.drawButton("shift", "ダッシュ切替", 0, this.fontSize * 1.5);
+    };
+
+    /**
+     * Scene_Itemのボタンガイド
+     */
+    Window_ButtonGuide.prototype.drawSceneItemGuide = function () {
+        switch (this.activeWindow) {
+            case "Window_ItemCategory":
+                this.drawButton("left", "←カテゴリ", 0, 0);
+                this.drawButton("right", "カテゴリ→", 0, this.fontSize + 1.5);
+                break;
+            case "Window_ItemList":
+                break;
+        }
     };
 
     /**

@@ -45,6 +45,7 @@
         _Scene_Item_create.call(this);
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
+        this._buttonGuide.setActiveWindow("Window_ItemCategory");
         this._buttonGuide.refresh();
         this.createCommandWindow();
         this.createGoldWindow();
@@ -95,6 +96,36 @@
         const ww = this._categoryWindow.width;
         const wh = this.mainAreaBottom() - wy;
         return new Rectangle(wx, wy, ww, wh);
+    };
+
+    const _Scene_Item_onCategoryOk = Scene_Item.prototype.onCategoryOk;
+    /**
+     * どのウィンドウがアクティヴかをボタンガイドに渡す処理を追加
+     */
+    Scene_Item.prototype.onCategoryOk = function () {
+        _Scene_Item_onCategoryOk.call(this);
+        this._buttonGuide.setActiveWindow("Window_ItemList");
+    };
+
+    const _Scene_Item_onItemCancel = Scene_Item.prototype.onItemCancel;
+    /**
+     * カテゴリ選択に戻るときにアクティヴウィンドウ名の更新を追加
+     */
+    Scene_Item.prototype.onItemCancel = function () {
+        _Scene_Item_onItemCancel.call(this);
+
+        if (this._categoryWindow.needsSelection()) {
+            this._buttonGuide.setActiveWindow("Window_ItemCategory");
+        }
+    };
+
+    const _Scene_Item_update = Scene_Item.prototype.update;
+    /**
+     * ボタンガイドの描画更新
+     */
+    Scene_Item.prototype.update = function () {
+        _Scene_Item_update.call(this);
+        this._buttonGuide.refresh();
     };
 
     //-----------------------------------------------------------------------------
