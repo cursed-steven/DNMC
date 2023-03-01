@@ -189,7 +189,6 @@
                 value = 0;
                 this.setConfigValue(symbol, value);
             }
-            console.log(`gamepad config value: ${value}`);
             return this.gamepadText(value);
         } else {
             return text;
@@ -236,8 +235,6 @@
         Window_Base.prototype.initialize.call(this, rect);
         this.setBackgroundType(2);
         this.fontSize = $gameSystem.mainFontSize() * 0.8;
-        console.log(Input.gamepadMapper);
-        console.log(Input.keyMapper);
     };
 
     /**
