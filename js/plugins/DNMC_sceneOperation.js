@@ -72,6 +72,7 @@ Scene_Operation.prototype.initialize = function () {
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
         this._buttonGuide.refresh();
+        this._buttonGuide.setActiveWindow("Window_CtlrL");
         this.createHelpWindow();
         this.createCtlrLWindow();
         this.createCtlrRWindow();
@@ -219,6 +220,7 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrLWindow.setLastIndex();
         this._ctlrLWindow.deactivate();
         this._skillTypeWindow.activate();
+        this._buttonGuide.setActiveWindow("Window_SkillType");
     };
 
     /**
@@ -231,6 +233,7 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrRWindow.activate();
         this._ctlrRWindow.selectLast();
         this._currentSide = 1;
+        this._buttonGuide.setActiveWindow("Window_CtlrR");
     };
 
     /**
@@ -240,6 +243,7 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrRWindow.setLastIndex();
         this._ctlrRWindow.deactivate();
         this._skillTypeWindow.activate();
+        this._buttonGuide.setActiveWindow("Window_SkillType");
     };
 
     /**
@@ -252,6 +256,7 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrLWindow.activate();
         this._ctlrLWindow.selectLast();
         this._currentSide = 0;
+        this._buttonGuide.setActiveWindow("Window_CtlrL");
     };
 
     /**
@@ -261,6 +266,7 @@ Scene_Operation.prototype.initialize = function () {
         this._itemWindow.activate();
         this._itemWindow.forceSelect(0);
         this.expandItemWindow();
+        this._buttonGuide.setActiveWindow("Window_SkillList");
     };
 
     /**
@@ -371,6 +377,7 @@ Scene_Operation.prototype.initialize = function () {
         this._itemWindow.deselect();
         this._categoryWindow.activate();
         this.shrinkItemWindow();
+        this._buttonGuide.setActiveWindow("Window_SkillCategory");
     };
 
     //-------------------------------------------------------------------------

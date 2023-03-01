@@ -267,10 +267,10 @@
                 this.drawSceneSkillGuide();
                 break;
             case "Scene_EquipStatus":
-                // this.drawSceneEquipStatus();
+                // this.drawSceneEquipStatusGuide();
                 break;
             case "Scene_Operation":
-                // this.drawSceneOperationStatus();
+                this.drawSceneOperationGuide();
                 break;
             case "Scene_Battle":
                 // this.drawSceneBattleGuide();
@@ -306,6 +306,34 @@
      */
     Window_ButtonGuide.prototype.drawSceneSkillGuide = function () {
         switch (this.activeWindow) {
+            case "Window_SkillType":
+                this.drawButton("left", "←スキルタイプ", 0, 0);
+                this.drawButton("right", "スキルタイプ→", 0, this.fontSize * 1.5);
+                this.drawButton("pageup", "←キャラ", 0, this.fontSize * 3);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * 4.5);
+                break;
+            case "Window_SkillCategory":
+                this.drawButton("left", "←カテゴリ", 0, 0);
+                this.drawButton("right", "カテゴリ→", 0, this.fontSize * 1.5);
+                this.drawButton("pageup", "←キャラ", 0, this.fontSize * 3);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * 4.5);
+                break;
+            case "Window_SkillList":
+                break;
+        }
+    };
+
+    /**
+     * Scene_Operationのボタンガイド
+     */
+    Window_ButtonGuide.prototype.drawSceneOperationGuide = function () {
+        switch (this.activeWindow) {
+            case "Window_CtlrL":
+                this.drawButton("pagedown", "R側設定", 0, 0);
+                break;
+            case "Window_CtlrR":
+                this.drawButton("pageup", "L側設定", 0, 0);
+                break;
             case "Window_SkillType":
                 this.drawButton("left", "←スキルタイプ", 0, 0);
                 this.drawButton("right", "スキルタイプ→", 0, this.fontSize * 1.5);
