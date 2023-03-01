@@ -35,13 +35,52 @@
             1: "A",
             2: "Y",
             3: "X",
-            4: "L",
-            5: "R",
+            4: "L1",
+            5: "R1",
+            12: "up",
+            13: "down",
+            14: "left",
+            15: "right"
+        },
+        PLAYSTATION: {
+            0: "×",
+            1: "○",
+            2: "□",
+            3: "△",
+            4: "L1",
+            5: "R1",
+            12: "up",
+            13: "down",
+            14: "left",
+            15: "right"
+        },
+        XBOX: {
+            0: "A",
+            1: "B",
+            2: "Y",
+            3: "X",
+            4: "L1",
+            5: "R1",
             12: "up",
             13: "down",
             14: "left",
             15: "right"
         }
+    };
+
+    const PADS = ["NINTENDO", "PLAYSTATION", "XBOX"];
+
+    //-----------------------------------------------------------------------------
+    // Scene_Options
+
+    const _Scene_Options_maxCommands = Scene_Options.prototype.maxCommands;
+    /**
+     * オプションのコマンド数に1追加
+     * @returns number
+     */
+    Scene_Options.prototype.maxCommands = function () {
+        const orgNum = _Scene_Options_maxCommands.call(this);
+        return orgNum + 1;
     };
 
     //-----------------------------------------------------------------------------
@@ -94,6 +133,87 @@
     Scene_Map.prototype.terminate = function () {
         this._buttonGuide.hide();
         _Scene_Map_terminate.call(this);
+    };
+
+    //-----------------------------------------------------------------------------
+    // Window_Options
+
+    const _Window_Options_makeCommandList = Window_Options.prototype.makeCommandList;
+    /**
+     * 使用ゲームパッド選択オプションを追加
+     */
+    Window_Options.prototype.makeCommandList = function () {
+        _Window_Options_makeCommandList.call(this);
+        this.addGamepadOptions();
+    };
+
+    Window_Options.prototype.addGamepadOptions = function () {
+        this.addCommand("使用ゲームパッド", "gamepads");
+    };
+
+    const _Window_Options_processOk = Window_Options.prototype.processOk;
+    /**
+     * OK時の処理に使用ゲームパッドの変更を追加
+     */
+    Window_Options.prototype.processOk = function () {
+        const index = this.index();
+        const symbol = this.commandSymbol(index);
+        if (this.isGamepadSymbol(symbol)) {
+            const lastValue = this.getConfigValue(symbol);
+            this.changePad(symbol, lastValue + 1);
+        } else {
+            _Window_Options_processOk.call(this);
+        }
+    };
+
+    /**
+     * コマンドシンボルがゲームパッドかどうかを返す
+     * @param {string} symbol 
+     * @returns boolean
+     */
+    Window_Options.prototype.isGamepadSymbol = function (symbol) {
+        return symbol === "gamepads";
+    };
+
+    const _Window_Options_statusText = Window_Options.prototype.statusText;
+    /**
+     * 現在値の表示の処理に使用ゲームパッド分を追加
+     * @param {number} index 
+     */
+    Window_Options.prototype.statusText = function (index) {
+        const text = _Window_Options_statusText.call(this, index);
+        const symbol = this.commandSymbol(index);
+        if (this.isGamepadSymbol(symbol)) {
+            let value = this.getConfigValue(symbol);
+            if (!value) {
+                value = 0;
+                this.setConfigValue(symbol, value);
+            }
+            console.log(`gamepad config value: ${value}`);
+            return this.gamepadText(value);
+        } else {
+            return text;
+        }
+    };
+
+    /**
+     * 使用ゲームパッドの種類を表すテキストを返す
+     * @param {number} value 
+     * @returns string
+     */
+    Window_Options.prototype.gamepadText = function (value) {
+        return PADS[value];
+    };
+
+    /**
+     * 使用ゲームパッドの設定を保存する
+     * @param {string} symbol 
+     */
+    Window_Options.prototype.changePad = function (symbol, value) {
+        const keyPadNums = PADS.length;
+        this.setConfigValue(symbol, value % keyPadNums);
+        this.redrawItem(this.findSymbol(symbol));
+        this.playCursorSound();
     };
 
     //-------------------------------------------------------------------------
@@ -185,8 +305,10 @@
         const btnNo = Object.keys(Input.gamepadMapper).find(
             n => Input.gamepadMapper[n] === role
         );
+        const padConfig = ConfigManager["gamepads"] ? ConfigManager["gamepads"] : 0;
+        const pad = PADS[padConfig];
 
-        return NUMBER_KEY_MAP.NINTENDO[btnNo];
+        return NUMBER_KEY_MAP[pad][btnNo];
     };
 
 
