@@ -304,7 +304,7 @@
      * @returns number
      */
     Window_LvUP.prototype.numVisibleRows = function () {
-        return this.maxItems();
+        return 2;
     };
 
     /**
@@ -320,9 +320,8 @@
 
         if (actor && ba0) {
             this.drawActorNameClass(index);
-            if (this.isLvUP(ba0)) this.changeTextColor("#FFFF00");
-            this.drawText("Lv: " + ba0.before.lv + " > " + ba0.after.lv, rect.width / 2, 8, rect.width / 2);
-            this.resetTextColor();
+            this.drawLv(rect, ba0);
+            this.drawParams(actor, rect, ba0);
         }
     };
 
@@ -343,6 +342,85 @@
             rect.y + y,
             width
         );
+        this.resetTextColor();
+    };
+
+    /**
+     * レベルの変化前後を描画
+     * @param {Rectangle} rect 
+     * @param {any} ba 
+     */
+    Window_LvUP.prototype.drawLv = function (rect, ba) {
+        if (this.isLvUP(ba)) this.changeTextColor("#FFFF00");
+        this.drawText(
+            "Lv: " + ba.before.lv + " > " + ba.after.lv,
+            rect.width / 2,
+            10,
+            rect.width / 2
+        );
+        this.resetTextColor();
+    };
+
+    Window_LvUP.prototype.drawParams = function (actor, rect, ba) {
+        let before = 0;
+        let after = 0;
+        let paramX = 0;
+        let paramY = 0;
+        this.contents.fontSize = $gameSystem.mainFontSize() * 0.8;
+        for (let i = 0; i < 8; i++) {
+            if (!this.isLvUP(ba)) {
+                before = actor.paramBase(i);
+                after = before;
+            } else {
+                before = actor.currentClass().params[i][ba.before.lv];
+                after = actor.paramBase(i);
+            }
+            paramX = this.paramX(rect, i);
+            paramY = this.paramY(rect, i);
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText(TextManager.param(i), paramX, paramY, this.paramWidth());
+            this.resetTextColor();
+            this.drawText(
+                before,
+                paramX + this.paramWidth() + this.itemPadding() * 0.5,
+                paramY,
+                54
+            );
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawRightArrow(paramX + 60, paramY);
+            this.resetTextColor();
+            if (after > before) this.changeTextColor("#FFFF00");
+            this.drawText(
+                after,
+                paramX + this.paramWidth() + this.itemPadding() * 2 + this.rightArrowWidth(),
+                paramY,
+                54
+            );
+            this.resetTextColor();
+        }
+        this.contents.fontSize = $gameSystem.mainFontSize();
+    }
+
+    Window_LvUP.prototype.rightArrowWidth = function () {
+        return 25;
+    };
+
+    Window_LvUP.prototype.paramWidth = function () {
+        return 36;
+    };
+
+    Window_LvUP.prototype.paramX = function (rect, paramId) {
+        return rect.width / 4 * (paramId % 4) + 12;
+    };
+
+    Window_LvUP.prototype.paramY = function (rect, paramId) {
+        return rect.y + this.lineHeight() * (1.5 + Math.floor(paramId / 4));
+    }
+
+    Window_LvUP.prototype.drawRightArrow = function (x, y) {
+        const rightArrowWidth = this.rightArrowWidth();
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText("\u2192", x, y, rightArrowWidth, "center");
     };
 
     /**
