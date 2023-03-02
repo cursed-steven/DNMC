@@ -225,7 +225,6 @@ Scene_Comparison.prototype.constructor = Scene_Comparison;
     Window_ActorComparison.prototype.drawItem = function (index) {
         const actor = this.actor(index);
         const rect = this.itemRect(index);
-
         this.drawPendingItemBackground(index);
 
         if (actor) {

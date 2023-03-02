@@ -155,6 +155,7 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
      * 撤退成功の処理
      */
     BattleManager.onEscapeSuccess = function () {
+        this.displayEscapeSuccessMessage();
         this.displayEscapeNoBusy();
         this._escaped = true;
         this.processAbort();
@@ -167,8 +168,8 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
         $gameParty.removeBattleStates();
         this.replayBgmAndBgs();
         this.makeRewardsOnEscape();
-        this.displayRewards();
         this.gainRewards();
+        this.displayRewards();
         this._victoryStart = true;
     };
 
