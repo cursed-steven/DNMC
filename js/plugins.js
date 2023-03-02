@@ -94,5 +94,6 @@ var $plugins =
 {"name":"DNMC_sceneBattle","status":true,"description":"Donut Machine 専用戦闘改変いろいろ","parameters":{}},
 {"name":"DNMC_tpFullCustom","status":true,"description":"戦闘中のTP(BB)の扱いの変更部分","parameters":{"stunStateId":"45","guardStateId":"2","justGuardSe":"retro/dry/Arcane_Magic_Spell_DRY_04","justGuardSeVolume":"35","justGuardSePitch":"100"}},
 {"name":"DNMC_battleCommandUI","status":true,"description":"Donut Machine 専用戦闘コマンドUI","parameters":{"setSkillVarIndex":"91"}},
-{"name":"CSVN_battleResult","status":true,"description":"戦闘結果表示","parameters":{}}
+{"name":"CSVN_battleResult","status":true,"description":"戦闘結果表示","parameters":{}},
+{"name":"RetryBattle","status":true,"description":"戦闘リトライプラグイン","parameters":{"RetryNormalEnemy":"true","RetryBossEnemy":"true","CommandRetry":"リトライ","CommandLoad":"ロード","CommandTitle":"タイトルへ","WindowY":"448","ShowMenu":"true","Message":"\\i[1]\\c[2]あなたは死にました\\c[0]\\i[1]","MessageY":"360","FontSize":"32","DisableSwitch":"0","RetryCostGold":"0","RetryCostVariable":"0","RetryCostValue":"0","RetryCostItem":"0","CostItemVariable":"0"}}
 ];
