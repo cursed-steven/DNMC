@@ -115,6 +115,18 @@
     };
 
     /**
+     * 結果ウィンドウ表示の邪魔になるので領域変更
+     * @returns Rectangle
+     */
+    Scene_Battle.prototype.logWindowRect = function () {
+        const wx = 0;
+        const wy = 0;
+        const ww = Graphics.boxWidth;
+        const wh = this.calcWindowHeight(1, false);
+        return new Rectangle(wx, wy, ww, wh);
+    };
+
+    /**
      * メッセージウィンドウ領域変更
      * @returns Rectangle
      */
@@ -140,7 +152,7 @@
      * LVUPウィンドウの領域
      */
     Scene_Battle.prototype.lvUPWindowRect = function () {
-        const ww = (Graphics.boxWidth - 160) / 2;
+        const ww = Graphics.boxWidth / 2;
         const wh = (Graphics.boxHeight - this.calcWindowHeight(3, true) - this.messageWindowRect().height) / 2;
         const wx = ww;
         const wy = this.calcWindowHeight(3, true);
@@ -243,7 +255,7 @@
         const ww = lvUPRect.width;
         const wh = lvUPRect.height - this.goldWindowRect().height;
         const wx = 0;
-        const wy = 0;
+        const wy = this.calcWindowHeight(3, true);
         // console.log("> expWindowRect");
         // console.log(new Rectangle(wx, wy, ww, wh));
         return new Rectangle(wx, wy, ww, wh);
