@@ -272,6 +272,9 @@
             case "Scene_Operation":
                 this.drawSceneOperationGuide();
                 break;
+            case "Scene_Comparison":
+                this.drawSceneComparisonGuide();
+                break;
             case "Scene_Battle":
                 // this.drawSceneBattleGuide();
                 break;
@@ -349,6 +352,14 @@
             case "Window_SkillList":
                 break;
         }
+    };
+
+    /**
+     * Scene_Comparisonのボタンガイド
+     */
+    Window_ButtonGuide.prototype.drawSceneComparisonGuide = function () {
+        this.drawButton("pageup", "モード切替", 0, 0);
+        this.drawButton("pagedown", "モード切替", 0, this.fontSize * 1.5);
     };
 
     /**
