@@ -318,7 +318,7 @@
         const rect = this.itemRect(index);
         this.drawPendingItemBackground(index);
 
-        if (actor && ba0) {
+        if (actor && ba0 && this.isLvUP(ba0)) {
             this.drawActorNameClass(index);
             this.drawLv(rect, ba0);
             this.drawParams(actor, rect, ba0);
@@ -366,7 +366,7 @@
         let after = 0;
         let paramX = 0;
         let paramY = 0;
-        this.contents.fontSize = $gameSystem.mainFontSize() * 0.8;
+        this.contents.fontSize = $gameSystem.mainFontSize() * 0.7;
         for (let i = 0; i < 8; i++) {
             if (!this.isLvUP(ba)) {
                 before = actor.paramBase(i);
@@ -377,29 +377,42 @@
             }
             paramX = this.paramX(rect, i);
             paramY = this.paramY(rect, i);
-            this.changeTextColor(ColorManager.systemColor());
-            this.drawText(TextManager.param(i), paramX, paramY, this.paramWidth());
-            this.resetTextColor();
-            this.drawText(
-                before,
-                paramX + this.paramWidth() + this.itemPadding() * 0.5,
-                paramY,
-                54
-            );
-            this.changeTextColor(ColorManager.systemColor());
-            this.drawRightArrow(paramX + 60, paramY);
-            this.resetTextColor();
-            if (after > before) this.changeTextColor("#FFFF00");
-            this.drawText(
-                after,
-                paramX + this.paramWidth() + this.itemPadding() * 2 + this.rightArrowWidth(),
-                paramY,
-                54
-            );
-            this.resetTextColor();
+            this.drawParamName(paramX, paramY, i);
+            this.drawBeforeParam(before, paramX, paramY);
+            this.drawRightArrow(paramX + 59, paramY);
+            this.drawAfterParam(before, after, paramX, paramY);
         }
         this.contents.fontSize = $gameSystem.mainFontSize();
     }
+
+    Window_LvUP.prototype.drawParamName = function (paramX, paramY, i) {
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText(TextManager.param(i), paramX, paramY, this.paramWidth());
+        this.resetTextColor();
+
+    };
+
+    Window_LvUP.prototype.drawBeforeParam = function (before, paramX, paramY) {
+        this.drawText(
+            before,
+            paramX + this.paramWidth() + this.itemPadding() * 0.5,
+            paramY,
+            this.textWidth("0000"),
+            "right"
+        );
+    }
+
+    Window_LvUP.prototype.drawAfterParam = function (before, after, paramX, paramY) {
+        if (after > before) this.changeTextColor("#FFFF00");
+        this.drawText(
+            after,
+            paramX + this.paramWidth() + this.itemPadding() * 2 + this.rightArrowWidth(),
+            paramY,
+            this.textWidth("0000"),
+            "right"
+        );
+        this.resetTextColor();
+    };
 
     Window_LvUP.prototype.rightArrowWidth = function () {
         return 25;
@@ -421,6 +434,7 @@
         const rightArrowWidth = this.rightArrowWidth();
         this.changeTextColor(ColorManager.systemColor());
         this.drawText("\u2192", x, y, rightArrowWidth, "center");
+        this.resetTextColor();
     };
 
     /**
