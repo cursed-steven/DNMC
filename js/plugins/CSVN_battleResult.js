@@ -313,20 +313,23 @@
      */
     Window_LvUP.prototype.drawItem = function (index) {
         const actor = this.actor(index);
-        const data = $gameTemp._actorsAfterBattle.length > 0
-            ? $gameTemp._actorsAfterBattle.find(d => d.actorId === actor._actorId)
-            : null;
+        const ba = $gameTemp._actorsAfterBattle.filter(a => a.actorId === actor._actorId);
+        const ba0 = ba[0] ? ba[0] : null;
         const rect = this.itemRect(index);
         this.drawPendingItemBackground(index);
-        console.log(actor);
-        console.log(data);
 
-        if (actor && data && this.isLvUP(data, actor)) {
+        if (actor && ba0) {
             this.drawActorNameClass(index);
-            // TODO
+            if (this.isLvUP(ba0)) this.changeTextColor("#FFFF00");
+            this.drawText("Lv: " + ba0.before.lv + " > " + ba0.after.lv, rect.width / 2, 8, rect.width / 2);
+            this.resetTextColor();
         }
     };
 
+    /**
+     * アクター名と職業を描画
+     * @param {number} index 
+     */
     Window_LvUP.prototype.drawActorNameClass = function (index) {
         const actor = this.actor(index);
         const rect = this.itemRect(index);
@@ -342,8 +345,13 @@
         );
     };
 
-    Window_LvUP.prototype.isLvUP = function (data, actor) {
-        return data.after.lv !== actor._level;
+    /**
+     * 戦闘開始前と比べてレベルが上がっていたらtrue
+     * @param {any} ba 
+     * @returns boolean
+     */
+    Window_LvUP.prototype.isLvUP = function (ba) {
+        return ba && ba.before.lv < ba.after.lv;
     }
 
     //-----------------------------------------------------------------------------
@@ -610,21 +618,32 @@
      * 戦闘前後のLV/経験値/習得スキルの比較データを一時的に持つ
      */
     BattleManager.parseAfterActorsData = function () {
-        let parsed = $gameTemp._actorsBeforeBattle;
+        const before = $gameTemp._actorsBeforeBattle;
+        let ps = [];
+        let after1 = null;
 
         for (const member of $gameParty.members()) {
-            const data = parsed.filter(d => d._actorId === member._actorId);
-            data.after = {
+            const before1 = before.filter(b => b.actorId === member._actorId);
+            const b = before1[0];
+            const data = {
                 lv: member._level,
-                exp: member._exp[data.classId],
-                skills: member._skill
+                exp: member._exp[b.classId],
+                skills: member._skills
             };
+            after1 = {
+                actorId: member._actorId,
+                classId: member._classId,
+                before: b.before,
+                after: data
+            };
+            ps.push(after1);
         }
-        $gameTemp._actorsAfterBattle = parsed;
+        $gameTemp._actorsAfterBattle = ps;
     };
 
     BattleManager.displayExp = function () {
         // TODO
+        this._expWindow.refresh();
         this._expWindow.show();
     };
 
@@ -636,17 +655,20 @@
 
     BattleManager.displayDropItems = function () {
         // TODO
+        this._dropItemsWindow.refresh();
         this._dropItemsWindow.show();
     };
 
     BattleManager.displayLVUP = function () {
         console.log(this._rewards);
         // TODO
+        this._lvUPWindow.refresh();
         this._lvUPWindow.show();
     };
 
     BattleManager.displayLearnedSkills = function () {
         // TODO
+        this._learnedSkillsWindow.refresh();
         this._learnedSkillsWindow.show();
     };
 
