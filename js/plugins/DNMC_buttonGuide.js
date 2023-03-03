@@ -23,132 +23,23 @@
  * @help DNMC_buttonGuide.js
  */
 
+//-------------------------------------------------------------------------
+// Window_ButtonGuide
+//
+// The window for displaying button guide on the map scene.
+
+function Window_ButtonGuide() {
+    this.initialize(...arguments);
+}
+
+Window_ButtonGuide.prototype = Object.create(Window_Base.prototype);
+Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
+
 (() => {
 
     'use strict';
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
-
-    const NUMBER_KEY_MAP = {
-        NINTENDO: {
-            0: "B",
-            1: "A",
-            2: "Y",
-            3: "X",
-            4: "L1",
-            5: "R1",
-            12: "↑",
-            13: "↓",
-            14: "←",
-            15: "→"
-        },
-        PLAYSTATION: {
-            0: "×",
-            1: "○",
-            2: "□",
-            3: "△",
-            4: "L1",
-            5: "R1",
-            12: "↑",
-            13: "↓",
-            14: "←",
-            15: "→"
-        },
-        XBOX: {
-            0: "A",
-            1: "B",
-            2: "Y",
-            3: "X",
-            4: "L1",
-            5: "R1",
-            12: "↑",
-            13: "↓",
-            14: "←",
-            15: "→"
-        },
-        KEYBOARD: {
-            8: "bksp",
-            9: "tab",
-            13: "enter",
-            16: "shift",
-            27: "esc",
-            32: "space",
-            33: "pageup",
-            34: "pagedown",
-            35: "pagedown",
-            36: "home",
-            37: "←",
-            38: "↑",
-            39: "→",
-            40: "↓",
-            44: "prsc",
-            46: "del",
-            48: "0",
-            49: "1",
-            50: "2",
-            51: "3",
-            52: "4",
-            53: "5",
-            54: "6",
-            55: "7",
-            56: "8",
-            57: "9",
-            65: "A",
-            66: "B",
-            67: "C",
-            68: "D",
-            69: "E",
-            70: "F",
-            71: "G",
-            72: "H",
-            73: "I",
-            74: "J",
-            75: "K",
-            76: "L",
-            77: "M",
-            78: "N",
-            79: "O",
-            80: "P",
-            81: "Q",
-            82: "R",
-            83: "S",
-            84: "T",
-            85: "U",
-            86: "V",
-            87: "W",
-            88: "X",
-            89: "Y",
-            90: "Z",
-            96: "tk0",
-            97: "tk1",
-            98: "tk2",
-            99: "tk3",
-            100: "tk4",
-            101: "tk5",
-            102: "tk6",
-            103: "tk7",
-            104: "tk8",
-            105: "tk9",
-            106: "tk*",
-            107: "tk+",
-            109: "tk-",
-            111: "tk/",
-            112: "F1",
-            113: "F2",
-            114: "F3",
-            115: "F4",
-            116: "F5",
-            117: "F6",
-            118: "F7",
-            119: "F8",
-            120: "F9",
-            121: "F10",
-            122: "F11",
-            123: "F12"
-        }
-    };
-
-    const PADS = ["NINTENDO", "PLAYSTATION", "XBOX", "KEYBOARD"];
 
     //-----------------------------------------------------------------------------
     // Scene_Options
@@ -159,8 +50,7 @@
      * @returns number
      */
     Scene_Options.prototype.maxCommands = function () {
-        const orgNum = _Scene_Options_maxCommands.call(this);
-        return orgNum + 1;
+        return _Scene_Options_maxCommands.call(this) + 1;
     };
 
     //-----------------------------------------------------------------------------
@@ -294,18 +184,6 @@
         this.redrawItem(this.findSymbol(symbol));
         this.playCursorSound();
     };
-
-    //-------------------------------------------------------------------------
-    // Window_ButtonGuide
-    //
-    // The window for displaying button guide on the map scene.
-
-    function Window_ButtonGuide() {
-        this.initialize(...arguments);
-    }
-
-    Window_ButtonGuide.prototype = Object.create(Window_Base.prototype);
-    Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
 
     /**
      * ボタンガイド初期化

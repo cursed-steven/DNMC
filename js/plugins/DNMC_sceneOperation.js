@@ -485,8 +485,8 @@ Scene_Operation.prototype.initialize = function () {
         const skill = this.itemAt(index);
         const keys = this.keysName(index);
         const rect = this.itemLineRect(index);
-        const costWidth = this.costWidth();
-        const keysWidth = this.textWidth("0000");
+        const costWidth = this.textWidth("0000000");
+        const keysWidth = this.textWidth("0000000");
         this.resetTextColor();
         if (skill) {
             this.changePaintOpacity(this.isEnabled(skill));
@@ -510,10 +510,39 @@ Scene_Operation.prototype.initialize = function () {
      * @returns string
      */
     Window_CtlrL.prototype.keysName = function (index) {
-        const LKEY = "L";
-        const keys = ["A", "B", "X", "Y"];
+        const padConfig = ConfigManager["gamepads"] ? ConfigManager["gamepads"] : 0;
+        const pad = PADS[padConfig];
+        const LKEY = pad === "KEYBOARD" ? this.keyboardKeysName("pageup") : this.gamePadBtn("pageup");
+        const keys = [
+            pad === "KEYBOARD" ? this.keyboardKeysName("ok") : this.gamePadBtn("ok"),
+            pad === "KEYBOARD" ? this.keyboardKeysName("cancel") : this.gamePadBtn("cancel"),
+            pad === "KEYBOARD" ? this.keyboardKeysName("menu") : this.gamePadBtn("menu"),
+            pad === "KEYBOARD" ? this.keyboardKeysName("shift") : this.gamePadBtn("shift")
+        ];
 
         return LKEY + "+" + keys[index];
+    };
+
+    Window_CtlrL.prototype.gamePadBtn = Window_ButtonGuide.prototype.gamePadBtn;
+    Window_CtlrL.prototype.keyboardKeysName = function (role) {
+        if (role === "menu") role = "escape";
+
+        const keyNo = Object.keys(Input.keyMapper).filter(
+            n => Input.keyMapper[n] === role
+        );
+        const priorKeyNo = keyNo.filter(
+            n => 65 <= parseInt(n) && parseInt(n) <= 90
+        );
+
+        // A-Zに割り当てがあればそれを優先
+        let resultKeyNo = 0;
+        if (priorKeyNo.length === 0) {
+            resultKeyNo = Math.min.apply(null, keyNo);
+        } else {
+            resultKeyNo = Math.min.apply(null, priorKeyNo);
+        }
+
+        return NUMBER_KEY_MAP.KEYBOARD[resultKeyNo];
     };
 
     //-------------------------------------------------------------------------
@@ -590,10 +619,19 @@ Scene_Operation.prototype.initialize = function () {
      * @returns string
      */
     Window_CtlrR.prototype.keysName = function (index) {
-        const RKEY = "R";
-        const keys = ["A", "B", "X", "Y"];
+        const padConfig = ConfigManager["gamepads"] ? ConfigManager["gamepads"] : 0;
+        const pad = PADS[padConfig];
+        const RKEY = pad === "KEYBOARD" ? this.keyboardKeysName("pagedown") : this.gamePadBtn("pagedown");
+        const keys = [
+            pad === "KEYBOARD" ? this.keyboardKeysName("ok") : this.gamePadBtn("ok"),
+            pad === "KEYBOARD" ? this.keyboardKeysName("cancel") : this.gamePadBtn("cancel"),
+            pad === "KEYBOARD" ? this.keyboardKeysName("menu") : this.gamePadBtn("menu"),
+            pad === "KEYBOARD" ? this.keyboardKeysName("shift") : this.gamePadBtn("shift")
+        ];
 
         return RKEY + "+" + keys[index];
     };
 
+    Window_CtlrR.prototype.gamePadBtn = Window_ButtonGuide.prototype.gamePadBtn;
+    Window_CtlrR.prototype.keyboardKeysName = Window_CtlrL.prototype.keyboardKeysName;
 })();
