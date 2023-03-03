@@ -66,10 +66,13 @@
      * @returns boolean
      */
     Game_BattlerBase.prototype.canPaySkillCost = function (skill) {
-        return (
+        const result = (
             this._tp <= this.skillTpCost(skill) &&
             this._mp >= this.skillMpCost(skill)
         );
+        if (!result) this._skillNgReason = "cantPaySkillCost";
+
+        return result;
     };
 
     /**

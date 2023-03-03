@@ -17,6 +17,7 @@
  * @author cursed_twitch
  * @base DNMC_sceneOperation
  * @base DNMC_sceneBattle
+ * @base SimpleMsgSideViewMZ
  * @orderAfter DNMC_sceneOperation
  * @orderAfter DNMC_sceneBattle
  * 
@@ -34,6 +35,65 @@
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
     const FRAMES_TO_BE_SUSPENDED = 10;
+
+    //-----------------------------------------------------------------------------
+    // Game_BattlerBase
+
+    const _Game_BattlerBase_initMembers = Game_BattlerBase.prototype.initMembers;
+    /**
+     * スキル使用不可理由を入れる場所を作る
+     */
+    Game_BattlerBase.prototype.initMembers = function () {
+        _Game_BattlerBase_initMembers.call(this);
+        this._skillNgReason = "";
+    };
+
+    /**
+     * スキルが封印されている場合に理由追記
+     * @param {number} skillId 
+     * @returns boolean
+     */
+    Game_BattlerBase.prototype.isSkillSealed = function (skillId) {
+        const result = this.traitsSet(Game_BattlerBase.TRAIT_SKILL_SEAL).includes(skillId);
+        if (!result) this._skillNgReason = "skillSealed";
+
+        return result;
+    };
+
+    /**
+     * スキルタイプが封印されている場合に理由追記
+     * @param {number} stypeId 
+     * @returns boolean
+     */
+    Game_BattlerBase.prototype.isSkillTypeSealed = function (stypeId) {
+        const result = this.traitsSet(Game_BattlerBase.TRAIT_STYPE_SEAL).includes(stypeId);
+        if (!result) this._skillNgReason = "stypeSealed";
+
+        return result;
+    };
+
+    //-----------------------------------------------------------------------------
+    // Game_Actor
+
+    /**
+     * 武器タイプ判定でNGの場合理由を追記
+     * @param {any} skill 
+     * @returns boolean
+     */
+    Game_Actor.prototype.isSkillWtypeOk = function (skill) {
+        const wtypeId1 = skill.requiredWtypeId1;
+        const wtypeId2 = skill.requiredWtypeId2;
+        if (
+            (wtypeId1 === 0 && wtypeId2 === 0) ||
+            (wtypeId1 > 0 && this.isWtypeEquipped(wtypeId1)) ||
+            (wtypeId2 > 0 && this.isWtypeEquipped(wtypeId2))
+        ) {
+            return true;
+        } else {
+            this._skillNgReason = "wtypeNg";
+            return false;
+        }
+    };
 
     //-----------------------------------------------------------------------------
     // BattleManager
@@ -236,6 +296,8 @@
                 const usable = BattleManager.actor().canUse(skill);
                 if (!usable) {
                     SoundManager.playBuzzer();
+                    this.logSkillNg(BattleManager.actor()._skillNgReason);
+                    BattleManager.actor()._skillNgReason = "";
                     return;
                 }
 
@@ -244,6 +306,28 @@
                 break;
         }
         this.resetSuspendedFrames();
+    };
+
+    /**
+     * スキル使用不可利用表示
+     * @param {string} reason 
+     */
+    Scene_Battle.prototype.logSkillNg = function (reason) {
+        const head = "【スキル使用不可】";
+        switch (reason) {
+            case "wtypeNg":
+                this._logWindow.push("skillNgReason", head + "武器タイプ不適合");
+                break;
+            case "cantPaySkillCost":
+                this._logWindow.push("skillNgReason", head + "MP不足 or BB上限オーバー");
+                break;
+            case "skillSealed":
+                this._logWindow.push("skillNgReason", head + "スキル封印");
+                break;
+            case "stypeSealed":
+                this._logWindow.push("skillNgReason", head + "スキルタイプ封印");
+                break;
+        }
     };
 
     const _Scene_Battle_commanAttack = Scene_Battle.prototype.commandAttack;
@@ -378,6 +462,20 @@
      */
     Window_BattleActor.prototype.numVisibleRows = function () {
         return $gameParty.battleMembers().length;
+    };
+
+    //-------------------------------------------------------------------------
+    // Window_BattleLog
+
+    /**
+     * スキル使用不可表示
+     * @param {string} text 
+     */
+    Window_BattleLog.prototype.skillNgReason = function (text) {
+        this.waitForEffect();
+        this._lines.push(text);
+        this.refresh();
+        this.waitAbs();
     };
 
     //-----------------------------------------------------------------------------
@@ -527,13 +625,12 @@
     };
 
     /**
-     * 指定したスキルが対応アクターで使用可能かどうかを返す
+     * 表示はすべて「使用可」で
      * @param {any} item 
      * @returns boolean
      */
-    Window_CustomActorCommand.prototype.isEnabled = function (item) {
-        const skill = $dataSkills[item.ext];
-        return this.actor() ? this.actor().canUse(skill) : false;
+    Window_CustomActorCommand.prototype.isEnabled = function (/*item*/) {
+        return true;
     };
 
     /**
