@@ -160,7 +160,7 @@
  *  このプラグインはもうあなたのものです。
  */
 
-(()=> {
+(() => {
     'use strict';
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
@@ -171,15 +171,15 @@
         }
     });
 
-    const _Game_Interpreter_command353      = Game_Interpreter.prototype.command353;
-    Game_Interpreter.prototype.command353 = function() {
+    const _Game_Interpreter_command353 = Game_Interpreter.prototype.command353;
+    Game_Interpreter.prototype.command353 = function () {
         const result = _Game_Interpreter_command353.apply(this, arguments);
         BattleManager.goToGameover();
         return result;
     };
 
-    const _Game_Interpreter_command301      = Game_Interpreter.prototype.command301;
-    Game_Interpreter.prototype.command301 = function(param) {
+    const _Game_Interpreter_command301 = Game_Interpreter.prototype.command301;
+    Game_Interpreter.prototype.command301 = function (param) {
         const result = _Game_Interpreter_command301.apply(this, arguments);
         if (!$gameParty.inBattle()) {
             BattleManager.setBossBattle(param[0] <= 1);
@@ -191,8 +191,8 @@
     // Game_Player
     //  雑魚敵の設定処理をします。
     //=============================================================================
-    const _Game_Player_executeEncounter      = Game_Player.prototype.executeEncounter;
-    Game_Player.prototype.executeEncounter = function() {
+    const _Game_Player_executeEncounter = Game_Player.prototype.executeEncounter;
+    Game_Player.prototype.executeEncounter = function () {
         const result = _Game_Player_executeEncounter.apply(this, arguments);
         if (result) {
             BattleManager.setBossBattle(false);
@@ -204,21 +204,21 @@
     // Game_System
     //  リトライ禁止フラグを管理します。
     //=============================================================================
-    const _Game_System_initialize      = Game_System.prototype.initialize;
-    Game_System.prototype.initialize = function() {
+    const _Game_System_initialize = Game_System.prototype.initialize;
+    Game_System.prototype.initialize = function () {
         _Game_System_initialize.apply(this, arguments);
-        this._retryCount   = 0;
+        this._retryCount = 0;
     };
 
-    Game_System.prototype.isRetryDisable = function() {
+    Game_System.prototype.isRetryDisable = function () {
         return $gameSwitches.value(param.DisableSwitch)
     };
 
-    Game_System.prototype.addRetryCount = function() {
+    Game_System.prototype.addRetryCount = function () {
         this._retryCount = this.getRetryCount() + 1;
     };
 
-    Game_System.prototype.getRetryCount = function() {
+    Game_System.prototype.getRetryCount = function () {
         return this._retryCount || 0;
     };
 
@@ -226,18 +226,18 @@
     // Game_BattlerBase
     //  リトライ時はコモンイベント使用を含むアイテムを使用禁止にします。
     //=============================================================================
-    const _Game_BattlerBase_meetsUsableItemConditions        = Game_BattlerBase.prototype.meetsUsableItemConditions;
-    Game_BattlerBase.prototype.meetsUsableItemConditions = function(item) {
+    const _Game_BattlerBase_meetsUsableItemConditions = Game_BattlerBase.prototype.meetsUsableItemConditions;
+    Game_BattlerBase.prototype.meetsUsableItemConditions = function (item) {
         return _Game_BattlerBase_meetsUsableItemConditions.apply(this, arguments) &&
             this.meetsUsableItemConditionsForRetry(item);
     };
 
-    Game_BattlerBase.prototype.meetsUsableItemConditionsForRetry = function(item) {
+    Game_BattlerBase.prototype.meetsUsableItemConditionsForRetry = function (item) {
         return !(SceneManager.isSceneRetry() && this.isCommonEventItemOf(item));
     };
 
-    Game_BattlerBase.prototype.isCommonEventItemOf = function(item) {
-        return item.effects.some(function(effect) {
+    Game_BattlerBase.prototype.isCommonEventItemOf = function (item) {
+        return item.effects.some(function (effect) {
             return effect.code === Game_Action.EFFECT_COMMON_EVENT;
         });
     };
@@ -247,12 +247,12 @@
     //  リトライ時はコモンイベント使用を含むアイテムを使用禁止にします。
     //=============================================================================
     const _Game_Actor_meetsUsableItemConditions = Game_Actor.prototype.meetsUsableItemConditions;
-    Game_Actor.prototype.meetsUsableItemConditions = function(item) {
+    Game_Actor.prototype.meetsUsableItemConditions = function (item) {
         return _Game_Actor_meetsUsableItemConditions.apply(this, arguments) &&
             this.meetsUsableItemConditionsForRetry(item);
     };
 
-    Game_Temp.prototype.clearCommonEvent = function() {
+    Game_Temp.prototype.clearCommonEvent = function () {
         this._commonEventQueue = [];
     };
 
@@ -260,7 +260,7 @@
     // Game_Map
     //  リトライ時に再戦前の状態を復帰します。
     //=============================================================================
-    Game_Map.prototype.restoreForBattleRetry = function(oldMap) {
+    Game_Map.prototype.restoreForBattleRetry = function (oldMap) {
         this._battleback1Name = oldMap.battleback1Name();
         this._battleback2Name = oldMap.battleback2Name();
     };
@@ -269,7 +269,7 @@
     // BattleManager
     //  リトライ関連処理を追加定義します。
     //=============================================================================
-    BattleManager.setupRetry = function() {
+    BattleManager.setupRetry = function () {
         SoundManager.playBattleStart();
         $gameTemp.clearCommonEvent();
         $gameTroop.setup($gameTroop.troop().id);
@@ -281,7 +281,7 @@
         }
     };
 
-    BattleManager.payRetryCost = function() {
+    BattleManager.payRetryCost = function () {
         if (param.RetryCostGold > 0) {
             $gameParty.gainGold(-param.RetryCostGold);
         }
@@ -294,34 +294,34 @@
         }
     };
 
-    BattleManager.setBossBattle = function(value) {
+    BattleManager.setBossBattle = function (value) {
         this._bossBattle = !!value;
     };
 
     const _BattleManager_startBattle = BattleManager.startBattle;
-    BattleManager.startBattle      = function() {
+    BattleManager.startBattle = function () {
         DataManager.saveGameForRetry();
         _BattleManager_startBattle.apply(this, arguments);
     };
 
     const _BattleManager_updateBattleEnd = BattleManager.updateBattleEnd;
-    BattleManager.updateBattleEnd      = function() {
+    BattleManager.updateBattleEnd = function () {
         _BattleManager_updateBattleEnd.apply(this, arguments);
         this.goToGameover();
     };
 
-    BattleManager.goToGameover = function() {
+    BattleManager.goToGameover = function () {
         if (SceneManager.isNextScene(Scene_Gameover)) {
             Scene_Gameover.firstShow = true;
             SceneManager.push(Scene_Gameover);
         }
     };
 
-    BattleManager.canRetry = function() {
+    BattleManager.canRetry = function () {
         return !$gameSystem.isRetryDisable() && this.checkBattleType() && param.CommandRetry && DataManager.hasRetryData();
     };
 
-    BattleManager.checkBattleType = function() {
+    BattleManager.checkBattleType = function () {
         return (param.RetryNormalEnemy && !this._bossBattle) || (param.RetryBossEnemy && this._bossBattle);
     };
 
@@ -329,7 +329,7 @@
     // DataManager
     //  リトライ用データのセーブとロードを行います。
     //=============================================================================
-    DataManager.saveGameForRetry = function() {
+    DataManager.saveGameForRetry = function () {
         const json = JsonEx.stringify(this.makeSaveContents());
         if (json.length >= 200000) {
             console.warn('Save data too big!');
@@ -337,11 +337,11 @@
         this._retryData = json;
     };
 
-    DataManager.hasRetryData = function() {
+    DataManager.hasRetryData = function () {
         return !!this._retryData;
     };
 
-    DataManager.loadGameForRetry = function() {
+    DataManager.loadGameForRetry = function () {
         if (this._retryData) {
             // without $gameMap because of 'victory or defeat'
             const prevGameMap = $gameMap;
@@ -355,8 +355,8 @@
     // SceneManager
     //  リトライ中かどうかの判定を行います。
     //=============================================================================
-    SceneManager.isSceneRetry = function() {
-        return this._stack.some(function(scene) {
+    SceneManager.isSceneRetry = function () {
+        return this._stack.some(function (scene) {
             return scene === Scene_Gameover;
         });
     };
@@ -365,13 +365,13 @@
     // Window_MenuCommand
     //  リトライ用のメニューでセーブを禁止します。
     //=============================================================================
-    const _Window_MenuCommand_isSaveEnabled      = Window_MenuCommand.prototype.isSaveEnabled;
-    Window_MenuCommand.prototype.isSaveEnabled = function() {
+    const _Window_MenuCommand_isSaveEnabled = Window_MenuCommand.prototype.isSaveEnabled;
+    Window_MenuCommand.prototype.isSaveEnabled = function () {
         return _Window_MenuCommand_isSaveEnabled.apply(this, arguments) && !SceneManager.isSceneRetry();
     };
 
-    const _Window_MenuCommand_isGameEndEnabled      = Window_MenuCommand.prototype.isGameEndEnabled;
-    Window_MenuCommand.prototype.isGameEndEnabled = function() {
+    const _Window_MenuCommand_isGameEndEnabled = Window_MenuCommand.prototype.isGameEndEnabled;
+    Window_MenuCommand.prototype.isGameEndEnabled = function () {
         return _Window_MenuCommand_isGameEndEnabled.apply(this, arguments) && !SceneManager.isSceneRetry();
     };
 
@@ -381,8 +381,8 @@
     //=============================================================================
     Scene_Gameover.firstShow = false;
 
-    const _Scene_Gameover_create      = Scene_Gameover.prototype.create;
-    Scene_Gameover.prototype.create = function() {
+    const _Scene_Gameover_create = Scene_Gameover.prototype.create;
+    Scene_Gameover.prototype.create = function () {
         _Scene_Gameover_create.apply(this, arguments);
         this.createWindowLayer();
         this.createForeground();
@@ -392,13 +392,13 @@
         }
     };
 
-    Scene_Gameover.prototype.createGoldWindow = function() {
+    Scene_Gameover.prototype.createGoldWindow = function () {
         this._goldWindow = new Window_Gold(this.goldWindowRect());
         this._goldWindow.x = Graphics.boxWidth - this._goldWindow.width;
         this.addWindow(this._goldWindow);
     };
 
-    Scene_Gameover.prototype.goldWindowRect = function() {
+    Scene_Gameover.prototype.goldWindowRect = function () {
         const ww = this.mainCommandWidth();
         const wh = this.calcWindowHeight(1, true);
         const wx = Graphics.boxWidth - ww;
@@ -406,8 +406,8 @@
         return new Rectangle(wx, wy, ww, wh);
     };
 
-    const _Scene_Gameover_start      = Scene_Gameover.prototype.start;
-    Scene_Gameover.prototype.start = function() {
+    const _Scene_Gameover_start = Scene_Gameover.prototype.start;
+    Scene_Gameover.prototype.start = function () {
         _Scene_Gameover_start.apply(this, arguments);
         if (!Scene_Gameover.firstShow) {
             if (SceneManager.isPreviousScene(Scene_Menu)) {
@@ -423,8 +423,8 @@
         Scene_Gameover.firstShow = false;
     };
 
-    const _Scene_Gameover_stop      = Scene_Gameover.prototype.stop;
-    Scene_Gameover.prototype.stop = function() {
+    const _Scene_Gameover_stop = Scene_Gameover.prototype.stop;
+    Scene_Gameover.prototype.stop = function () {
         if (!SceneManager.isNextScene(Scene_Load) && !SceneManager.isNextScene(Scene_Menu)) {
             _Scene_Gameover_stop.apply(this, arguments);
         } else {
@@ -432,8 +432,8 @@
         }
     };
 
-    const _Scene_Gameover_terminate      = Scene_Gameover.prototype.terminate;
-    Scene_Gameover.prototype.terminate = function() {
+    const _Scene_Gameover_terminate = Scene_Gameover.prototype.terminate;
+    Scene_Gameover.prototype.terminate = function () {
         if (!SceneManager.isNextScene(Scene_Load) && !SceneManager.isNextScene(Scene_Menu)) {
             _Scene_Gameover_terminate.apply(this, arguments);
         } else {
@@ -441,14 +441,14 @@
         }
     };
 
-    const _Scene_Gameover_playGameoverMusic      = Scene_Gameover.prototype.playGameoverMusic;
-    Scene_Gameover.prototype.playGameoverMusic = function() {
+    const _Scene_Gameover_playGameoverMusic = Scene_Gameover.prototype.playGameoverMusic;
+    Scene_Gameover.prototype.playGameoverMusic = function () {
         if (!SceneManager.isPreviousScene(Scene_Load)) {
             _Scene_Gameover_playGameoverMusic.apply(this, arguments);
         }
     };
 
-    Scene_Gameover.prototype.createRetryWindow = function() {
+    Scene_Gameover.prototype.createRetryWindow = function () {
         this._retryWindow = new Window_RetryCommand(this.rectRetryWindow());
         this._retryWindow.setHandler('retry', this.commandRetry.bind(this));
         this._retryWindow.setHandler('load', this.commandLoad.bind(this));
@@ -460,17 +460,18 @@
         }
     };
 
-    Scene_Gameover.prototype.rectRetryWindow = function() {
+    // curseds_steven custom 2023/03/03
+    Scene_Gameover.prototype.rectRetryWindow = function () {
         const w = 180;
         const h = this.calcWindowHeight(BattleManager.canRetry() ? 3 : 2, true);
-        const x = (Graphics.boxWidth - w) / 2;
+        const x = (Graphics.boxWidth - w) / 2 + 128;
         const y = param.WindowY;
         return new Rectangle(x, y, w, h);
     };
 
-    Scene_Gameover.prototype.createForeground = function() {
-        this._messageWindow                   = new Window_Base(new Rectangle());
-        this._messageWindow.opacity           = 0;
+    Scene_Gameover.prototype.createForeground = function () {
+        this._messageWindow = new Window_Base(new Rectangle());
+        this._messageWindow.opacity = 0;
         this._messageWindow.contents.fontSize = param.FontSize;
         this.addWindow(this._messageWindow);
         if (param.Message) {
@@ -478,11 +479,12 @@
         }
     };
 
-    Scene_Gameover.prototype.drawMessage = function() {
+    // cursed_steven custom 2023/03/03
+    Scene_Gameover.prototype.drawMessage = function () {
         const padding = this._messageWindow.padding;
-        const width   = this._messageWindow.drawTextEx(param.Message, 0, 0) + padding * 2;
-        const height  = param.FontSize + 8 + padding * 2;
-        const x       = Graphics.boxWidth / 2 - width / 2;
+        const width = this._messageWindow.drawTextEx(param.Message, 0, 0) + padding * 2;
+        const height = param.FontSize + 8 + padding * 2;
+        const x = Graphics.boxWidth / 2 - width / 2 + 200;
         this._messageWindow.move(x, param.MessageY, width, height);
         this._messageWindow.createContents();
         if (param.CostItemVariable > 0 && param.RetryCostItem > 0) {
@@ -491,7 +493,7 @@
         this._messageWindow.drawTextEx(param.Message, 0, 0);
     };
 
-    Scene_Gameover.prototype.commandRetry = function() {
+    Scene_Gameover.prototype.commandRetry = function () {
         DataManager.loadGameForRetry();
         if (param.ShowMenu) {
             SceneManager.push(Scene_Menu);
@@ -501,24 +503,24 @@
         }
     };
 
-    Scene_Gameover.prototype.commandLoad = function() {
+    Scene_Gameover.prototype.commandLoad = function () {
         this._retryWindow.close();
         SceneManager.push(Scene_Load);
     };
 
-    Scene_Gameover.prototype.commandTitle = function() {
+    Scene_Gameover.prototype.commandTitle = function () {
         this._retryWindow.close();
         this.gotoTitle();
     };
 
-    Scene_Gameover.prototype.executeRetry = function(fade) {
+    Scene_Gameover.prototype.executeRetry = function (fade) {
         BattleManager.setupRetry();
         this.popScene();
         this.startFadeOut(fade, true);
     };
 
     const _Scene_Gameover_update = Scene_Gameover.prototype.update;
-    Scene_Gameover.prototype.update = function() {
+    Scene_Gameover.prototype.update = function () {
         if (this._noRetry) {
             _Scene_Gameover_update.apply(this, arguments);
             return;
@@ -529,7 +531,7 @@
         Scene_Base.prototype.update.call(this);
     };
 
-    Scene_Gameover.prototype.isBusy = function() {
+    Scene_Gameover.prototype.isBusy = function () {
         return this._retryWindow.isClosing() || Scene_Base.prototype.isBusy.call(this);
     };
 
@@ -537,8 +539,8 @@
     // Scene_Base
     //  リトライ状態からの再ゲームオーバーを禁止します。
     //=============================================================================
-    const _Scene_Base_checkGameover      = Scene_Base.prototype.checkGameover;
-    Scene_Base.prototype.checkGameover = function() {
+    const _Scene_Base_checkGameover = Scene_Base.prototype.checkGameover;
+    Scene_Base.prototype.checkGameover = function () {
         return !SceneManager.isSceneRetry() && _Scene_Base_checkGameover.apply(this, arguments);
     };
 
@@ -546,8 +548,8 @@
     // Scene_Load
     //  ロード時にゲームオーバーMEを止めます。
     //=============================================================================
-    const _Scene_Load_onLoadSuccess      = Scene_Load.prototype.onLoadSuccess;
-    Scene_Load.prototype.onLoadSuccess = function() {
+    const _Scene_Load_onLoadSuccess = Scene_Load.prototype.onLoadSuccess;
+    Scene_Load.prototype.onLoadSuccess = function () {
         if (SceneManager.isSceneRetry()) {
             AudioManager.stopAll();
         }
@@ -562,19 +564,19 @@
         this.initialize.apply(this, arguments);
     }
 
-    Scene_BattleReturn.prototype             = Object.create(Scene_Gameover.prototype);
+    Scene_BattleReturn.prototype = Object.create(Scene_Gameover.prototype);
     Scene_BattleReturn.prototype.constructor = Scene_BattleReturn;
 
-    Scene_BattleReturn.prototype.create = function() {
+    Scene_BattleReturn.prototype.create = function () {
     };
 
-    Scene_BattleReturn.prototype.start = function() {
+    Scene_BattleReturn.prototype.start = function () {
         DataManager.loadGameForRetry();
         this.executeRetry(this.fadeSpeed());
         Scene_Base.prototype.start.call(this);
     };
 
-    Scene_BattleReturn.prototype.isBusy = function() {
+    Scene_BattleReturn.prototype.isBusy = function () {
         return Scene_Base.prototype.isBusy.call(this);
     };
 
@@ -586,15 +588,15 @@
         this.initialize.apply(this, arguments);
     }
 
-    Window_RetryCommand.prototype             = Object.create(Window_Command.prototype);
+    Window_RetryCommand.prototype = Object.create(Window_Command.prototype);
     Window_RetryCommand.prototype.constructor = Window_RetryCommand;
 
-    Window_RetryCommand.prototype.initialize = function(rectangle) {
+    Window_RetryCommand.prototype.initialize = function (rectangle) {
         Window_Command.prototype.initialize.apply(this, arguments);
         this.openness = 0;
     };
 
-    Window_RetryCommand.prototype.makeCommandList = function() {
+    Window_RetryCommand.prototype.makeCommandList = function () {
         if (BattleManager.canRetry()) {
             this.addCommand(param.CommandRetry, 'retry', this.canPayRetryCost());
         }
@@ -604,7 +606,7 @@
         this.addCommand(param.CommandTitle, 'title');
     };
 
-    Window_RetryCommand.prototype.canPayRetryCost = function() {
+    Window_RetryCommand.prototype.canPayRetryCost = function () {
         if (param.RetryCostGold > 0 && $gameParty.gold() < param.RetryCostGold) {
             return false;
         }
