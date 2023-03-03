@@ -65,10 +65,90 @@
             13: "↓",
             14: "←",
             15: "→"
+        },
+        KEYBOARD: {
+            8: "bksp",
+            9: "tab",
+            13: "enter",
+            16: "shift",
+            27: "esc",
+            32: "space",
+            33: "pageup",
+            34: "pagedown",
+            35: "pagedown",
+            36: "home",
+            37: "←",
+            38: "↑",
+            39: "→",
+            40: "↓",
+            44: "prsc",
+            46: "del",
+            48: "0",
+            49: "1",
+            50: "2",
+            51: "3",
+            52: "4",
+            53: "5",
+            54: "6",
+            55: "7",
+            56: "8",
+            57: "9",
+            65: "A",
+            66: "B",
+            67: "C",
+            68: "D",
+            69: "E",
+            70: "F",
+            71: "G",
+            72: "H",
+            73: "I",
+            74: "J",
+            75: "K",
+            76: "L",
+            77: "M",
+            78: "N",
+            79: "O",
+            80: "P",
+            81: "Q",
+            82: "R",
+            83: "S",
+            84: "T",
+            85: "U",
+            86: "V",
+            87: "W",
+            88: "X",
+            89: "Y",
+            90: "Z",
+            96: "tk0",
+            97: "tk1",
+            98: "tk2",
+            99: "tk3",
+            100: "tk4",
+            101: "tk5",
+            102: "tk6",
+            103: "tk7",
+            104: "tk8",
+            105: "tk9",
+            106: "tk*",
+            107: "tk+",
+            109: "tk-",
+            111: "tk/",
+            112: "F1",
+            113: "F2",
+            114: "F3",
+            115: "F4",
+            116: "F5",
+            117: "F6",
+            118: "F7",
+            119: "F8",
+            120: "F9",
+            121: "F10",
+            122: "F11",
+            123: "F12"
         }
     };
 
-    const PADS = ["NINTENDO", "PLAYSTATION", "XBOX"];
+    const PADS = ["NINTENDO", "PLAYSTATION", "XBOX", "KEYBOARD"];
 
     //-----------------------------------------------------------------------------
     // Scene_Options
@@ -236,6 +316,7 @@
         this.setBackgroundType(2);
         this.fontSize = $gameSystem.mainFontSize() * 0.8;
         this.activeWindow = "";
+        this.lhr = 1.3;
     };
 
     /**
@@ -287,7 +368,7 @@
      */
     Window_ButtonGuide.prototype.drawSceneMapGuide = function () {
         this.drawButton("menu", "メニュー", 0, 0);
-        this.drawButton("shift", "ダッシュ切替", 0, this.fontSize * 1.5);
+        this.drawButton("shift", "ダッシュ切替", 0, this.fontSize * this.lhr);
     };
 
     /**
@@ -297,7 +378,7 @@
         switch (this.activeWindow) {
             case "Window_ItemCategory":
                 this.drawButton("left", "←カテゴリ", 0, 0);
-                this.drawButton("right", "カテゴリ→", 0, this.fontSize * 1.5);
+                this.drawButton("right", "カテゴリ→", 0, this.fontSize * this.lhr);
                 break;
             case "Window_ItemList":
                 break;
@@ -311,15 +392,15 @@
         switch (this.activeWindow) {
             case "Window_SkillType":
                 this.drawButton("left", "←スキルタイプ", 0, 0);
-                this.drawButton("right", "スキルタイプ→", 0, this.fontSize * 1.5);
-                this.drawButton("pageup", "←キャラ", 0, this.fontSize * 3);
-                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * 4.5);
+                this.drawButton("right", "スキルタイプ→", 0, this.fontSize * this.lhr);
+                this.drawButton("pageup", "←キャラ", 0, this.fontSize * this.lhr * 2);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * this.lhr * 3);
                 break;
             case "Window_SkillCategory":
                 this.drawButton("left", "←カテゴリ", 0, 0);
-                this.drawButton("right", "カテゴリ→", 0, this.fontSize * 1.5);
-                this.drawButton("pageup", "←キャラ", 0, this.fontSize * 3);
-                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * 4.5);
+                this.drawButton("right", "カテゴリ→", 0, this.fontSize * this.lhr);
+                this.drawButton("pageup", "←キャラ", 0, this.fontSize * this.lhr * 2);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * this.lhr * 3);
                 break;
             case "Window_SkillList":
                 break;
@@ -339,15 +420,15 @@
                 break;
             case "Window_SkillType":
                 this.drawButton("left", "←スキルタイプ", 0, 0);
-                this.drawButton("right", "スキルタイプ→", 0, this.fontSize * 1.5);
-                this.drawButton("pageup", "←キャラ", 0, this.fontSize * 3);
-                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * 4.5);
+                this.drawButton("right", "スキルタイプ→", 0, this.fontSize * this.lhr);
+                this.drawButton("pageup", "←キャラ", 0, this.fontSize * this.lhr * 2);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * this.lhr * 3);
                 break;
             case "Window_SkillCategory":
                 this.drawButton("left", "←カテゴリ", 0, 0);
-                this.drawButton("right", "カテゴリ→", 0, this.fontSize * 1.5);
-                this.drawButton("pageup", "←キャラ", 0, this.fontSize * 3);
-                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * 4.5);
+                this.drawButton("right", "カテゴリ→", 0, this.fontSize * this.lhr);
+                this.drawButton("pageup", "←キャラ", 0, this.fontSize * this.lhr * 2);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * this.lhr * 3);
                 break;
             case "Window_SkillList":
                 break;
@@ -359,7 +440,7 @@
      */
     Window_ButtonGuide.prototype.drawSceneComparisonGuide = function () {
         this.drawButton("pageup", "モード切替", 0, 0);
-        this.drawButton("pagedown", "モード切替", 0, this.fontSize * 1.5);
+        this.drawButton("pagedown", "モード切替", 0, this.fontSize * this.lhr);
     };
 
     /**
@@ -370,10 +451,19 @@
      * @param {number} y 
      */
     Window_ButtonGuide.prototype.drawButton = function (role, desc, x, y) {
-        const btnWidth = this.fontSize / 2 * (this.gamePadBtn(role).length + 3);
+        const padConfig = ConfigManager["gamepads"] ? ConfigManager["gamepads"] : 0;
+        const pad = PADS[padConfig];
+
         let width = 0;
-        this.drawText("[" + this.gamePadBtn(role) + "]", x, y, btnWidth);
-        width += btnWidth;
+        if (pad === "KEYBOARD") {
+            const keyWidth = this.fontSize / 2 * (this.keyName(role).length + 3);
+            this.drawText("[" + this.keyName(role) + "]", x, y, keyWidth);
+            width += keyWidth;
+        } else {
+            const btnWidth = this.fontSize / 2 * (this.gamePadBtn(role).length + 3);
+            this.drawText("[" + this.gamePadBtn(role) + "]", x, y, btnWidth);
+            width += btnWidth;
+        }
         this.drawText(desc, x + width, y, this.width - width);
     };
 
@@ -390,6 +480,32 @@
         const pad = PADS[padConfig];
 
         return NUMBER_KEY_MAP[pad][btnNo];
+    };
+
+    /**
+     * ロールからキー番号を取得し、そこからキーボードのの対応キーを返す。
+     * @param {string} role 
+     * @returns string
+     */
+    Window_ButtonGuide.prototype.keyName = function (role) {
+        if (role === "menu") role = "escape";
+
+        const keyNo = Object.keys(Input.keyMapper).filter(
+            n => Input.keyMapper[n] === role
+        );
+        const priorKeyNo = keyNo.filter(
+            n => 65 <= parseInt(n) && parseInt(n) <= 90
+        );
+
+        // A-Zに割り当てがあればそれを優先
+        let resultKeyNo = 0;
+        if (priorKeyNo.length === 0) {
+            resultKeyNo = Math.min.apply(null, keyNo);
+        } else {
+            resultKeyNo = Math.min.apply(null, priorKeyNo);
+        }
+
+        return NUMBER_KEY_MAP.KEYBOARD[resultKeyNo];
     };
 
 
