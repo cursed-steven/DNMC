@@ -577,8 +577,10 @@
      * @param number
      */
     Window_BattleGold.prototype.refresh = function () {
-        // TODO
-        this.drawText("Window_BattleGold", 0, 0, this.width);
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText(TextManager.currencyUnit + ": ", 12, 4, this.width / 2 - 8);
+        this.resetTextColor();
+        this.drawText($gameParty.gold(), this.width / 2 - 12, 4, this.width / 2 - 8 - this.textWidth("000"), "right");
     };
 
     //-----------------------------------------------------------------------------
@@ -645,6 +647,10 @@
         this.contents.fontSize = $gameSystem.mainFontSize();
     };
 
+    /**
+     * アクター名描画
+     * @param {number} index 
+     */
     Window_Exp.prototype.drawActorName = function (index) {
         const actor = this.actor(index);
         const rect = this.itemRect(index);
@@ -661,6 +667,11 @@
         this.resetTextColor();
     };
 
+    /**
+     * LVパラメータ名描画
+     * @param {Rectangle} rect 
+     * @param {any} ba0 
+     */
     Window_Exp.prototype.drawLv = function (rect, ba0) {
         this.drawText(
             TextManager.levelA + ": " + ba0.after.lv,
@@ -670,6 +681,12 @@
         );
     };
 
+    /**
+     * 経験値描画
+     * @param {Game_Actor} actor 
+     * @param {Rectangle} rect 
+     * @param {any} ba0 
+     */
     Window_Exp.prototype.drawExp = function (actor, rect, ba0) {
         const current = ba0.after.exp;
         const next = actor.expForLevel(actor._level + 1);
@@ -697,6 +714,10 @@
         this.drawText(")", tmpX, 10, this.textWidth(")"));
     };
 
+    /**
+     * 経験値パラメータ名描画
+     * @param {Rectangle} rect 
+     */
     Window_Exp.prototype.drawExpParamName = function (rect) {
         this.changeTextColor(ColorManager.systemColor());
         this.drawText(
@@ -708,6 +729,11 @@
         this.resetTextColor();
     };
 
+    /**
+     * 経験値の値描画
+     * @param {number} value 
+     * @param {number} x 
+     */
     Window_Exp.prototype.drawExpValue = function (value, x) {
         this.drawText(
             value,
