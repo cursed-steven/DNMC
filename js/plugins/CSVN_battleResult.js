@@ -353,7 +353,7 @@
     Window_LvUP.prototype.drawLv = function (rect, ba) {
         if (this.isLvUP(ba)) this.changeTextColor("#FFFF00");
         this.drawText(
-            "Lv: " + ba.before.lv + " > " + ba.after.lv,
+            TextManager.levelA + ": " + ba.before.lv + " > " + ba.after.lv,
             rect.width / 2,
             10,
             rect.width / 2
@@ -614,7 +614,7 @@
      * @returns number
      */
     Window_Exp.prototype.maxItems = function () {
-        return 24;
+        return $gameParty.members().length;
     };
 
     /**
@@ -622,7 +622,7 @@
      * @returns number
      */
     Window_Exp.prototype.numVisibleRows = function () {
-        return this.maxItems();
+        return 4;
     };
 
     /**
@@ -630,8 +630,98 @@
      * @param number
      */
     Window_Exp.prototype.drawItem = function (index) {
-        // TODO
-        this.drawText("Window_Exp", 0, 0, this.width);
+        const actor = this.actor(index);
+        const ba = $gameTemp._actorsAfterBattle.filter(a => a.actorId === actor._actorId);
+        const ba0 = ba[0] ? ba[0] : null;
+        const rect = this.itemRect(index);
+        this.drawPendingItemBackground(index);
+
+        this.contents.fontSize = $gameSystem.mainFontSize() * 0.8;
+        if (actor && ba0) {
+            this.drawActorName(index);
+            this.drawLv(rect, ba0);
+            this.drawExp(actor, rect, ba0);
+        }
+        this.contents.fontSize = $gameSystem.mainFontSize();
+    };
+
+    Window_Exp.prototype.drawActorName = function (index) {
+        const actor = this.actor(index);
+        const rect = this.itemRect(index);
+        const x = 8;
+        const y = 8;
+        const width = rect.width / 5;
+        this.changeTextColor(ColorManager.hpColor(actor));
+        this.drawText(
+            actor.name(),
+            rect.x + x,
+            rect.y + y,
+            width
+        );
+        this.resetTextColor();
+    };
+
+    Window_Exp.prototype.drawLv = function (rect, ba0) {
+        this.drawText(
+            TextManager.levelA + ": " + ba0.after.lv,
+            rect.width / 5 + this.itemPadding() * 4,
+            10,
+            rect.width / 10
+        );
+    };
+
+    Window_Exp.prototype.drawExp = function (actor, rect, ba0) {
+        const current = ba0.after.exp;
+        const next = actor.expForLevel(actor._level + 1);
+        const diff = next - current;
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText(
+            TextManager.expA + ": ",
+            rect.width / 10 * 3 + this.itemPadding() * 6,
+            10,
+            this.textWidth("Lv: 00")
+        );
+        this.resetTextColor();
+        this.drawText(
+            current,
+            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 "),
+            10,
+            this.textWidth("000000"),
+            "right"
+        );
+        this.drawText(
+            " / ",
+            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 000000"),
+            10,
+            this.textWidth("000"),
+            "center"
+        );
+        this.drawText(
+            next,
+            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 000000 / "),
+            10,
+            this.textWidth("000000"),
+            "right"
+        );
+        this.drawText(
+            "(Left: ",
+            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 000000 / 000000 "),
+            10,
+            this.textWidth("(Left: ")
+        );
+        this.drawText(
+            diff,
+            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 000000 / 000000 (Left: "),
+            10,
+            this.textWidth("000000"),
+            "right"
+        );
+        this.drawText(
+            ")",
+            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 000000 / 000000 (Left: 000000"),
+            10,
+            this.textWidth(")")
+        );
     };
 
     //-----------------------------------------------------------------------------
@@ -734,32 +824,26 @@
     };
 
     BattleManager.displayExp = function () {
-        // TODO
         this._expWindow.refresh();
         this._expWindow.show();
     };
 
     BattleManager.displayGold = function () {
-        // TODO
         this._battleGoldWindow.refresh();
         this._battleGoldWindow.show();
     };
 
     BattleManager.displayDropItems = function () {
-        // TODO
         this._dropItemsWindow.refresh();
         this._dropItemsWindow.show();
     };
 
     BattleManager.displayLVUP = function () {
-        console.log(this._rewards);
-        // TODO
         this._lvUPWindow.refresh();
         this._lvUPWindow.show();
     };
 
     BattleManager.displayLearnedSkills = function () {
-        // TODO
         this._learnedSkillsWindow.refresh();
         this._learnedSkillsWindow.show();
     };
