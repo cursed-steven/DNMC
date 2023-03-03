@@ -456,7 +456,7 @@
         this.initialize(...arguments);
     }
 
-    Window_DropItems.prototype = Object.create(Window_MenuStatus.prototype);
+    Window_DropItems.prototype = Object.create(Window_ItemList.prototype);
     Window_DropItems.prototype.constructor = Window_DropItems;
 
     /**
@@ -464,7 +464,7 @@
      * @param {Rentangle} rect 
      */
     Window_DropItems.prototype.initialize = function (rect) {
-        Window_MenuStatus.prototype.initialize.call(this, rect);
+        Window_ItemList.prototype.initialize.call(this, rect);
     };
 
     /**
@@ -488,16 +488,26 @@
      * @returns number
      */
     Window_DropItems.prototype.numVisibleRows = function () {
-        return this.maxItems();
+        return 4;
     };
 
     /**
-     * 1件分の描画
-     * @param number
+     * 常に可能表示にする
+     * @param {any} item 
+     * @returns boolean
      */
-    Window_DropItems.prototype.drawItem = function (index) {
-        // TODO
-        this.drawText("Window_DropItems", 0, 0, this.width);
+    Window_DropItems.prototype.isEnabled = function (item) {
+        return true;
+    };
+
+    /**
+     * リスト作成
+     */
+    Window_DropItems.prototype.makeItemList = function () {
+        this._data = BattleManager._rewards.items;
+        if (this.includes(null)) {
+            this._data.push(null);
+        }
     };
 
     //-----------------------------------------------------------------------------
