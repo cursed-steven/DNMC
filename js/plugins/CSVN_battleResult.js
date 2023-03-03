@@ -57,7 +57,8 @@
      * 戦闘開始時点での各アクターのLV/経験値/習得スキルを一時保存
      */
     Scene_Battle.prototype.parseBeforeActorsData = function () {
-        for (const current of $gameParty.members()) {
+        const members = JsonEx.makeDeepCopy($gameParty.members());
+        for (const current of members) {
             const classId = current._classId;
             $gameTemp._actorsBeforeBattle.push({
                 actorId: current._actorId,
@@ -75,7 +76,7 @@
             });
         }
         CSVN_base.log(">>>> " + this.constructor.name + " parseBeforeActorsData");
-        CSVN_base.log(this._data);
+        CSVN_base.log($gameTemp._actorsBeforeBattle);
     };
 
     const _Scene_Battle_createDisplayObjects = Scene_Battle.prototype.createDisplayObjects;
@@ -540,7 +541,7 @@
      * @returns number
      */
     Window_LearnedSkills.prototype.numVisibleRows = function () {
-        return this.maxItems();
+        return 2;
     };
 
     /**
@@ -548,8 +549,70 @@
      * @param number
      */
     Window_LearnedSkills.prototype.drawItem = function (index) {
-        // TODO
-        this.drawText("Window_LearnedSkills", 0, 0, this.width);
+        const actor = this.actor(index);
+        const ba = $gameTemp._actorsAfterBattle.filter(a => actor && a.actorId === actor._actorId);
+        const ba0 = ba[0] ? ba[0] : null;
+        const rect = this.itemRect(index);
+        this.drawPendingItemBackground(index);
+
+        if (actor && ba0) {
+            const diff = ba0.after.skills.filter(s => !ba0.before.skills.includes(s));
+            if (diff.length > 0) {
+                this.drawActorName(index);
+                this.drawNewSkills(rect, diff);
+            }
+        }
+    };
+
+    /**
+     * アクター名の描画
+     * @param {number} index 
+     */
+    Window_LearnedSkills.prototype.drawActorName = function (index) {
+        const actor = this.actor(index);
+        const rect = this.itemRect(index);
+        const x = 8;
+        const y = 8;
+        this.changeTextColor(ColorManager.hpColor(actor));
+        this.drawText(
+            actor.name() + "が新たに習得したスキル",
+            rect.x + x,
+            rect.y + y,
+            rect.width
+        );
+        this.resetTextColor();
+    }
+
+    /**
+     * スキル全体の描画
+     * @param {Rectan} rect 
+     * @param {number[]} diff 
+     */
+    Window_LearnedSkills.prototype.drawNewSkills = function (rect, diff) {
+        const width = (rect.width - 16) / 3;
+        for (let i = 0; i < diff.length; i++) {
+            this.drawSkill(rect, diff[i], i);
+        }
+    };
+
+    /**
+     * 個々のスキルの描画
+     * @param {Rectangl} rect 
+     * @param {number} skillId 
+     * @param {number} i 
+     */
+    Window_LearnedSkills.prototype.drawSkill = function (rect, skillId, i) {
+        const skill = $dataSkills[skillId];
+        this.drawIcon(
+            skill.iconIndex,
+            rect.x + 8 + rect.width / 3 * (i % 3),
+            rect.y + this.lineHeight() * (Math.floor(i / 3) + 1) + this.itemPadding()
+        );
+        this.drawText(
+            skill.name,
+            rect.x + 8 + rect.width / 3 * (i % 3) + 40,
+            rect.y + this.lineHeight() * (Math.floor(i / 3) + 1) + this.itemPadding()
+        );
     };
 
     //-----------------------------------------------------------------------------
