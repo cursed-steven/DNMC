@@ -244,6 +244,12 @@ const MATERIAL_ID = {
     DARKNESS: 19
 };
 
+const FIXED_ATTACK_SKILLS = {
+    BOW: 702,
+    CROSS_BOW: 702,
+    GUN: 701
+};
+
 /**
  * 武器タイプ定数オブジェクト。
  * 
@@ -368,7 +374,8 @@ const WEAPON_TYPE = [
         iconIndex: [102, 102, 102, 102],
         animationId: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 13, 14, 15, 12, 12, 12, 12, 12],
         fixedTraits: [
-            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE },
+            { code: Game_BattlerBase.TRAIT_ATTACK_SKILL, dataId: FIXED_ATTACK_SKILLS.BOW }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -386,7 +393,8 @@ const WEAPON_TYPE = [
         iconIndex: [103, 103, 103, 103],
         animationId: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 13, 14, 15, 12, 12, 12, 12, 12],
         fixedTraits: [
-            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE },
+            { code: Game_BattlerBase.TRAIT_ATTACK_SKILL, dataId: FIXED_ATTACK_SKILLS.CROSS_BOW }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -404,7 +412,8 @@ const WEAPON_TYPE = [
         iconIndex: [104, 104, 115, 116],
         animationId: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 13, 14, 15, 12, 12, 12, 12, 12],
         fixedTraits: [
-            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE }
+            { code: Game_BattlerBase.TRAIT_ATTACK_ELEMENT, dataId: ELEMENT.PENETRATE },
+            { code: Game_BattlerBase.TRAIT_ATTACK_SKILL, dataId: FIXED_ATTACK_SKILLS.GUN }
         ],
         params: [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
