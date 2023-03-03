@@ -674,53 +674,47 @@
         const current = ba0.after.exp;
         const next = actor.expForLevel(actor._level + 1);
         const diff = next - current;
+        let tmpX = 0;
+
+        this.drawExpParamName(rect);
+        tmpX = rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 ");
+
+        this.drawExpValue(current, tmpX);
+        tmpX += this.textWidth("000000");
+
+        this.drawText(" / ", tmpX, 10, this.textWidth("000"), "center");
+        tmpX += this.textWidth("000");
+
+        this.drawExpValue(next, tmpX);
+        tmpX += this.textWidth("000000 ");
+
+        this.drawText("(Left: ", tmpX, 10, this.textWidth("(Left: "));
+        tmpX += this.textWidth("(Left: ");
+
+        this.drawText(diff, tmpX, 10, this.textWidth("000000"), "right");
+        tmpX += this.textWidth("000000");
+
+        this.drawText(")", tmpX, 10, this.textWidth(")"));
+    };
+
+    Window_Exp.prototype.drawExpParamName = function (rect) {
         this.changeTextColor(ColorManager.systemColor());
         this.drawText(
             TextManager.expA + ": ",
             rect.width / 10 * 3 + this.itemPadding() * 6,
             10,
-            this.textWidth("Lv: 00")
+            this.textWidth("Lv: ")
         );
         this.resetTextColor();
+    };
+
+    Window_Exp.prototype.drawExpValue = function (value, x) {
         this.drawText(
-            current,
-            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 "),
+            value,
+            x,
             10,
             this.textWidth("000000"),
             "right"
-        );
-        this.drawText(
-            " / ",
-            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 000000"),
-            10,
-            this.textWidth("000"),
-            "center"
-        );
-        this.drawText(
-            next,
-            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 000000 / "),
-            10,
-            this.textWidth("000000"),
-            "right"
-        );
-        this.drawText(
-            "(Left: ",
-            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 000000 / 000000 "),
-            10,
-            this.textWidth("(Left: ")
-        );
-        this.drawText(
-            diff,
-            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 000000 / 000000 (Left: "),
-            10,
-            this.textWidth("000000"),
-            "right"
-        );
-        this.drawText(
-            ")",
-            rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 000000 / 000000 (Left: 000000"),
-            10,
-            this.textWidth(")")
         );
     };
 
