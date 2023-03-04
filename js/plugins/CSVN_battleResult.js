@@ -747,10 +747,17 @@
      */
     Window_Exp.prototype.drawLv = function (rect, ba0) {
         this.drawText(
-            TextManager.levelA + ": " + ba0.after.lv,
+            TextManager.levelA + ": ",
             rect.width / 5 + this.itemPadding() * 4,
             10,
-            this.textWidth("00")
+            this.textWidth("Lv: ")
+        );
+        this.drawText(
+            ba0.after.lv,
+            rect.width / 5 + this.itemPadding() * 4 + this.textWidth("Lv: "),
+            10,
+            this.textWidth("00"),
+            "right"
         );
     };
 
