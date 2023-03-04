@@ -750,7 +750,7 @@
             TextManager.levelA + ": " + ba0.after.lv,
             rect.width / 5 + this.itemPadding() * 4,
             10,
-            rect.width / 10
+            this.textWidth("00")
         );
     };
 
@@ -764,27 +764,26 @@
         const current = ba0.after.exp;
         const next = actor.expForLevel(actor._level + 1);
         const diff = next - current;
+        const earned = BattleManager._rewards.exp;
         let tmpX = 0;
 
         this.drawExpParamName(rect);
-        tmpX = rect.width / 10 * 3 + this.itemPadding() * 6 + this.textWidth("Lv: 00 ");
+        tmpX = rect.width / 10 * 3 + this.itemPadding() * 4 + this.textWidth("Lv: 00 ");
 
-        this.drawExpValue(current, tmpX);
-        tmpX += this.textWidth("000000");
+        this.drawExpValue(current, tmpX, actor.isMaxLevel());
+        tmpX += this.textWidth("0000000");
 
-        this.drawText(" / ", tmpX, 10, this.textWidth("000"), "center");
+        this.drawText(" + ", tmpX, 10, this.textWidth("000"), "center");
         tmpX += this.textWidth("000");
 
-        this.drawExpValue(next, tmpX);
-        tmpX += this.textWidth("000000 ");
+        this.drawExpValue(earned, tmpX);
+        tmpX += this.textWidth("0000000 ");
 
-        this.drawText("(Left: ", tmpX, 10, this.textWidth("(Left: "));
-        tmpX += this.textWidth("(Left: ");
+        this.drawText("→ Left: ", tmpX, 10, this.textWidth("→ Left: "));
+        tmpX += this.textWidth("→ Left: ");
 
-        this.drawText(diff, tmpX, 10, this.textWidth("000000"), "right");
-        tmpX += this.textWidth("000000");
-
-        this.drawText(")", tmpX, 10, this.textWidth(")"));
+        this.drawExpValue(diff, tmpX, actor.isMaxLevel());
+        tmpX += this.textWidth("0000000");
     };
 
     /**
@@ -795,7 +794,7 @@
         this.changeTextColor(ColorManager.systemColor());
         this.drawText(
             TextManager.expA + ": ",
-            rect.width / 10 * 3 + this.itemPadding() * 6,
+            rect.width / 10 * 3 + this.itemPadding() * 5,
             10,
             this.textWidth("Lv: ")
         );
@@ -806,13 +805,15 @@
      * 経験値の値描画
      * @param {number} value 
      * @param {number} x 
+     * @param {boolean} isMaxLevel
      */
-    Window_Exp.prototype.drawExpValue = function (value, x) {
+    Window_Exp.prototype.drawExpValue = function (value, x, isMaxLevel) {
+        if (isMaxLevel) value = "-------";
         this.drawText(
             value,
             x,
             10,
-            this.textWidth("000000"),
+            this.textWidth("0000000"),
             "right"
         );
     };
