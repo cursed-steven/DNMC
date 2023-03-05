@@ -19,7 +19,7 @@ var $plugins =
 {"name":"CSVN_DevHUD","status":true,"description":"開発用HUD","parameters":{"mapId":"38","x":"39","y":"40","region":"42","terrain":"57","xTextOffset":"4","yTextOffset":"6","debugModeSwId":"1"}},
 {"name":"ItemNameMsg","status":true,"description":"メッセージウィンドウで \\ITEM[] をアイテム名に置き換えます。","parameters":{}},
 {"name":"KeepShowFast","status":true,"description":"瞬間表示\"\\>\"を改行後も持続させます。","parameters":{}},
-{"name":"CSVN_setMoreNumberFontFace","status":false,"description":"数字のフォントを数字フォントに切り替える","parameters":{}},
+{"name":"CSVN_setMoreNumberFontFace","status":true,"description":"数字のフォントを数字フォントに切り替える","parameters":{}},
 {"name":"FesCursor","status":true,"description":"ツクールフェス風のカーソルを表示します。","parameters":{"windowArrowImage":"WindowArrow","saveCursorImage":"","windowArrowRange":"10","textPadding":"14","windowArrowDuration":"50","enemyCursorImage":"EnemyCursor","enemyCursorHomeX":"56","enemyCursorHomeY":"56","enemyCursorRangeX":"6","enemyCursorRangeY":"6","enemyCursorDuration":"50","stopCursorAnimation":"true","hideCursor":"true","fastPauseSign":"false","gradientCursor":"false","gradientCursorBladeLength":"16","pauseSignToRight":"true","exclusionList":"[\"Window_NameEdit\",\"Window_ShopNumber\"]"}},
 {"name":"PANDA_KeywordColor","status":true,"description":"文章中で重要語句の文字色変更を簡略化できます。","parameters":{"KeyList":"[\"N\",\"E\",\"P\",\"I\",\"S\",\"K\"]","ColorList":"[\"4\",\"4\",\"6\",\"2\",\"2\",\"27\"]"}},
 {"name":"DNMC_system3","status":true,"description":"Donut Machine 専用追加システム設定","parameters":{"originalCommandNames":"[\"装備/ステータス\",\"作戦\",\"比較\",\"回復\",\"戦闘専用\",\"メニュー\",\"装備効果一覧\",\"通常行動\"]","otherStrings":"[\"装備分\",\"合計\"]"}},
