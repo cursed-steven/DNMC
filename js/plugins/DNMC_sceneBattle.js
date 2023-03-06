@@ -79,6 +79,18 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
     };
 
     /**
+     * HUD領域に変更
+     * @returns Rectangle
+     */
+    Scene_Battle.prototype.actorWindowRect = function () {
+        const ww = 160;
+        const wh = this.HUDHeight() * 2;
+        const wx = Graphics.boxWidth - ww;
+        const wy = this.calcWindowHeight(3, true);
+        return new Rectangle(wx, wy, ww, wh);
+    };
+
+    /**
      * 敵選択ウインドウの領域変更
      * @returns Rectangle
      */
@@ -95,7 +107,7 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
      * @returns number
      */
     Scene_Battle.prototype.HUDHeight = function () {
-        return this.calcWindowHeight(3.7 * $gameParty.size(), true);
+        return this.calcWindowHeight(3.7 * $gameParty.battleMembers().length, true);
     };
 
     //-----------------------------------------------------------------------------
@@ -107,6 +119,7 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
      */
     Window_BattleHUD.prototype.drawItem = function (index) {
         const actor = this.actor(index);
+        if (!actor) return;
         const rect = this.itemRect(index);
         const x = rect.x;
         const y = rect.y;

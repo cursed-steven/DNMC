@@ -8,6 +8,7 @@
 // Version
 // 1.0.0  2023/02/05 初版
 // 1.1.0  2023/02/26 座標決定ロジック見直し
+// 1.2.0  2023/03/06 一時バイオーム対応
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -24,6 +25,16 @@
  * @param terrain
  * @text 地形タグ
  * @desc プレイヤーがいる地形タグを格納する変数のID
+ * @type variable
+ * 
+ * @param tmpBiomeVarId
+ * @text 一時バイオーム変数
+ * @desc イベント・模擬戦用バイオームインデックスを入れる変数
+ * @type variable
+ * 
+ * @param turnCountVarId
+ * @text ターン数変数
+ * @desc 直近の戦闘の経過ターン数を入れる変数
  * @type variable
  * 
  * @param stateInterested
@@ -47,12 +58,26 @@
         INTERESTED: param.stateInterested
     };
 
+    const TMP_BIOME_NAMES = [
+        "event",
+        "training1",
+        "training2",
+        "training3"
+    ];
+    let tmpBiomeName = "";
+
     /**
      * 指定した地形タグに生息する敵のリストを取得して返す
      * @param {number} terrain 
      */
     function getEnemiesOnTerrain(terrain) {
-        const biomeName = BIOME_NAMES[terrain];
+        let biomeName = BIOME_NAMES[terrain];
+        if (!biomeName) {
+            // バイオーム名が決まらない場合はイベントか模擬戦。
+            biomeName = TMP_BIOME_NAMES[$v.get(param.tmpBiomeVarId)];
+            tmpBiomeName = biomeName;
+        }
+
         const enemies = $dataEnemies.filter(e => {
             return e && e.meta.biome.split(",").includes(biomeName);
         });
@@ -137,6 +162,28 @@
         return Object.keys(COMMON_SKILL_IDS).some(s => {
             return COMMON_SKILL_IDS[s] === skill.id;
         });
+    };
+
+    //-----------------------------------------------------------------------------
+    // Game_System
+
+    const _Game_System_onBattleWin = Game_System.prototype.onBattleWin;
+    /**
+     * 直近の戦闘のターン数を指定の変数に入れる
+     */
+    Game_System.prototype.onBattleWin = function () {
+        _Game_System_onBattleWin.call(this);
+        $v.set(param.turnCountVarId, $gameParty.leader().turnCount());
+    };
+
+    const _Game_System_onBattleEscape = Game_System.prototype.onBattleEscape;
+    /**
+     * 直近の戦闘のターン数を指定の変数に入れる
+     */
+    Game_System.prototype.onBattleEscape = function () {
+        _Game_System_onBattleEscape.call(this);
+        // 逃走した場合は負数にしておく
+        $v.set(param.turnCountVarId, $gameParty.leader().turnCount() * -1);
     };
 
     //-----------------------------------------------------------------------------
@@ -239,14 +286,20 @@
             : $gameVariables.value(param.terrain);
 
         let inBiome = getEnemiesOnTerrain(terrain);
+        CSVN_base.log(`biome: ${tmpBiomeName}`);
 
         if (inBiome.length === 0) {
             return troop;
         }
 
-        const enemyCount = Math.randomInt(8) + 1;
+        let enemyCount = Math.randomInt(8) + 1;
         let indexes = [];
         let ix = -1;
+
+        // 模擬戦の場合は人数をこちらのパーティーに合わせる
+        if (tmpBiomeName.includes("training")) enemyCount = $gameParty.battleMembers().length;
+        CSVN_base.log(`enemyCount: ${enemyCount}`);
+
         while (indexes.length < enemyCount) {
             ix = Math.randomInt(inBiome.length);
             if (!indexes.includes(ix)) {
@@ -331,7 +384,7 @@
 
     const _Game_Action_executeHpDamage = Game_Action.prototype.executeHpDamage;
     /**
-     * HPが7割を切ったら「興味がない」行動を封印→行動するようになる
+     * HPが7割を切るか、模擬戦の場合は「興味がない」行動を封印→行動するようになる
      * @param {Game_Battler} target 
      * @param {number} value 
      */
@@ -339,6 +392,10 @@
         _Game_Action_executeHpDamage.call(this, target, value);
 
         if (target.hp / target.mhp < 0.7) {
+            target.addState(STATE_IDS.INTERESTED);
+        }
+
+        if (tmpBiomeName) {
             target.addState(STATE_IDS.INTERESTED);
         }
     };

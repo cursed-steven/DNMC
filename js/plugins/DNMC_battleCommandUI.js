@@ -461,7 +461,11 @@
      * @returns number
      */
     Window_BattleActor.prototype.numVisibleRows = function () {
-        return $gameParty.battleMembers().length;
+        return 4;
+    };
+
+    Window_BattleActor.prototype.itemHeight = function () {
+        return this.innerHeight / this.numVisibleRows();
     };
 
     //-------------------------------------------------------------------------
