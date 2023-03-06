@@ -509,6 +509,7 @@
         skills.push($dataSkills[COMMON_SKILL_IDS.ATTACK]);
         skills.push($dataSkills[COMMON_SKILL_IDS.DEFEND]);
         skills.push($dataSkills[COMMON_SKILL_IDS.ESCAPE]);
+        skills.push($dataSkills[COMMON_SKILL_IDS.ITEM]);
         return skills;
     };
 
@@ -548,7 +549,7 @@
             });
         }
 
-        if (this._data.length === 0) this._data = this.defaultData();
+        if (!this._data[0]) this._data = this.defaultData();
 
         // 左から右、上から下ではなく
         // 上から下、左から右に並べる
