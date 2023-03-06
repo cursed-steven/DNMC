@@ -171,8 +171,7 @@ const BIOMES = {
     WOODS: 4,
     HEAT: 5,
     WATER: 6,
-    DUNGEON: 7,
-    SKY: 8
+    DUNGEON: 7
 };
 
 const BIOME_NAMES = [
@@ -183,8 +182,7 @@ const BIOME_NAMES = [
     "woods",
     "heat",
     "water",
-    "dungeon",
-    "sky"
+    "dungeon"
 ];
 
 /**
