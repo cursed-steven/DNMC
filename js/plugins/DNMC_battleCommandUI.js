@@ -405,12 +405,32 @@
     };
 
     /**
+     * アイテムウィンドウ領域再定義
+     * @returns Rectangle
+     */
+    Scene_Battle.prototype.itemWindowRect = function () {
+        const ww = Graphics.boxWidth - 160;
+        const wh = this.windowAreaHeight();
+        const wx = 0;
+        const wy = Graphics.boxHeight - wh;
+        return new Rectangle(wx, wy, ww, wh);
+    };
+
+    /**
+     * 敵選択ウィンドウ領域再定義
+     * @returns Rectangle
+     */
+    Scene_Battle.prototype.enemyWindowRect = function () {
+        return this.itemWindowRect();
+    };
+
+    /**
      * 新設カスタムアクターコマンドウィンドウの領域
      */
     Scene_Battle.prototype.customActorCommandWindowRect = function () {
         const ww = Graphics.boxWidth - this._partyCommandWindow.width;
         const wh = this.windowAreaHeight();
-        const wx = (Graphics.boxWidth - ww) / 2;
+        const wx = 0;
         const wy = Graphics.boxHeight - wh;
         return new Rectangle(wx, wy, ww, wh);
     };

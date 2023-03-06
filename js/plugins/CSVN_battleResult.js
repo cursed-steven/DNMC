@@ -714,8 +714,8 @@
         this.contents.fontSize = $gameSystem.mainFontSize() * 0.8;
         if (actor && ba0) {
             this.drawActorName(index);
-            this.drawLv(rect, ba0);
-            this.drawExp(actor, rect, ba0);
+            this.drawLv(ba0, index);
+            this.drawExp(ba0, index);
         }
         this.contents.fontSize = $gameSystem.mainFontSize();
     };
@@ -742,20 +742,21 @@
 
     /**
      * LVパラメータ名描画
-     * @param {Rectangle} rect 
      * @param {any} ba0 
+     * @param {number} index
      */
-    Window_Exp.prototype.drawLv = function (rect, ba0) {
+    Window_Exp.prototype.drawLv = function (ba0, index) {
+        const rect = this.itemRect(index);
         this.drawText(
             TextManager.levelA + ": ",
             rect.width / 5 + this.itemPadding() * 4,
-            10,
+            rect.y + 10,
             this.textWidth("Lv: ")
         );
         this.drawText(
             ba0.after.lv,
             rect.width / 5 + this.itemPadding() * 4 + this.textWidth("Lv: "),
-            10,
+            rect.y + 10,
             this.textWidth("00"),
             "right"
         );
@@ -763,46 +764,48 @@
 
     /**
      * 経験値描画
-     * @param {Game_Actor} actor 
-     * @param {Rectangle} rect 
      * @param {any} ba0 
+     * @param {number} index
      */
-    Window_Exp.prototype.drawExp = function (actor, rect, ba0) {
+    Window_Exp.prototype.drawExp = function (ba0, index) {
+        const actor = this.actor(index);
+        const rect = this.itemRect(index);
         const current = ba0.after.exp;
         const next = actor.expForLevel(actor._level + 1);
         const diff = next - current;
         const earned = BattleManager._rewards.exp;
         let tmpX = 0;
 
-        this.drawExpParamName(rect);
+        this.drawExpParamName(rect, index);
         tmpX = rect.width / 10 * 3 + this.itemPadding() * 4 + this.textWidth("Lv: 00 ");
 
-        this.drawExpValue(current, tmpX, actor.isMaxLevel());
+        this.drawExpValue(current, tmpX, rect.y, actor.isMaxLevel());
         tmpX += this.textWidth("0000000");
 
-        this.drawText(" + ", tmpX, 10, this.textWidth("000"), "center");
+        this.drawText(" + ", tmpX, rect.y + 10, this.textWidth("000"), "center");
         tmpX += this.textWidth("000");
 
-        this.drawExpValue(earned, tmpX);
+        this.drawExpValue(earned, tmpX, rect.y);
         tmpX += this.textWidth("0000000 ");
 
-        this.drawText("→ Left: ", tmpX, 10, this.textWidth("→ Left: "));
+        this.drawText("→ Left: ", tmpX, rect.y + 12, this.textWidth("→ Left: "));
         tmpX += this.textWidth("→ Left: ");
 
-        this.drawExpValue(diff, tmpX, actor.isMaxLevel());
+        this.drawExpValue(diff, tmpX, rect.y, actor.isMaxLevel());
         tmpX += this.textWidth("0000000");
     };
 
     /**
      * 経験値パラメータ名描画
-     * @param {Rectangle} rect 
+     * @param {number} index
      */
-    Window_Exp.prototype.drawExpParamName = function (rect) {
+    Window_Exp.prototype.drawExpParamName = function (index) {
+        const rect = this.itemRect(index);
         this.changeTextColor(ColorManager.systemColor());
         this.drawText(
             TextManager.expA + ": ",
             rect.width / 10 * 3 + this.itemPadding() * 5,
-            10,
+            rect.y + 10,
             this.textWidth("Lv: ")
         );
         this.resetTextColor();
@@ -812,14 +815,16 @@
      * 経験値の値描画
      * @param {number} value 
      * @param {number} x 
+     * @param {number} y 
      * @param {boolean} isMaxLevel
+     * @param {number} index
      */
-    Window_Exp.prototype.drawExpValue = function (value, x, isMaxLevel) {
+    Window_Exp.prototype.drawExpValue = function (value, x, y, isMaxLevel) {
         if (isMaxLevel) value = "-------";
         this.drawText(
             value,
             x,
-            10,
+            y + 10,
             this.textWidth("0000000"),
             "right"
         );
