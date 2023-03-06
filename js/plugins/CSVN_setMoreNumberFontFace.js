@@ -7,6 +7,7 @@
 ----------------------------------------------------------------------------
  Version
  1.0.0 2021/10/25 初版
+ 1.1.0 2023/03/06 CustomSkillCostDisplay含めて数字以外の半角英字にも対応
 ----------------------------------------------------------------------------
  [Twitter]: https://twitter.com/cursed_steven
 =============================================================================*/
@@ -52,21 +53,34 @@
 (() => {
     'use strict';
     //const params = PluginManagerEx.createParameter(document.currentScript);
+    const regex = /\w{1,}|\d?[ :]{1,}\d{1,}|(\\CCS\[\d{1}\]\d{1,}.?)+/g;
 
     const _Window_Base_drawText = Window_Base.prototype.drawText;
     Window_Base.prototype.drawText = function (text, x, y, maxWidth, align) {
-
         // 描画したい内容が数値なら数字用フォントを設定
-        if (!isNaN(parseFloat(text))) {
+        if (regex.test(text)) {
             this.contents.fontFace = $gameSystem.numberFontFace();
         }
 
         _Window_Base_drawText.call(this, text, x, y, maxWidth, align);
 
         // 描画後にフォント設定を戻す
-        if (!isNaN(parseFloat(text))) {
+        if (regex.test(text)) {
             this.resetFontSettings();
         }
+    };
 
+    Window_Base.prototype.drawTextEx = function (text, x, y, width) {
+        // this.resetFontSettings();
+        if (regex.test(text)) {
+            this.contents.fontFace = $gameSystem.numberFontFace();
+        }
+        const textState = this.createTextState(text, x, y, width);
+        this.processAllText(textState);
+        return textState.outputWidth;
+        // 描画後にフォント設定を戻す
+        if (regex.test(text)) {
+            this.resetFontSettings();
+        }
     };
 })();

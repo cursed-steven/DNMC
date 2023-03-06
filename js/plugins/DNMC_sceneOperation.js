@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2023/01/23 初版(DNMC_scene_Menuから分離)
+// 1.0.1  2023/03/06 setMoreNumberFontFace.jsの改造に伴ってカスタマイズ
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -485,18 +486,25 @@ Scene_Operation.prototype.initialize = function () {
         const skill = this.itemAt(index);
         const keys = this.keysName(index);
         const rect = this.itemLineRect(index);
+        const itemNameWidth = 156;
         const costWidth = this.textWidth("0000000");
-        const keysWidth = this.textWidth("0000000");
+        const keysWidth = 48;
+        const offset = index === 0 ? 16 : 0;    // 応急処置
         this.resetTextColor();
         if (skill) {
             this.changePaintOpacity(this.isEnabled(skill));
             this.drawText(keys, rect.x, rect.y, keysWidth);
-            this.drawItemName(skill, rect.x + keysWidth, rect.y, rect.width - costWidth - keysWidth);
+            this.drawItemName(
+                skill,
+                rect.x + keysWidth,
+                rect.y,
+                itemNameWidth
+            );
             this.drawSkillCost(
                 skill,
-                rect.x + keysWidth - costWidth - this.itemPadding(),
+                rect.x + keysWidth + itemNameWidth - offset,
                 rect.y,
-                rect.width
+                costWidth
             );
             this.changePaintOpacity(1);
         } else {
