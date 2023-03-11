@@ -77,10 +77,11 @@
         }
         const textState = this.createTextState(text, x, y, width);
         this.processAllText(textState);
-        return textState.outputWidth;
         // 描画後にフォント設定を戻す
         if (regex.test(text)) {
             this.resetFontSettings();
         }
+
+        return textState.outputWidth;
     };
 })();
