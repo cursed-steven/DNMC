@@ -158,6 +158,7 @@
     const FACE_HEIGHT = param.faceHeight;
     const PARTY_MAX_LENGTH = 8;
     const ACTORS_MAX_LENGTH = param.actorsMaxLength;
+    const LABEL_YOFFSET = 4;
     const LABEL_CHANGE_MODE = param.labelForChangeMode;
     const LABEL_ELIMINATE_MODE = param.labelForEliminateMode;
     const LABEL_BROWSE_MODE = param.labelForBrowseMode;
@@ -257,7 +258,10 @@
         const rect = this.modeWindowRect();
         this._modeWindow = new Window_Base(rect);
         // TODO モードごと(入れ替え/除籍/閲覧)にほんとは変わる
-        this._modeWindow.drawText(LABEL_CHANGE_MODE, 0, 0, CHAR_WIDTH * 4 + 8 * 5);
+        this._modeWindow.changeTextColor(ColorManager.systemColor());
+        this._modeWindow.drawText(LABEL_CHANGE_MODE, 0, LABEL_YOFFSET, CHAR_WIDTH * 4 + 8 * 5);
+        this._modeWindow.resetTextColor();
+        this.addWindow(this._modeWindow);
     };
 
     /**
@@ -267,8 +271,8 @@
     Scene_PartyChange.prototype.modeWindowRect = function () {
         const wx = 0;
         const wy = TOPSIDE_OFFSET;
-        const ww = CHAR_WIDTH * 4 + 8 * 5;
-        const wh = CHAR_HEIGHT * 4 + 8 * 5;
+        const ww = CHAR_WIDTH * 4 + 8 * 7;
+        const wh = this.calcWindowHeight(1, true);
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -285,6 +289,20 @@
         this._partyMemberWindow.setHandler("menu", this.moveSortKeyForward.bind(this));
         this._partyMemberWindow.setHandler("shift", this.moveSortKeyBackward.bind(this));
         this.addWindow(this._partyMemberWindow);
+    };
+
+    /**
+     * パーティーメンバーウィンドウ領域を返す
+     * @returns Rectangle
+     */
+    Scene_PartyChange.prototype.partyMemberWindowRect = function () {
+        const mrect = this.modeWindowRect();
+        const lrect = this.partyLabelWindowRect();
+        const wx = 0;
+        const wy = mrect.height + lrect.height + TOPSIDE_OFFSET;
+        const ww = CHAR_WIDTH * 4 + 8 * 7;
+        const wh = CHAR_HEIGHT * 2 + 8 * 5;
+        return new Rectangle(wx, wy, ww, wh);
     };
 
     /**
@@ -307,26 +325,12 @@
     };
 
     /**
-     * パーティーメンバーウィンドウ領域を返す
-     * @returns Rectangle
-     */
-    Scene_PartyChange.prototype.partyMemberWindowRect = function () {
-        const mrect = this.modeWindowRect();
-        const lrect = this.partyLabelWindowRect();
-        const wx = 0;
-        const wy = mrect.height + lrect.height + TOPSIDE_OFFSET;
-        const ww = CHAR_WIDTH * 4 + 8 * 5;
-        const wh = CHAR_HEIGHT * 2 + 8 * 3;
-        return new Rectangle(wx, wy, ww, wh);
-    };
-
-    /**
      * パーティーラベルウィンドウ作成
      */
     Scene_PartyChange.prototype.createPartyLabelWindow = function () {
         const rect = this.partyLabelWindowRect();
         this._partyLabelWindow = new Window_Base(rect);
-        this._partyLabelWindow.drawText(LABEL_PARTY_LIST, 0, 0, this.width);
+        this._partyLabelWindow.drawText(LABEL_PARTY_LIST, 0, LABEL_YOFFSET, this.width);
         this.addWindow(this._partyLabelWindow);
     };
 
@@ -363,11 +367,12 @@
      * @returns Rectangle
      */
     Scene_PartyChange.prototype.reserveMemberWindowRect = function () {
-        const prect = this.partyMemberWindowRect();
-        const ww = this.partyLabelWindowRect().width;
-        const wh = Graphics.boxHeight - prect.height - this.calcWindowHeight(1, true) * 3;
+        const rrect = this.reserveLabelWindowRect();
+        const srect = this.sortKeyWindowRect();
         const wx = 0;
-        const wy = Graphics.boxHeight - wh;
+        const wy = rrect.y + rrect.height;
+        const ww = rrect.width;
+        const wh = Graphics.boxHeight - wy - srect.height;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -377,7 +382,7 @@
     Scene_PartyChange.prototype.createReserveLabelWindow = function () {
         const rect = this.reserveLabelWindowRect();
         this._reserveLabelWindow = new Window_Base(rect);
-        this._reserveLabelWindow.drawText(LABEL_RESERVE_LIST, 0, 0, this.width);
+        this._reserveLabelWindow.drawText(LABEL_RESERVE_LIST, 0, LABEL_YOFFSET, this.width);
         this.addWindow(this._reserveLabelWindow);
     };
 
@@ -622,6 +627,7 @@
         Window_MenuStatus.prototype.initialize.call(this, rect);
         this._list = [];
         this._marked = -1;
+        this.select(0);
     };
 
     /**
@@ -638,6 +644,14 @@
      */
     Window_PartyChangeBase.prototype.maxCols = function () {
         return 4;
+    };
+
+    /**
+     * 行高を返す
+     * @returns number
+     */
+    Window_PartyChangeBase.prototype.itemHeight = function () {
+        return CHAR_HEIGHT + this.itemPadding();
     };
 
     /**
@@ -685,12 +699,21 @@
     }
 
     /**
+     * カーソルがいる部分のデータを返す
+     * @param {number} index 
+     * @returns Game_Actor
+     */
+    Window_PartyChangeBase.prototype.actor = function (index) {
+        return this.itemAt(index);
+    };
+
+    /**
      * 1項目分の描画
      * @param {number} index 
      */
     Window_PartyChangeBase.prototype.drawItem = function (index) {
         this.drawActorCharacter(index);
-        this.drawActorName(index);
+        // this.drawActorName(index);
     };
 
     /**
@@ -704,8 +727,8 @@
             this.drawCharacter(
                 actor.characterName(),
                 actor.characterIndex(),
-                rect.x,
-                rect.y
+                rect.x + CHAR_WIDTH / 2,
+                rect.y + CHAR_HEIGHT
             );
         }
     };
@@ -736,7 +759,13 @@
      * 描画更新
      */
     Window_PartyChangeBase.prototype.refresh = function () {
+        this.contents.clear();
         this.makeItemList();
+        console.table(this._list);
+        for (let i = 0; i < this._list, i++;) {
+            this.drawItem(i);
+        }
+
         Window_Selectable.prototype.refresh.call(this);
     };
 
@@ -803,7 +832,9 @@
      * @returns number
      */
     Window_PartyChangeMember.prototype.maxItems = function () {
-        return PARTY_MAX_LENGTH;
+        return $gameParty.members().length + 1 < PARTY_MAX_LENGTH
+            ? $gameParty.members().length + 1
+            : PARTY_MAX_LENGTH;
     };
 
     /**
@@ -851,7 +882,7 @@
     Window_ReserveChangeMember.prototype.maxItems = function () {
         const a = $dataActors.length;
         const b = ACTORS_MAX_LENGTH;
-        return Math.max(a, b);
+        return Math.min(a, b);
     };
 
     /**
@@ -861,7 +892,6 @@
         const reserves = $v.get(param.reserveMemberVarId).toString().split(",");
         if (!this._list) this._list = []; //workaround
 
-        let actor = null;
         for (const r of reserves) {
             if (!$dataActors[r]) continue;
             this._list.push(new Game_Actor(r));
