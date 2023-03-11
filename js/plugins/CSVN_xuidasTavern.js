@@ -49,6 +49,7 @@
  * @desc これを超えると除籍が必要になる人数
  * @type number
  * @min 2
+ * @default 16
  * 
  * @param membersCantChangeVarId
  * @text 入替不可アクターIDリスト変数ID
@@ -92,6 +93,11 @@
  * @type string
  * @default 職業
  * 
+ * @param labelForLevel
+ * @text ソートキー「レベル」をあらわすラベル
+ * @type string
+ * @default Lv
+ * 
  * @command disableChange
  * @text 入れ替え禁止メンバー追加
  * 
@@ -129,6 +135,15 @@
  * @text 右側の空きスペースの幅
  * @type number
  * @default 0
+ * 
+ * @command changeStart
+ * @text 入替シーン開始
+ * 
+ * @command eliminateStart
+ * @text 除籍シーン開始
+ * 
+ * @command browseStart
+ * @text 閲覧シーン開始
  */
 
 (() => {
@@ -161,7 +176,7 @@
         TextManager.luk,
         "ID",
         param.labelForClass,
-        TextManager.levelA
+        param.labelForLevel
     ];
     let membersCantChange = [];
     let membersCantEliminate = [];
@@ -216,8 +231,8 @@
     Scene_PartyChange.prototype.create = function () {
         Scene_MenuBase.prototype.create.call(this);
         this.createDisplayObjects();
-        membersCantChange = $v.get(param.membersCantChangeVarId).split(",");
-        membersCantEliminate = $v.get(param.membersCantEliminateVarId).split(",");
+        membersCantChange = $v.get(param.membersCantChangeVarId).toString().split(",");
+        membersCantEliminate = $v.get(param.membersCantEliminateVarId).toString().split(",");
         this._partyMemberWindow.activate();
         this._reserveMemberWindow.deactivate();
     };
@@ -242,7 +257,7 @@
         const rect = this.modeWindowRect();
         this._modeWindow = new Window_Base(rect);
         // TODO モードごと(入れ替え/除籍/閲覧)にほんとは変わる
-        this._modeWindow.drawText(LABEL_CHANGE_MODE, 0, 0, this.textWidth(LABEL_CHANGE_MODE));
+        this._modeWindow.drawText(LABEL_CHANGE_MODE, 0, 0, CHAR_WIDTH * 4 + 8 * 5);
     };
 
     /**
@@ -311,7 +326,7 @@
     Scene_PartyChange.prototype.createPartyLabelWindow = function () {
         const rect = this.partyLabelWindowRect();
         this._partyLabelWindow = new Window_Base(rect);
-        this._partyLabelWindow.drawText(LABEL_PARTY_LIST, 0, 0, this.textWidth(LABEL_PARTY_LIST));
+        this._partyLabelWindow.drawText(LABEL_PARTY_LIST, 0, 0, this.width);
         this.addWindow(this._partyLabelWindow);
     };
 
@@ -362,7 +377,7 @@
     Scene_PartyChange.prototype.createReserveLabelWindow = function () {
         const rect = this.reserveLabelWindowRect();
         this._reserveLabelWindow = new Window_Base(rect);
-        this._reserveLabelWindow.drawText(LABEL_RESERVE_LIST, 0, 0, this.textWidth(LABEL_RESERVE_LIST));
+        this._reserveLabelWindow.drawText(LABEL_RESERVE_LIST, 0, 0, this.width);
         this.addWindow(this._reserveLabelWindow);
     };
 
@@ -424,11 +439,11 @@
      */
     Scene_PartyChange.prototype.statusWindowRect = function () {
         const prect = this.partyMemberWindowRect();
-        const wx = Graphcs.boxWidth - prect.width;
+        const wx = Graphics.boxWidth - prect.width;
         const wy = 0;
         const ww = wx - RIGHTSIDE_OFFSET;
         const wh = Graphics.boxHeight;
-        return new Rectanlge(wx, wy, ww, wh);
+        return new Rectangle(wx, wy, ww, wh);
     };
 
     /**
@@ -551,7 +566,7 @@
      * @param {number} actorId 
      */
     Scene_PartyChange.prototype.addToReserve = function (actorId) {
-        let reserves = $v.get(param.reserveMemberVarId).split(",");
+        let reserves = $v.get(param.reserveMemberVarId).toString().split(",");
         reserves.push(actorId);
         $v.set(param.reserveMemberVarId, reserves.join(","));
     };
@@ -561,7 +576,7 @@
      * @param {number} actorId 
      */
     Scene_PartyChange.prototype.removeFromReserve = function (actorId) {
-        let reserves = $v.get(param.reserveMemberVarId).split(",");
+        let reserves = $v.get(param.reserveMemberVarId).toString().split(",");
         const removed = reserves.filter(r => {
             return r.actorId() !== actorId;
         });
@@ -685,12 +700,14 @@
     Window_PartyChangeBase.prototype.drawActorCharacter = function (index) {
         const actor = this.actor(index);
         const rect = this.itemRect(index);
-        this.drawActorCharacter(
-            actor.characterName(),
-            actor.characterIndex(),
-            rect.x,
-            rect.y
-        );
+        if (actor) {
+            this.drawCharacter(
+                actor.characterName(),
+                actor.characterIndex(),
+                rect.x,
+                rect.y
+            );
+        }
     };
 
     /**
@@ -700,10 +717,12 @@
     Window_PartyChangeBase.prototype.drawActorName = function (index) {
         const actor = this.actor(index);
         const rect = this.itemRect(index);
-        const fontSize = $gameSystem.mainFontSize() / 2;
-        this.contents.fontSize = fontSize;
-        this.drawText(actor.name(), rect.x, rect.y + CHAR_HEIGHT - fontSize, "center");
-        this.contents.fontSize = $gameSystem.mainFontSize();
+        if (actor) {
+            const fontSize = $gameSystem.mainFontSize() / 2;
+            this.contents.fontSize = fontSize;
+            this.drawText(actor.name(), rect.x, rect.y + CHAR_HEIGHT - fontSize, "center");
+            this.contents.fontSize = $gameSystem.mainFontSize();
+        }
     };
 
     /**
@@ -839,8 +858,12 @@
      * 項目リスト作成
      */
     Window_ReserveChangeMember.prototype.makeItemList = function () {
-        const reserves = $v.get(param.reserveMemberVarId).split(",");
+        const reserves = $v.get(param.reserveMemberVarId).toString().split(",");
+        if (!this._list) this._list = []; //workaround
+
+        let actor = null;
         for (const r of reserves) {
+            if (!$dataActors[r]) continue;
             this._list.push(new Game_Actor(r));
         }
         this._list.push(null);
@@ -863,7 +886,7 @@
      * @param {Rectangle} rect
      */
     Window_ReserveMemberSortKey.prototype.initialize = function (rect) {
-        Window_Base.prototype.initialize.call(this);
+        Window_Base.prototype.initialize.call(this, rect);
         this._sortKey = $v.get(param.sortKeyVarId);
     };
 
