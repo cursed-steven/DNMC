@@ -1,12 +1,13 @@
-// FesCursor.js Ver.2.1.0
+// FesCursor.js Ver.2.2.3
 
 /*:
 * @target MZ
 * @orderBefore EnemyGauge
+* @orderBefore FesStyleBattle
 * @plugindesc Display an RPG Maker Fes style cursor.
 * @author あわやまたな (Awaya_Matana)
 * @url https://awaya3ji.seesaa.net/
-* @help Ver.2.1.0
+* @help Ver.2.2.3
 * You can use it by putting images in the img/system folder.
 * By combining with MVStyleWindow.js, you can make it closer to RPG Maker Fes.
 *
@@ -152,6 +153,10 @@
 * 2022/09/19：Ver.2.0.4　装備画面のパディングを修正。
 * 2022/12/09：Ver.2.0.5　FesStyleBattleの判別方法を修正。
 * 2022/12/19：Ver.2.1.0　階調カーソルをツクールフェスに近くなるように調整。
+* 2023/01/13：Ver.2.2.0　挙動修正。
+* 2023/03/05：Ver.2.2.1　挙動修正。
+* 2023/03/07：Ver.2.2.2　挙動修正。
+* 2023/03/11：Ver.2.2.3　挙動修正。
 *
 * @param windowArrowImage
 * @text 矢印カーソル画像
@@ -479,13 +484,23 @@ function Sprite_EnemyCursor() {
 			return (hideCursor && this._dimmerSprite && this._dimmerSprite.visible) || (this.arrowCursorVisible && gradientCursor && this.maxCols() > 1);
 		};
 
+		const _Window_Selectable_update = Window_Selectable.prototype.update;
+		Window_Selectable.prototype.update = function() {
+			_Window_Selectable_update.call(this);
+			this.updateArrowCursorDuration();
+		};
+
 		Window_Selectable.prototype._updateArrowCursor = function() {
 			if (this._arrowCursorSprites.length === 0) return;
 			const visible = this.isOpen() && this.cursorVisible && this.arrowCursorVisible;
 			this._arrowCursorSprites.forEach(sprite => sprite.visible = false);
-			this._updateArrowCursorDuration();
 			if (this._cursorAll) {
-				this._arrowCursorSprites.forEach(sprite => sprite.visible = visible);
+				const topIndex = this.topIndex();
+				const maxItems = this.maxItems();
+				this._arrowCursorSprites.forEach((sprite, cursorIndex) => {
+					const index = cursorIndex + topIndex;
+					sprite.visible =  index < maxItems && visible;
+				});
 			} else if (this._arrowCursor) {
 				this._arrowCursor.visible = visible;
 			}
@@ -496,9 +511,9 @@ function Sprite_EnemyCursor() {
 			});
 		};
 
-		Window_Selectable.prototype._updateArrowCursorDuration = function() {
+		Window_Selectable.prototype.updateArrowCursorDuration = function() {
 			this._arrowCursorDuration--;
-			if (!this.active) {
+			if (!this.isOpenAndActive()) {
 				this._arrowCursorDuration = 0;
 			} else if (this._arrowCursorDuration <= 0) {
 				this._arrowCursorDuration = arrowDuration;
@@ -637,6 +652,10 @@ function Sprite_EnemyCursor() {
 
 		Window_NumberInput.prototype.arrowCursorPadding = function() {
 			return false;
+		};
+
+		Window_NumberInput.prototype._backCursorCanInvisible = function() {
+			return (hideCursor && this._dimmerSprite && this._dimmerSprite.visible) || (this.arrowCursorVisible && gradientCursor);
 		};
 
 		// Window_StatusBase系
