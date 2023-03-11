@@ -20,6 +20,11 @@
  * 
  * @help CSVN_xuidasTavern.js
  * 
+ * @param excludedActors
+ * @text 除外アクター
+ * @desc テスト用等でウィンドウに登場させたくないもの
+ * @type actor[]
+ * 
  * @param actorListVarId
  * @text 使用可能アクターリスト
  * @desc このセーブファイル内で使えるアクターのリスト(※DNMC_randomActors.js対策)
@@ -157,6 +162,7 @@
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
 
+    const EXCLUDED_ACTORS = param.excludedActors ? param.excludedActors : [];
     const CHAR_WIDTH = param.charWidth;
     const CHAR_HEIGHT = param.charHeight;
     const FACE_WIDTH = param.faceWidth;
@@ -308,7 +314,7 @@
         const wx = 0;
         const wy = mrect.height + lrect.height + TOPSIDE_OFFSET;
         const ww = CHAR_WIDTH * 4 + 8 * 7;
-        const wh = CHAR_HEIGHT * 2 + 8 * 5;
+        const wh = (CHAR_HEIGHT + $gameSystem.mainFontSize() / 2) * 2 + 8 * 5;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -607,7 +613,6 @@
         Window_MenuStatus.prototype.initialize.call(this, rect);
         this._list = [];
         this._marked = -1;
-        this.select(0);
     };
 
     /**
@@ -639,7 +644,7 @@
      * @returns number
      */
     Window_PartyChangeBase.prototype.itemHeight = function () {
-        return CHAR_HEIGHT + this.itemPadding();
+        return CHAR_HEIGHT + $gameSystem.mainFontSize() / 2 + this.itemPadding();
     };
 
     /**
@@ -701,7 +706,7 @@
      */
     Window_PartyChangeBase.prototype.drawItem = function (index) {
         this.drawActorCharacter(index);
-        // this.drawActorName(index);
+        this.drawActorName(index);
     };
 
     /**
@@ -731,7 +736,7 @@
         if (actor) {
             const fontSize = $gameSystem.mainFontSize() / 2;
             this.contents.fontSize = fontSize;
-            this.drawText(actor.name(), rect.x, rect.y + CHAR_HEIGHT - fontSize, "center");
+            this.drawText(actor.name(), rect.x, rect.y + CHAR_HEIGHT - fontSize, CHAR_WIDTH, "center");
             this.contents.fontSize = $gameSystem.mainFontSize();
         }
     };
@@ -803,6 +808,7 @@
      */
     Window_PartyChangeMember.prototype.initialize = function (rect) {
         Window_PartyChangeBase.prototype.initialize.call(this, rect);
+        this.select(0);
     };
 
     /**
@@ -835,7 +841,10 @@
      * 項目リスト作成
      */
     Window_PartyChangeMember.prototype.makeItemList = function () {
-        this._list = $gameParty.members();
+        const tmp = $gameParty.members();
+        this._list = tmp.filter(a => {
+            return !EXCLUDED_ACTORS.includes(a.actorId());
+        });
         this._list.push(null);
     };
 
@@ -850,11 +859,13 @@
 
         // いちばん下の行を選択中の場合は控えメンバーウィンドウに移る
         if (row === rowMax) {
-            const destIndex = col > r.itemsCount() ? r.itemsCount() - 1 : col;
+            const destIndex = col >= r.itemsCount() + 1 ? r.itemsCount() : col;
             this.deselect();
             this.deactivate();
             r.activate();
             r.forceSelect(destIndex);
+            // console.log(`col: ${col} count: ${r.itemsCount() + 1}`);
+            // console.log(`destIndex: ${destIndex}`);
         }
     };
 
@@ -880,6 +891,18 @@
      */
     Window_ReserveChangeMember.prototype.initialize = function (rect) {
         Window_PartyChangeBase.prototype.initialize.call(this, rect);
+
+        this._dnmcActive = false;
+        try {
+            const test = new DataActor();
+            console.log(`DataActor?: ${typeof test}`);
+            if (typeof test === "object") {
+                this._dnmcActive = true;
+            }
+        } catch (e) {
+            CSVN_base.log(">>>> " + this.constructor.name + " initialize");
+            CSVN_base.log("Donut Machine not activated, do not mind.");
+        }
     };
 
     /**
@@ -917,24 +940,30 @@
      */
     Window_ReserveChangeMember.prototype.possibleReservesCount = function () {
         let result = 0;
-        if (typeof DataActor !== "object") {
+        if (!this._dnmcActive) {
             result = $dataActors.length;
+            // CSVN_base.log(`$dataActors.length = ${result}`);
         } else {
             result = $v.get(param.actorListVarId).toString().split(",").length;
+            // CSVN_base.log(`actorList.length: ${result}`);
         }
+        result -= $gameParty.members().length;
+        if (result <= 0) result = 1;
 
-        return result - $gameParty.members().length;
+        return result;
     };
 
     /**
      * 項目リスト作成
      */
     Window_ReserveChangeMember.prototype.makeItemList = function () {
+        this._list = [];
         const reserves = $v.get(param.reserveMemberVarId).toString().split(",");
-        if (!this._list) this._list = []; //workaround
 
         for (const r of reserves) {
+            if (r === "0") continue;
             if (!$dataActors[r]) continue;
+            if (EXCLUDED_ACTORS.includes(r)) continue;
             this._list.push(new Game_Actor(r));
         }
         this._list.push(null);
@@ -949,12 +978,13 @@
      */
     Window_ReserveChangeMember.prototype.cursorUp = function () {
         const p = this._partyMemberWindow;
+        p.refresh();    // これをしないと0件が返る
         const row = Math.floor(this.index() / this.maxCols());
         const col = this.index() % this.maxCols();
 
         // いちばん上の行を選択中の場合はパーティーメンバーウィンドウに移る
         if (row === 0) {
-            const destLine = Math.floor(p.maxItems() / p.maxCols()) + 1;
+            const destLine = Math.floor(p.maxItems() / p.maxCols());
             const itemsCountOnLastLine = p.itemsCount() % p.maxCols();
             const destCol = col > itemsCountOnLastLine - 1 ? itemsCountOnLastLine - 1 : col;
             const destIndex = destLine * (p.maxCols() - 1) + destCol;
@@ -962,6 +992,7 @@
             this.deactivate();
             p.activate();
             p.forceSelect(destIndex);
+            // console.log(`destLine: ${destLine}, icoll: ${itemsCountOnLastLine}, destCol: ${destCol}, destIndex: ${destIndex}`);
         }
     };
 

@@ -52,6 +52,156 @@
  * @text リセット
  */
 
+/**
+ * アクタークラス。
+ */
+class DataActor {
+    id = 0;
+    battlerName = "";
+    characterIndex = 0;
+    characterName = "";
+    classId = 0;
+    equips = [];
+    faceIndex = 0;
+    faceName = "";
+    traits = [];
+    initialLevel = 1;
+    maxLevel = 99;
+    name = "";
+    nickName = "";
+    note = "";
+    profile = "";
+    meta = {};
+
+    get id() {
+        return this.id;
+    };
+
+    set id(id) {
+        this.id = id;
+    }
+
+    get battlerName() {
+        return this.battlerName;
+    };
+
+    set battlerName(bn) {
+        this.battlerName = bn;
+    };
+
+    get characterIndex() {
+        return this.characterIndex;
+    };
+
+    set characterIndex(ci) {
+        this.characterIndex = ci;
+    }
+
+    get characterName() {
+        return this.characterName;
+    };
+
+    set characterName(cn) {
+        this.characterName = cn;
+    };
+
+    get classId() {
+        return this.classId;
+    };
+
+    set classId(ci) {
+        this.classId = ci;
+    }
+
+    get equips() {
+        return this.equips;
+    };
+
+    set equips(eq) {
+        this.equips = eq;
+    };
+
+    get faceIndex() {
+        return this.faceIndex;
+    };
+
+    set faceIndex(fi) {
+        this.faceIndex = fi;
+    };
+
+    get faceName() {
+        return this.faceName;
+    };
+
+    set faceName(fn) {
+        this.faceName = fn;
+    };
+
+    get traits() {
+        return this.traits;
+    };
+
+    set traits(traits) {
+        this.traits = traits;
+    };
+
+    get initialLevel() {
+        return this.initialLevel;
+    };
+
+    set initialLevel(il) {
+        this.initialLevel = il;
+    };
+
+    get maxLevel() {
+        return this.maxLevel;
+    };
+
+    set maxLevel(ml) {
+        this.maxLevel = ml;
+    };
+
+    get name() {
+        return this.name;
+    };
+
+    set name(name) {
+        this.name = name;
+    };
+
+    get nickName() {
+        return this.nickName;
+    };
+
+    set nickName(nn) {
+        this.nickName = nn;
+    };
+
+    get note() {
+        return this.note;
+    };
+
+    set note(note) {
+        this.note = note;
+    };
+
+    get profile() {
+        return this.profile;
+    };
+
+    set profile(p) {
+        this.profile = p;
+    };
+
+    get meta() {
+        return this.meta;
+    };
+
+    set meta(meta) {
+        this.meta = meta;
+    };
+}
+
 (() => {
 
     'use strict';
@@ -274,155 +424,4 @@
         const sum = this.members().reduce((v, e) => v += e.level, 0);
         return Math.floor(sum / this.size());
     };
-
-    /**
-     * アクタークラス。
-     */
-    class DataActor {
-        id = 0;
-        battlerName = "";
-        characterIndex = 0;
-        characterName = "";
-        classId = 0;
-        equips = [];
-        faceIndex = 0;
-        faceName = "";
-        traits = [];
-        initialLevel = 1;
-        maxLevel = 99;
-        name = "";
-        nickName = "";
-        note = "";
-        profile = "";
-        meta = {};
-
-        get id() {
-            return this.id;
-        };
-
-        set id(id) {
-            this.id = id;
-        }
-
-        get battlerName() {
-            return this.battlerName;
-        };
-
-        set battlerName(bn) {
-            this.battlerName = bn;
-        };
-
-        get characterIndex() {
-            return this.characterIndex;
-        };
-
-        set characterIndex(ci) {
-            this.characterIndex = ci;
-        }
-
-        get characterName() {
-            return this.characterName;
-        };
-
-        set characterName(cn) {
-            this.characterName = cn;
-        };
-
-        get classId() {
-            return this.classId;
-        };
-
-        set classId(ci) {
-            this.classId = ci;
-        }
-
-        get equips() {
-            return this.equips;
-        };
-
-        set equips(eq) {
-            this.equips = eq;
-        };
-
-        get faceIndex() {
-            return this.faceIndex;
-        };
-
-        set faceIndex(fi) {
-            this.faceIndex = fi;
-        };
-
-        get faceName() {
-            return this.faceName;
-        };
-
-        set faceName(fn) {
-            this.faceName = fn;
-        };
-
-        get traits() {
-            return this.traits;
-        };
-
-        set traits(traits) {
-            this.traits = traits;
-        };
-
-        get initialLevel() {
-            return this.initialLevel;
-        };
-
-        set initialLevel(il) {
-            this.initialLevel = il;
-        };
-
-        get maxLevel() {
-            return this.maxLevel;
-        };
-
-        set maxLevel(ml) {
-            this.maxLevel = ml;
-        };
-
-        get name() {
-            return this.name;
-        };
-
-        set name(name) {
-            this.name = name;
-        };
-
-        get nickName() {
-            return this.nickName;
-        };
-
-        set nickName(nn) {
-            this.nickName = nn;
-        };
-
-        get note() {
-            return this.note;
-        };
-
-        set note(note) {
-            this.note = note;
-        };
-
-        get profile() {
-            return this.profile;
-        };
-
-        set profile(p) {
-            this.profile = p;
-        };
-
-        get meta() {
-            return this.meta;
-        };
-
-        set meta(meta) {
-            this.meta = meta;
-        };
-    }
-
 })();
