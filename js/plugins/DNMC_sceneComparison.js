@@ -234,9 +234,9 @@ Scene_Comparison.prototype.constructor = Scene_Comparison;
                 rect.y + CHARACTER_IMAGE.HEIGHT_OFFSET
             );
             this.drawActorNameClass(index);
-            this.drawActorLevel(index);
 
             if (this._mode === "param") {
+                this.drawActorLevel(index);
                 this.drawAllParams(index);
             } else {
                 this.drawEquips(index);
