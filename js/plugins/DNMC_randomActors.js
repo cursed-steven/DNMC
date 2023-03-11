@@ -27,6 +27,11 @@
  * @desc classId + この値 = 職業のアンロックスイッチのID
  * @type switch
  * 
+ * @param generatedActorsVarId
+ * @text 生成アクターIDリスト
+ * @desc 生成したアクターのリストを保持する変数
+ * @type variable
+ * 
  * @command generate
  * @text アクター生成
  * 
@@ -59,6 +64,7 @@
     PluginManagerEx.registerCommand(script, "generate", args => {
         const actor = randomActor(args.rank);
         DataManager.registerActor(actor);
+        registerActorId(actor.id);
         $gameTemp.setLatestGenerated([actor]);
     });
 
@@ -181,6 +187,12 @@
         actor.name = name;
 
         return actor;
+    }
+
+    function registerActorId(id) {
+        let registered = $v.get(param.generatedActorsVarId).toString().split(",");
+        registered.push(id);
+        $v.set(param.generatedActorsVarId, registered.join(","));
     }
 
     //-------------------------------------------------------------------------

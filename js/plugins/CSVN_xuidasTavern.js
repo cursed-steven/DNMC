@@ -20,6 +20,11 @@
  * 
  * @help CSVN_xuidasTavern.js
  * 
+ * @param actorListVarId
+ * @text 使用可能アクターリスト
+ * @desc このセーブファイル内で使えるアクターのリスト(※DNMC_randomActors.js対策)
+ * @type variable
+ * 
  * @param reserveMemberVarId
  * @text 控えメンバーを入れる変数ID
  * @type variable
@@ -234,6 +239,8 @@
         this.createDisplayObjects();
         membersCantChange = $v.get(param.membersCantChangeVarId).toString().split(",");
         membersCantEliminate = $v.get(param.membersCantEliminateVarId).toString().split(",");
+        this._partyMemberWindow.setReserveMemberWindow(this._reserveMemberWindow);
+        this._reserveMemberWindow.setPartyMemberWindow(this._partyMemberWindow);
         this._partyMemberWindow.activate();
         this._reserveMemberWindow.deactivate();
     };
@@ -309,19 +316,7 @@
      * パーティーメンバーウィンドウでOK押下時の処理
      */
     Scene_PartyChange.prototype.onPartyOk = function () {
-        if (this._partyMemberWindow.isMarked()) {
-            // パーティーメンバー同士なら通常の並べ替え
-            const a = this._partyMemberWindow.marked();
-            const b = this.index();
-            if (a != b) $gameParty.swapOrder(a, b);
-            this._partyMemberWindow.refresh();
-        } else {
-            // 選択中のパーティーメンバーをマークして控えメンバー側に
-            this._partyMemberWindow.mark();
-            this._partyMemberWindow.deactivate();
-            this._reserveMemberWindow.activate();
-            this._reserveMemberWindow.select(0);
-        }
+        // TODO
     };
 
     /**
@@ -404,29 +399,14 @@
      * ※控えメンバー側にはパーティーメンバーをマークしたあときている前提
      */
     Scene_PartyChange.prototype.onReserveOk = function () {
-        // メンバー交代
-        const p2r = this._partyMemberWindow.markedItem();
-        const r2p = this._reserveMemberWindow.item();
-        $gameParty.removeActor(p2r.actorId());
-        this.addToReserve(p2r.actorId());
-        this.removeFromReserve(r2p.actorId());
-        $gameParty.addActor(r2p.actorId());
-        this._partyMemberWindow.refresh();
-        this._reserveMemberWindow.refresh();
-
-        // パーティー側に戻る
-        this._reserveMemberWindow.deactivate();
-        this._partyMemberWindow.activate();
-        this._partyMemberWindow.select(0);
+        // TODO
     };
 
     /**
      * 控えメンバーウィンドウでキャンセル押下時の処理
      */
     Scene_PartyChange.prototype.onReserveCancel = function () {
-        this._partyMemberWindow.activate();
-        this._partyMemberWindow.select(0);
-        this._reserveMemberWindow.deactivate();
+        // TODO
     };
 
     /**
@@ -647,6 +627,14 @@
     };
 
     /**
+     * いまある項目数を返す
+     * @returns number
+     */
+    Window_PartyChangeBase.prototype.itemsCount = function () {
+        return this._list.length;
+    };
+
+    /**
      * 行高を返す
      * @returns number
      */
@@ -694,7 +682,7 @@
      */
     Window_PartyChangeBase.prototype.isEnabled = function (item) {
         return !membersCantChange.some(m => {
-            return parseInt(m) === item.actorId();
+            return item && parseInt(m) === item.actorId();
         });
     }
 
@@ -703,7 +691,7 @@
      * @param {number} index 
      * @returns Game_Actor
      */
-    Window_PartyChangeBase.prototype.actor = function (index) {
+    Window_PartyChangeBase.prototype.listActor = function (index) {
         return this.itemAt(index);
     };
 
@@ -721,7 +709,7 @@
      * @param {number} index 
      */
     Window_PartyChangeBase.prototype.drawActorCharacter = function (index) {
-        const actor = this.actor(index);
+        const actor = this.listActor(index);
         const rect = this.itemRect(index);
         if (actor) {
             this.drawCharacter(
@@ -738,7 +726,7 @@
      * @param {number} index 
      */
     Window_PartyChangeBase.prototype.drawActorName = function (index) {
-        const actor = this.actor(index);
+        const actor = this.listActor(index);
         const rect = this.itemRect(index);
         if (actor) {
             const fontSize = $gameSystem.mainFontSize() / 2;
@@ -761,11 +749,9 @@
     Window_PartyChangeBase.prototype.refresh = function () {
         this.contents.clear();
         this.makeItemList();
-        console.table(this._list);
         for (let i = 0; i < this._list, i++;) {
             this.drawItem(i);
         }
-
         Window_Selectable.prototype.refresh.call(this);
     };
 
@@ -820,6 +806,14 @@
     };
 
     /**
+     * 控えメンバーウィンドウの参照を持たせる
+     * @param {Window_ReserveChangeMember} reserveMemberWindow 
+     */
+    Window_PartyChangeMember.prototype.setReserveMemberWindow = function (reserveMemberWindow) {
+        this._reserveMemberWindow = reserveMemberWindow;
+    };
+
+    /**
      * 行数は固定
      * @returns number
      */
@@ -845,6 +839,29 @@
         this._list.push(null);
     };
 
+    /**
+     * パーティーメンバーウィンドウが有効な間に下を押したときの処理
+     */
+    Window_PartyChangeMember.prototype.cursorDown = function () {
+        const r = this._reserveMemberWindow;
+        const row = Math.floor(this.index() / this.maxCols());
+        const col = this.index() % this.maxCols();
+        const rowMax = Math.floor(this.itemsCount() / this.maxCols());
+
+        // いちばん下の行を選択中の場合は控えメンバーウィンドウに移る
+        if (row === rowMax) {
+            const destIndex = col > r.itemsCount() ? r.itemsCount() - 1 : col;
+            this.deselect();
+            this.deactivate();
+            r.activate();
+            r.forceSelect(destIndex);
+        }
+    };
+
+    Window_PartyChangeMember.prototype.cursorUp = function () {
+        // TODO
+    };
+
     //-----------------------------------------------------------------------------
     // Window_ReserveChangeMember
     //
@@ -866,6 +883,14 @@
     };
 
     /**
+     * パーティーメンバーウィンドウの参照を持たせる
+     * @param {Window_PartyChangeMember} partyMemberWindow 
+     */
+    Window_ReserveChangeMember.prototype.setPartyMemberWindow = function (partyMemberWindow) {
+        this._partyMemberWindow = partyMemberWindow;
+    };
+
+    /**
      * 最大行数を返す
      * @returns number
      */
@@ -880,9 +905,25 @@
      * @returns number
      */
     Window_ReserveChangeMember.prototype.maxItems = function () {
-        const a = $dataActors.length;
+        const a = this.possibleReservesCount();
         const b = ACTORS_MAX_LENGTH;
         return Math.min(a, b);
+    };
+
+    /**
+     * 控えメンバーとしてありうる人数を返す
+     * ※DNMC_randomActors.js対策
+     * @returns number
+     */
+    Window_ReserveChangeMember.prototype.possibleReservesCount = function () {
+        let result = 0;
+        if (typeof DataActor !== "object") {
+            result = $dataActors.length;
+        } else {
+            result = $v.get(param.actorListVarId).toString().split(",").length;
+        }
+
+        return result - $gameParty.members().length;
     };
 
     /**
@@ -897,6 +938,31 @@
             this._list.push(new Game_Actor(r));
         }
         this._list.push(null);
+    };
+
+    Window_ReserveChangeMember.prototype.cursorDown = function () {
+        // TODO
+    };
+
+    /**
+     * 控えメンバーウィンドウが有効な間に上を押したときの処理
+     */
+    Window_ReserveChangeMember.prototype.cursorUp = function () {
+        const p = this._partyMemberWindow;
+        const row = Math.floor(this.index() / this.maxCols());
+        const col = this.index() % this.maxCols();
+
+        // いちばん上の行を選択中の場合はパーティーメンバーウィンドウに移る
+        if (row === 0) {
+            const destLine = Math.floor(p.maxItems() / p.maxCols()) + 1;
+            const itemsCountOnLastLine = p.itemsCount() % p.maxCols();
+            const destCol = col > itemsCountOnLastLine - 1 ? itemsCountOnLastLine - 1 : col;
+            const destIndex = destLine * (p.maxCols() - 1) + destCol;
+            this.deselect();
+            this.deactivate();
+            p.activate();
+            p.forceSelect(destIndex);
+        }
     };
 
     //-----------------------------------------------------------------------------
