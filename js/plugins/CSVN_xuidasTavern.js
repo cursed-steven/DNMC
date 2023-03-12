@@ -325,15 +325,12 @@
     Scene_PartyChange.prototype.onPartyOk = function () {
         const p = this._partyMemberWindow;
         const r = this._reserveMemberWindow;
-        console.log("a OK!!");
         if (p.isMarked()) {
             // パーティーメンバー側でだれかすでにマークされている
             if (p.index() === p.marked()) {
                 // マークされているメンバーの上でさらに選択→マーク解除
-                console.log("b OK!!");
             } else {
                 // 別のパーティーメンバーを選択→順番入替
-                console.log("c OK!!");
                 const a = p.marked();
                 const b = p.index();
                 $gameParty.swapOrder(a, b);
@@ -341,25 +338,21 @@
             p.unmark();
         } else {
             if (r.isMarked()) {
-                console.log("d");
                 // 控えメンバーを既に誰かマークしている
                 const p2r = p.item();
                 const r2p = r.markedItem();
                 if (r2p) {
                     // 控えメンバーで先に誰か選んでいる
                     if (p2r) {
-                        console.log("d1 NG");
                         // パーティーメンバーからも誰か選んだ(=入替)
                         this.partyReserveExchange(p2r.actorId(), r2p.actorId());
                     } else {
                         // パーティーメンバーからは空欄を選んだ(控えからの単純加入)
                         // 人数超過がないか確認
                         if ($gameParty.members().length + 1 > PARTY_MAX_LENGTH) {
-                            console.log("d2");
                             SoundManager.playBuzzer();
                         } else {
                             // パーティーに移動
-                            console.log("d3 OK!!");
                             this.moveToParty(r2p.actorId());
                         }
                     }
@@ -368,15 +361,12 @@
                     if (p2r) {
                         // パーティー側では誰か選んだ(=パーティーからの単純追い出し)
                         if ($gameParty.members().length === 1) {
-                            console.log("d41 OK!!");
                             // パーティーから誰もいなくなるのはNG
                             SoundManager.playBuzzer();
                         } else {
-                            console.log("d42 OK!!");
                             this.moveToReserve(p2r.actorId());
                         }
                     } else {
-                        console.log("d5 OK!!");
                         // どちらも空欄を選んだ(=buzz)
                         SoundManager.playBuzzer();
                     }
@@ -386,7 +376,6 @@
                 p.refresh();
                 r.refresh();
             } else {
-                console.log("e OK!!");
                 // 誰もマークしていない→カーソルのあるパーティーメンバーをマーク
                 p.mark();
             }
@@ -492,15 +481,13 @@
     Scene_PartyChange.prototype.onReserveOk = function () {
         const p = this._partyMemberWindow;
         const r = this._reserveMemberWindow;
-        console.log("f OK!!");
         if (r.isMarked()) {
             // 控えメンバー側でだれかすでにマークされている
             if (r.index() === r.marked()) {
-                console.log("g");
                 // マークされているメンバーの上でさらに選択→マーク解除
             } else {
-                console.log("h");
                 // 別のパーティーメンバーを選択→ソートキーを任意に変更して順番入替
+                // TODO 未テスト
                 const a = r.marked();
                 const b = r.index();
                 console.table(this._list);
@@ -511,42 +498,35 @@
             r.unmark();
         } else {
             if (p.isMarked()) {
-                console.log("i");
                 // パーティーメンバーを既に誰かマークしている
                 const p2r = p.markedItem();
                 const r2p = r.item();
                 if (p2r) {
                     // パーティー側で先に誰か選んでいる
                     if (r2p) {
-                        console.log("i1 NG");
                         // 控側でも誰か選んだ(=入替)
                         this.partyReserveExchange(p2r.actorId(), r2p.actorId());
                     } else {
                         // 控側では空欄を選んだ(=パーティからの単純追い出し)
                         if ($gameParty.members().length === 1) {
-                            console.log("i21 OK!!");
                             // パーティーに誰もいなくなるのはNG
                             SoundManager.playBuzzer();
                         } else {
-                            console.log("i22 OK!!");
                             this.moveToReserve(p2r.actorId());
                         }
                     }
                 } else {
                     // パーティー側で空欄を選んでいる
                     if (r2p) {
-                        console.log("i3");
                         // 控側では誰か選んだ(=控えからの単純加入)
                         // 人数超過がないか確認
                         if ($gameParty.members().length + 1 > PARTY_MAX_LENGTH) {
                             SoundManager.playBuzzer();
                         } else {
-                            console.log("i4 OK!!");
                             // パーティーに移動
                             this.moveToParty(r2p.actorId());
                         }
                     } else {
-                        console.log("i5 OK!!");
                         // どちらも空欄を選んだ(=buzz)
                         SoundManager.playBuzzer();
                     }
@@ -556,7 +536,6 @@
                 p.refresh();
                 r.refresh();
             } else {
-                console.log("j OK!!");
                 // 誰もマークしていない→カーソルのある控えメンバーをマーク
                 r.mark();
             }
@@ -586,8 +565,8 @@
      * @param {number} r2p 
      */
     Scene_PartyChange.prototype.partyReserveExchange = function (p2r, r2p) {
-        this.moveToReserve(p2r);
         this.moveToParty(r2p);
+        this.moveToReserve(p2r);
     };
 
     /**
