@@ -325,15 +325,15 @@
     Scene_PartyChange.prototype.onPartyOk = function () {
         const p = this._partyMemberWindow;
         const r = this._reserveMemberWindow;
-        console.log("a");
+        console.log("a OK!!");
         if (p.isMarked()) {
             // パーティーメンバー側でだれかすでにマークされている
             if (p.index() === p.marked()) {
                 // マークされているメンバーの上でさらに選択→マーク解除
-                console.log("b");
+                console.log("b OK!!");
             } else {
                 // 別のパーティーメンバーを選択→順番入替
-                console.log("c");
+                console.log("c OK!!");
                 const a = p.marked();
                 const b = p.index();
                 $gameParty.swapOrder(a, b);
@@ -348,16 +348,37 @@
                 if (r2p) {
                     // 控えメンバーで先に誰か選んでいる
                     if (p2r) {
+                        console.log("d1 NG");
                         // パーティーメンバーからも誰か選んだ(=入替)
+                        this.partyReserveExchange(p2r.actorId(), r2p.actorId());
                     } else {
                         // パーティーメンバーからは空欄を選んだ(控えからの単純加入)
+                        // 人数超過がないか確認
+                        if ($gameParty.members().length + 1 > PARTY_MAX_LENGTH) {
+                            console.log("d2");
+                            SoundManager.playBuzzer();
+                        } else {
+                            // パーティーに移動
+                            console.log("d3 OK!!");
+                            this.moveToParty(r2p.actorId());
+                        }
                     }
                 } else {
                     // 控え側では空欄を選んでいる
                     if (p2r) {
                         // パーティー側では誰か選んだ(=パーティーからの単純追い出し)
+                        if ($gameParty.members().length === 1) {
+                            console.log("d41 OK!!");
+                            // パーティーから誰もいなくなるのはNG
+                            SoundManager.playBuzzer();
+                        } else {
+                            console.log("d42 OK!!");
+                            this.moveToReserve(p2r.actorId());
+                        }
                     } else {
+                        console.log("d5 OK!!");
                         // どちらも空欄を選んだ(=buzz)
+                        SoundManager.playBuzzer();
                     }
                 }
                 p.unmark();
@@ -365,7 +386,7 @@
                 p.refresh();
                 r.refresh();
             } else {
-                console.log("e");
+                console.log("e OK!!");
                 // 誰もマークしていない→カーソルのあるパーティーメンバーをマーク
                 p.mark();
             }
@@ -471,7 +492,7 @@
     Scene_PartyChange.prototype.onReserveOk = function () {
         const p = this._partyMemberWindow;
         const r = this._reserveMemberWindow;
-        console.log("f");
+        console.log("f OK!!");
         if (r.isMarked()) {
             // 控えメンバー側でだれかすでにマークされている
             if (r.index() === r.marked()) {
@@ -497,16 +518,37 @@
                 if (p2r) {
                     // パーティー側で先に誰か選んでいる
                     if (r2p) {
-                        // 控側でも誰か選んだ(=入替)                        
+                        console.log("i1 NG");
+                        // 控側でも誰か選んだ(=入替)
+                        this.partyReserveExchange(p2r.actorId(), r2p.actorId());
                     } else {
                         // 控側では空欄を選んだ(=パーティからの単純追い出し)
+                        if ($gameParty.members().length === 1) {
+                            console.log("i21 OK!!");
+                            // パーティーに誰もいなくなるのはNG
+                            SoundManager.playBuzzer();
+                        } else {
+                            console.log("i22 OK!!");
+                            this.moveToReserve(p2r.actorId());
+                        }
                     }
                 } else {
                     // パーティー側で空欄を選んでいる
                     if (r2p) {
+                        console.log("i3");
                         // 控側では誰か選んだ(=控えからの単純加入)
+                        // 人数超過がないか確認
+                        if ($gameParty.members().length + 1 > PARTY_MAX_LENGTH) {
+                            SoundManager.playBuzzer();
+                        } else {
+                            console.log("i4 OK!!");
+                            // パーティーに移動
+                            this.moveToParty(r2p.actorId());
+                        }
                     } else {
+                        console.log("i5 OK!!");
                         // どちらも空欄を選んだ(=buzz)
+                        SoundManager.playBuzzer();
                     }
                 }
                 p.unmark();
@@ -514,7 +556,7 @@
                 p.refresh();
                 r.refresh();
             } else {
-                console.log("j");
+                console.log("j OK!!");
                 // 誰もマークしていない→カーソルのある控えメンバーをマーク
                 r.mark();
             }
@@ -536,6 +578,34 @@
             // シーン終了
             this.popScene();
         }
+    };
+
+    /**
+     * パーティーにいるp2rと控えにいるr2pを入替
+     * @param {number} p2r 
+     * @param {number} r2p 
+     */
+    Scene_PartyChange.prototype.partyReserveExchange = function (p2r, r2p) {
+        this.moveToReserve(p2r);
+        this.moveToParty(r2p);
+    };
+
+    /**
+     * パーティーから控えに指定アクターを移動
+     * @param {number} actorId 
+     */
+    Scene_PartyChange.prototype.moveToReserve = function (actorId) {
+        this.addToReserve(actorId);
+        $gameParty.removeActor(parseInt(actorId));
+    };
+
+    /**
+     * 控えからパーティーに指定アクターを移動
+     * @param {number} actorId 
+     */
+    Scene_PartyChange.prototype.moveToParty = function (actorId) {
+        this.removeFromReserve(actorId);
+        $gameParty.addActor(parseInt(actorId));
     };
 
     /**
@@ -901,8 +971,8 @@
         this._marked = this.index();
         if (this.markedItem()) {
             this.drawItem(this.index(), true);
+            this.refresh()
         }
-        this.refresh()
     };
 
     /**
@@ -928,6 +998,15 @@
      */
     Window_PartyChangeBase.prototype.isMarked = function () {
         return this._marked >= 0;
+    };
+
+    /**
+     * 継承元の余計な処理を省略
+     */
+    Window_PartyChangeBase.prototype.processOk = function () {
+        Window_StatusBase.prototype.processOk.call(this);
+        // const actor = this.actor(this.index());
+        // $gameParty.setMenuActor(actor);
     };
 
     //-----------------------------------------------------------------------------
@@ -988,17 +1067,6 @@
     };
 
     /**
-     * パーティー側が残りひとりでかつその一人を指している場合何もさせない
-     */
-    Window_PartyChangeMember.prototype.mark = function () {
-        if ($gameParty.members().length === 1 && this.index() === 0) {
-            SoundManager.playBuzzer();
-        } else {
-            Window_PartyChangeBase.prototype.mark.call(this);
-        }
-    };
-
-    /**
      * パーティーメンバーウィンドウが有効な間に下を押したときの処理
      */
     Window_PartyChangeMember.prototype.cursorDown = function () {
@@ -1010,7 +1078,8 @@
 
         // いちばん下の行を選択中の場合は控えメンバーウィンドウに移る
         if (row === rowMax) {
-            const destIndex = col >= r.itemsCount() + 1 ? r.itemsCount() : col;
+            let destIndex = col >= r.itemsCount() + 1 ? r.itemsCount() : col;
+            if (!r.itemAt(0) && destIndex > 0) destIndex--;  // workaround
             this.deselect();
             this.deactivate();
             r.activate();
@@ -1091,7 +1160,11 @@
             result = $dataActors.length;
             // CSVN_base.log(`$dataActors.length = ${result}`);
         } else {
-            result = $v.get(param.actorListVarId).toString().split(",").length + 1;
+            if (!this.itemAt(0)) {
+                result = 1;
+            } else {
+                result = $v.get(param.actorListVarId).toString().split(",").length + 1;
+            }
             // CSVN_base.log(`actorList.length: ${result}`);
         }
 
