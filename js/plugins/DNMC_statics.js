@@ -2038,7 +2038,7 @@ const SHIELD_MATERIALS = [
                     [5, -5, -2],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [40, 25, 45],
                     [40, 25, 45],
@@ -4667,7 +4667,7 @@ const HEAD_BODY_MATERIALS = [
                     [5, -10, -5],
                     // additional
                     [5],
-                    [5],
+                    [0],
                     // slash/pen/bash
                     [20, 15, 30],
                     [20, 15, 30],
@@ -10630,8 +10630,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor1_1",
         characterIndex: 0,
         characterName: "preset/Actor1",
-        miniCharIndex: 0,
-        miniCharName: "tf/minis_char1_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10639,8 +10637,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor1_2",
         characterIndex: 1,
         characterName: "preset/Actor1",
-        miniCharIndex: 0,
-        miniCharName: "tf/minis_char1_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10648,8 +10644,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor1_3",
         characterIndex: 2,
         characterName: "preset/Actor1",
-        miniCharIndex: 2,
-        miniCharName: "tf/minis_char6_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10657,8 +10651,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor1_4",
         characterIndex: 3,
         characterName: "preset/Actor1",
-        miniCharIndex: 2,
-        miniCharName: "tf/minis_char6_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10666,8 +10658,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor2_7",
         characterIndex: 6,
         characterName: "preset/Actor2",
-        miniCharIndex: 4,
-        miniCharName: "tf/minis_char7_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10675,8 +10665,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor2_8",
         characterIndex: 7,
         characterName: "preset/Actor2",
-        miniCharIndex: 4,
-        miniCharName: "tf/minis_char7_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10684,8 +10672,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor3_5",
         characterIndex: 4,
         characterName: "preset/Actor3",
-        miniCharIndex: 2,
-        miniCharName: "tf/minis_char2_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10693,8 +10679,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor3_6",
         characterIndex: 5,
         characterName: "preset/Actor3",
-        miniCharIndex: 5,
-        miniCharName: "tf/minis_char3_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10702,8 +10686,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor2_5",
         characterIndex: 4,
         characterName: "preset/Actor2",
-        miniCharIndex: 0,
-        miniCharName: "tf/minis_char6_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10711,8 +10693,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor2_6",
         characterIndex: 5,
         characterName: "preset/Actor2",
-        miniCharIndex: 1,
-        miniCharName: "tf/minis_char6_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10720,8 +10700,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor1_5",
         characterIndex: 4,
         characterName: "preset/Actor1",
-        miniCharIndex: 2,
-        miniCharName: "tf/minis_char4_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10729,8 +10707,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor1_6",
         characterIndex: 5,
         characterName: "preset/Actor1",
-        miniCharIndex: 5,
-        miniCharName: "tf/minis_char1_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10738,8 +10714,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor1_7",
         characterIndex: 6,
         characterName: "preset/Actor1",
-        miniCharIndex: 6,
-        miniCharName: "tf/minis_char1_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10747,8 +10721,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor1_8",
         characterIndex: 7,
         characterName: "preset/Actor1",
-        miniCharIndex: 7,
-        miniCharName: "tf/minis_char1_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10756,8 +10728,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor2_3",
         characterIndex: 2,
         characterName: "preset/Actor2",
-        miniCharIndex: 1,
-        miniCharName: "tf/minis_soldiers1_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10765,8 +10735,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor2_4",
         characterIndex: 3,
         characterName: "preset/Actor2",
-        miniCharIndex: 4,
-        miniCharName: "tf/minis_char5_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10774,8 +10742,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor3_8",
         characterIndex: 7,
         characterName: "preset/Actor3",
-        miniCharIndex: 5,
-        miniCharName: "tf/minis_char8_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10783,8 +10749,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor3_8",
         characterIndex: 7,
         characterName: "preset/Actor3",
-        miniCharIndex: 5,
-        miniCharName: "tf/minis_char8_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10792,8 +10756,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor2_1",
         characterIndex: 0,
         characterName: "preset/Actor2",
-        miniCharIndex: 1,
-        miniCharName: "tf/minis_soldiers1_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10801,8 +10763,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor2_2",
         characterIndex: 1,
         characterName: "preset/Actor2",
-        miniCharIndex: 6,
-        miniCharName: "tf/minis_soldiers1_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10810,8 +10770,6 @@ const ACTOR_BCF = {
         battlerName: "cover/Package1_3",
         characterIndex: 2,
         characterName: "cover/Package1",
-        miniCharIndex: 6,
-        miniCharName: "tf/minis_char5_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10819,8 +10777,6 @@ const ACTOR_BCF = {
         battlerName: "cover/Package1_3",
         characterIndex: 2,
         characterName: "cover/Package1",
-        miniCharIndex: 6,
-        miniCharName: "tf/minis_char5_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10828,8 +10784,6 @@ const ACTOR_BCF = {
         battlerName: "cover/Package1_5",
         characterIndex: 4,
         characterName: "cover/Package1",
-        miniCharIndex: 5,
-        miniCharName: "tf/minis_char5_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10837,8 +10791,6 @@ const ACTOR_BCF = {
         battlerName: "cover/Package1_6",
         characterIndex: 5,
         characterName: "cover/Package1",
-        miniCharIndex: 2,
-        miniCharName: "tf/minis_char5_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10846,8 +10798,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor3_3",
         characterIndex: 2,
         characterName: "preset/Actor3",
-        miniCharIndex: 1,
-        miniCharName: "tf/minis_char3_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10855,8 +10805,6 @@ const ACTOR_BCF = {
         battlerName: "preset/Actor3_4",
         characterIndex: 3,
         characterName: "preset/Actor3",
-        miniCharIndex: 5,
-        miniCharName: "tf/minis_char1_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10864,8 +10812,6 @@ const ACTOR_BCF = {
         battlerName: "cover/Package2_3",
         characterIndex: 2,
         characterName: "cover/Package2",
-        miniCharIndex: 7,
-        miniCharName: "tf/minis_char7_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10873,8 +10819,6 @@ const ACTOR_BCF = {
         battlerName: "cover/Package2_4",
         characterIndex: 3,
         characterName: "cover/Package2",
-        miniCharIndex: 5,
-        miniCharName: "tf/minis_char8_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10882,8 +10826,6 @@ const ACTOR_BCF = {
         battlerName: "cover/Package2_1",
         characterIndex: 0,
         characterName: "cover/Package2",
-        miniCharIndex: 3,
-        miniCharName: "tf/minis_char4_3",
         faceIndex: 0,
         faceName: ""
     },
@@ -10891,8 +10833,6 @@ const ACTOR_BCF = {
         battlerName: "cover/Package2_2",
         characterIndex: 1,
         characterName: "cover/Package2",
-        miniCharIndex: 5,
-        miniCharName: "tf/minis_char4_3",
         faceIndex: 0,
         faceName: ""
     }

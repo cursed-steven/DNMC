@@ -119,20 +119,6 @@ class Trait_Effect {
     //-----------------------------------------------------------------------------
     // DataManager
 
-    const _DataManager_setupNewGame = DataManager.setupNewGame;
-    /**
-     * ゲーム開始
-     */
-    DataManager.setupNewGame = function () {
-        _DataManager_setupNewGame.call(this);
-
-        // キャラクター画像・ミニキャラ画像を先行してロード
-        Object.keys(ACTOR_BCF).map(a => {
-            ImageManager.loadCharacter(ACTOR_BCF[a].characterName);
-            ImageManager.loadCharacter(ACTOR_BCF[a].miniCharName);
-        });
-    };
-
     /**
      * $data* を上書きする
      * @param {string} path 
