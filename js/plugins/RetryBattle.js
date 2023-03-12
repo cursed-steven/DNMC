@@ -484,7 +484,7 @@
         const padding = this._messageWindow.padding;
         const width = this._messageWindow.drawTextEx(param.Message, 0, 0) + padding * 2;
         const height = param.FontSize + 8 + padding * 2;
-        const x = Graphics.boxWidth / 2 - width / 2 + 200;
+        const x = Graphics.boxWidth / 2 - width / 2 + 300;
         this._messageWindow.move(x, param.MessageY, width, height);
         this._messageWindow.createContents();
         if (param.CostItemVariable > 0 && param.RetryCostItem > 0) {
