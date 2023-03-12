@@ -131,26 +131,6 @@
     }
 
     //-----------------------------------------------------------------------------
-    // Scene_Map
-
-    const _Scene_Map_create = Scene_Map.prototype.create;
-    Scene_Map.prototype.create = function () {
-        _Scene_Map_create.call(this);
-        ImageManager.preloadEnemyImages();
-    };
-
-    //-----------------------------------------------------------------------------
-    // ImageManager
-
-    ImageManager.preloadEnemyImages = function () {
-        for (const de of $dataEnemies) {
-            if (de && de.battlerName) {
-                this.loadEnemy(de.battlerName);
-            }
-        }
-    };
-
-    //-----------------------------------------------------------------------------
     // DataManager
 
     /**

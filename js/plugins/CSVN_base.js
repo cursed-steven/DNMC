@@ -234,6 +234,30 @@
     };
 
     //-----------------------------------------------------------------------------
+    // ImageManager
+
+    ImageManager.preloadAllFacesAndChars = function () {
+        for (const da of $dataActors) {
+            if (da) {
+                if (da.faceName) {
+                    this.loadFace(da.faceName);
+                }
+                if (da.characterName) {
+                    this.loadCharacter(da.characterName);
+                }
+            }
+        };
+    }
+
+    ImageManager.preloadEnemyImages = function () {
+        for (const de of $dataEnemies) {
+            if (de && de.battlerName) {
+                this.loadEnemy(de.battlerName);
+            }
+        }
+    };
+
+    //-----------------------------------------------------------------------------
     // TextManager
 
     /**
@@ -370,6 +394,13 @@
 
     //-------------------------------------------------------------------------
     // Scene_Map
+
+    const _Scene_Map_create = Scene_Map.prototype.create;
+    Scene_Map.prototype.create = function () {
+        _Scene_Map_create.call(this);
+        ImageManager.preloadEnemyImages();
+        ImageManager.preloadAllFacesAndChars();
+    };
 
     const _Scene_Map_start = Scene_Map.prototype.start;
     /**
