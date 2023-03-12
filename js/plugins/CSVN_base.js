@@ -53,6 +53,9 @@
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
 
+    //-----------------------------------------------------------------------------
+    // $gameSwitches と $gameVariables のショートハンド定義の準備
+
     let swList;
     window['$s'] = {};
     swList = window['$s'];
@@ -60,6 +63,25 @@
     let varList;
     window['$v'] = {};
     varList = window['$v'];
+
+    //-----------------------------------------------------------------------------
+    // Array
+
+    /**
+     * 配列のXばんめとYばんめを入れ替えたものを返す
+     * @param {number} x 
+     * @param {number} y  
+     * @returns Array
+     */
+    Array.prototype.swap = function (x, y) {
+        this[x] = [this[y], this[y] = this[x]][0];
+
+        return this;
+    }
+
+    Object.defineProperty(Array.prototype, "swap", {
+        enumerable: false
+    });
 
     //-----------------------------------------------------------------------------
     // Math

@@ -188,7 +188,8 @@
         TextManager.luk,
         "ID",
         param.labelForClass,
-        param.labelForLevel
+        param.labelForLevel,
+        "任意"
     ];
     let membersCantChange = [];
     let membersCantEliminate = [];
@@ -322,7 +323,41 @@
      * パーティーメンバーウィンドウでOK押下時の処理
      */
     Scene_PartyChange.prototype.onPartyOk = function () {
-        // TODO
+        const p = this._partyMemberWindow;
+        const r = this._reserveMemberWindow;
+        console.log("a");
+        if (p.isMarked()) {
+            // パーティーメンバー側でだれかすでにマークされている
+            if (p.index() === p.marked()) {
+                // マークされているメンバーの上でさらに選択→マーク解除
+                console.log("b");
+                p.unmark();
+            } else {
+                // 別のパーティーメンバーを選択→順番入替
+                console.log("c");
+                const a = p.marked();
+                const b = p.index();
+                $gameParty.swapOrder(a, b);
+                p.unmark();
+            }
+        } else {
+            if (r.isMarked()) {
+                console.log("d");
+                // 控えメンバーを既に誰かマークしている→入替
+                const p2r = this.item();
+                const r2p = r.markedItem();
+                this.addToReserve(p2r.actorId());
+                this.removeFromReserve(r2p.actorId());
+                $gameParty.addActor(r2p.actorId());
+                r.refresh();
+            } else {
+                console.log("e");
+                // 誰もマークしていない→カーソルのあるパーティーメンバーをマーク
+                p.mark();
+            }
+        }
+        p.activate();
+        p.refresh();
     };
 
     /**
@@ -405,7 +440,43 @@
      * ※控えメンバー側にはパーティーメンバーをマークしたあときている前提
      */
     Scene_PartyChange.prototype.onReserveOk = function () {
-        // TODO
+        const p = this._partyMemberWindow;
+        const r = this._reserveMemberWindow;
+        console.log("f");
+        if (r.isMarked()) {
+            // 控えメンバー側でだれかすでにマークされている
+            if (r.index() === r.marked()) {
+                console.log("g");
+                // マークされているメンバーの上でさらに選択→マーク解除
+                r.unmark();
+            } else {
+                console.log("h");
+                // 別のパーティーメンバーを選択→ソートキーを任意に変更して順番入替
+                const a = r.marked();
+                const b = r.index();
+                console.table(this._list);
+                this._list = this._list.swap(a, b);
+                console.table(this._list);
+                r.refresh();
+            }
+        } else {
+            if (p.isMarked()) {
+                console.log("i");
+                // パーティーメンバーを既に誰かマークしている→入替
+                const p2r = p.markedItem();
+                const r2p = this.item();
+                this.addToReserve(p2r.actorId());
+                this.removeFromReserve(r2p.actorId());
+                $gameParty.addActor(r2p.actorId());
+                p.refresh();
+                r.refresh();
+            } else {
+                console.log("j");
+                // 誰もマークしていない→カーソルのある控えメンバーをマーク
+                r.mark();
+            }
+        }
+        r.activate();
     };
 
     /**
@@ -703,10 +774,15 @@
     /**
      * 1項目分の描画
      * @param {number} index 
+     * @param {boolean} opacity 
      */
-    Window_PartyChangeBase.prototype.drawItem = function (index) {
+    Window_PartyChangeBase.prototype.drawItem = function (index, opacity) {
+        if (!opacity) opacity = false;
+        console.log(`opacity: ${opacity}`);
+        this.changePaintOpacity(opacity);
         this.drawActorCharacter(index);
         this.drawActorName(index);
+        this.changePaintOpacity(true);
     };
 
     /**
@@ -754,10 +830,12 @@
     Window_PartyChangeBase.prototype.refresh = function () {
         this.contents.clear();
         this.makeItemList();
-        for (let i = 0; i < this._list, i++;) {
-            this.drawItem(i);
+        for (let i = 0; i < this._list.length; i++) {
+            console.log(`i: ${i} / marked: ${this._marked}`);
+            i === this._marked
+                ? this.drawItem(i, true)
+                : this.drawItem(i, false);
         }
-        Window_Selectable.prototype.refresh.call(this);
     };
 
     /**
@@ -765,6 +843,8 @@
      */
     Window_PartyChangeBase.prototype.mark = function () {
         this._marked = this.index();
+        this.drawItem(this.index(), true);
+        this.refresh()
     };
 
     /**
@@ -772,6 +852,8 @@
      */
     Window_PartyChangeBase.prototype.unmark = function () {
         this._marked = -1;
+        this.drawItem(this.index(), false);
+        this.refresh()
     };
 
     /**
@@ -841,8 +923,7 @@
      * 項目リスト作成
      */
     Window_PartyChangeMember.prototype.makeItemList = function () {
-        const tmp = $gameParty.members();
-        this._list = tmp.filter(a => {
+        this._list = $gameParty.members().filter(a => {
             return !EXCLUDED_ACTORS.includes(a.actorId());
         });
         this._list.push(null);
@@ -869,10 +950,6 @@
         }
     };
 
-    Window_PartyChangeMember.prototype.cursorUp = function () {
-        // TODO
-    };
-
     //-----------------------------------------------------------------------------
     // Window_ReserveChangeMember
     //
@@ -895,7 +972,7 @@
         this._dnmcActive = false;
         try {
             const test = new DataActor();
-            console.log(`DataActor?: ${typeof test}`);
+            // console.log(`DataActor?: ${typeof test}`);
             if (typeof test === "object") {
                 this._dnmcActive = true;
             }
@@ -967,10 +1044,6 @@
             this._list.push(new Game_Actor(r));
         }
         this._list.push(null);
-    };
-
-    Window_ReserveChangeMember.prototype.cursorDown = function () {
-        // TODO
     };
 
     /**
