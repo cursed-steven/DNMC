@@ -63,11 +63,6 @@
         }
 
         _Window_Base_drawText.call(this, text, x, y, maxWidth, align);
-
-        // 描画後にフォント設定を戻す
-        if (regex.test(text)) {
-            this.contents.fontFace = $gameSystem.mainFontFace();
-        }
     };
 
     Window_Base.prototype.drawTextEx = function (text, x, y, width) {
