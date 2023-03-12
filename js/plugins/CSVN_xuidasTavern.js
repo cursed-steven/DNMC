@@ -297,7 +297,7 @@
         const rect = this.partyMemberWindowRect();
         this._partyMemberWindow = new Window_PartyChangeMember(rect);
         this._partyMemberWindow.setHandler("ok", this.onPartyOk.bind(this));
-        this._partyMemberWindow.setHandler("cancel", this.popScene.bind(this));
+        this._partyMemberWindow.setHandler("cancel", this.onPartyCancel.bind(this));
         this._partyMemberWindow.setHandler("pageup", this.toggleStatus.bind(this));
         this._partyMemberWindow.setHandler("pagedown", this.toggleStatus.bind(this));
         this._partyMemberWindow.setHandler("menu", this.moveSortKeyForward.bind(this));
@@ -331,24 +331,38 @@
             if (p.index() === p.marked()) {
                 // マークされているメンバーの上でさらに選択→マーク解除
                 console.log("b");
-                p.unmark();
             } else {
                 // 別のパーティーメンバーを選択→順番入替
                 console.log("c");
                 const a = p.marked();
                 const b = p.index();
                 $gameParty.swapOrder(a, b);
-                p.unmark();
             }
+            p.unmark();
         } else {
             if (r.isMarked()) {
                 console.log("d");
-                // 控えメンバーを既に誰かマークしている→入替
-                const p2r = this.item();
+                // 控えメンバーを既に誰かマークしている
+                const p2r = p.item();
                 const r2p = r.markedItem();
-                this.addToReserve(p2r.actorId());
-                this.removeFromReserve(r2p.actorId());
-                $gameParty.addActor(r2p.actorId());
+                if (r2p) {
+                    // 控えメンバーで先に誰か選んでいる
+                    if (p2r) {
+                        // パーティーメンバーからも誰か選んだ(=入替)
+                    } else {
+                        // パーティーメンバーからは空欄を選んだ(控えからの単純加入)
+                    }
+                } else {
+                    // 控え側では空欄を選んでいる
+                    if (p2r) {
+                        // パーティー側では誰か選んだ(=パーティーからの単純追い出し)
+                    } else {
+                        // どちらも空欄を選んだ(=buzz)
+                    }
+                }
+                p.unmark();
+                r.unmark();
+                p.refresh();
                 r.refresh();
             } else {
                 console.log("e");
@@ -358,6 +372,21 @@
         }
         p.activate();
         p.refresh();
+    };
+
+    /**
+     * パーティーメンバーウィンドウでキャンセル押下時の処理
+     */
+    Scene_PartyChange.prototype.onPartyCancel = function () {
+        if (this._partyMemberWindow.isMarked()) {
+            // パーティーメンバー側で誰かマークしている場合
+            this._partyMemberWindow.unmark();
+            this._partyMemberWindow.refresh();
+            this._partyMemberWindow.activate();
+        } else {
+            // シーン終了
+            this.popScene();
+        }
     };
 
     /**
@@ -448,7 +477,6 @@
             if (r.index() === r.marked()) {
                 console.log("g");
                 // マークされているメンバーの上でさらに選択→マーク解除
-                r.unmark();
             } else {
                 console.log("h");
                 // 別のパーティーメンバーを選択→ソートキーを任意に変更して順番入替
@@ -459,15 +487,30 @@
                 console.table(this._list);
                 r.refresh();
             }
+            r.unmark();
         } else {
             if (p.isMarked()) {
                 console.log("i");
-                // パーティーメンバーを既に誰かマークしている→入替
+                // パーティーメンバーを既に誰かマークしている
                 const p2r = p.markedItem();
-                const r2p = this.item();
-                this.addToReserve(p2r.actorId());
-                this.removeFromReserve(r2p.actorId());
-                $gameParty.addActor(r2p.actorId());
+                const r2p = r.item();
+                if (p2r) {
+                    // パーティー側で先に誰か選んでいる
+                    if (r2p) {
+                        // 控側でも誰か選んだ(=入替)                        
+                    } else {
+                        // 控側では空欄を選んだ(=パーティからの単純追い出し)
+                    }
+                } else {
+                    // パーティー側で空欄を選んでいる
+                    if (r2p) {
+                        // 控側では誰か選んだ(=控えからの単純加入)
+                    } else {
+                        // どちらも空欄を選んだ(=buzz)
+                    }
+                }
+                p.unmark();
+                r.unmark();
                 p.refresh();
                 r.refresh();
             } else {
@@ -477,13 +520,22 @@
             }
         }
         r.activate();
+        r.refresh();
     };
 
     /**
      * 控えメンバーウィンドウでキャンセル押下時の処理
      */
     Scene_PartyChange.prototype.onReserveCancel = function () {
-        // TODO
+        if (this._reserveMemberWindow.isMarked()) {
+            // 控えメンバー側で誰かマークしている場合
+            this._reserveMemberWindow.unmark();
+            this._reserveMemberWindow.refresh();
+            this._reserveMemberWindow.activate();
+        } else {
+            // シーン終了
+            this.popScene();
+        }
     };
 
     /**
@@ -630,6 +682,10 @@
     Scene_PartyChange.prototype.addToReserve = function (actorId) {
         let reserves = $v.get(param.reserveMemberVarId).toString().split(",");
         reserves.push(actorId);
+        // 0は除外しておく
+        reserves = reserves.filter(r => {
+            return parseInt(r) !== 0;
+        });
         $v.set(param.reserveMemberVarId, reserves.join(","));
     };
 
@@ -640,10 +696,10 @@
     Scene_PartyChange.prototype.removeFromReserve = function (actorId) {
         let reserves = $v.get(param.reserveMemberVarId).toString().split(",");
         const removed = reserves.filter(r => {
-            return r.actorId() !== actorId;
+            return parseInt(r) !== 0 && parseInt(r) === actorId;
         });
 
-        $v.set(param.reserveMemberVarId, removed);
+        $v.set(param.reserveMemberVarId, removed.join(","));
     };
 
     /**
@@ -778,7 +834,7 @@
      */
     Window_PartyChangeBase.prototype.drawItem = function (index, opacity) {
         if (!opacity) opacity = false;
-        console.log(`opacity: ${opacity}`);
+        // console.log(`opacity: ${opacity}`);
         this.changePaintOpacity(opacity);
         this.drawActorCharacter(index);
         this.drawActorName(index);
@@ -831,7 +887,7 @@
         this.contents.clear();
         this.makeItemList();
         for (let i = 0; i < this._list.length; i++) {
-            console.log(`i: ${i} / marked: ${this._marked}`);
+            // console.log(`i: ${i} / marked: ${this._marked}`);
             i === this._marked
                 ? this.drawItem(i, true)
                 : this.drawItem(i, false);
@@ -843,7 +899,9 @@
      */
     Window_PartyChangeBase.prototype.mark = function () {
         this._marked = this.index();
-        this.drawItem(this.index(), true);
+        if (this.markedItem()) {
+            this.drawItem(this.index(), true);
+        }
         this.refresh()
     };
 
@@ -930,10 +988,22 @@
     };
 
     /**
+     * パーティー側が残りひとりでかつその一人を指している場合何もさせない
+     */
+    Window_PartyChangeMember.prototype.mark = function () {
+        if ($gameParty.members().length === 1 && this.index() === 0) {
+            SoundManager.playBuzzer();
+        } else {
+            Window_PartyChangeBase.prototype.mark.call(this);
+        }
+    };
+
+    /**
      * パーティーメンバーウィンドウが有効な間に下を押したときの処理
      */
     Window_PartyChangeMember.prototype.cursorDown = function () {
         const r = this._reserveMemberWindow;
+        r.refresh();
         const row = Math.floor(this.index() / this.maxCols());
         const col = this.index() % this.maxCols();
         const rowMax = Math.floor(this.itemsCount() / this.maxCols());
@@ -1021,11 +1091,9 @@
             result = $dataActors.length;
             // CSVN_base.log(`$dataActors.length = ${result}`);
         } else {
-            result = $v.get(param.actorListVarId).toString().split(",").length;
+            result = $v.get(param.actorListVarId).toString().split(",").length + 1;
             // CSVN_base.log(`actorList.length: ${result}`);
         }
-        result -= $gameParty.members().length;
-        if (result <= 0) result = 1;
 
         return result;
     };
@@ -1051,7 +1119,7 @@
      */
     Window_ReserveChangeMember.prototype.cursorUp = function () {
         const p = this._partyMemberWindow;
-        p.refresh();    // これをしないと0件が返る
+        p.refresh();
         const row = Math.floor(this.index() / this.maxCols());
         const col = this.index() % this.maxCols();
 
