@@ -277,8 +277,8 @@ class DataActor {
             battlerName: ACTOR_BCF[bcf].battlerName,
             characterIndex: ACTOR_BCF[bcf].characterIndex,
             characterName: ACTOR_BCF[bcf].characterName,
-            faceIndex: ACTOR_BCF[bcf].faceIndex,
-            faceName: ACTOR_BCF[bcf].faceName
+            faceIndex: ACTOR_BCF[bcf].characterIndex,
+            faceName: ACTOR_BCF[bcf].characterName
         };
     }
 
@@ -331,6 +331,8 @@ class DataActor {
         actor.battlerName = bcf.battlerName;
         actor.characterIndex = bcf.characterIndex;
         actor.characterName = bcf.characterName;
+        actor.faceIndex = bcf.faceIndex;
+        actor.faceName = bcf.faceName;
         actor.classId = bcf.classId;
         actor.initialLevel = initialLevel;
         actor.equips = equips;
