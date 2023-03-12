@@ -601,11 +601,11 @@
      * @returns Rectangle
      */
     Scene_PartyChange.prototype.statusWindowRect = function () {
-        const prect = this.partyMemberWindowRect();
-        const wx = Graphics.boxWidth - prect.width;
-        const wy = 0;
-        const ww = wx - RIGHTSIDE_OFFSET;
-        const wh = Graphics.boxHeight;
+        const mrect = this.modeWindowRect();
+        const wx = mrect.width;
+        const wy = mrect.y;
+        const ww = (Graphics.boxWidth - wx) - RIGHTSIDE_OFFSET;
+        const wh = Graphics.boxHeight - TOPSIDE_OFFSET;
         return new Rectangle(wx, wy, ww, wh);
     };
 
