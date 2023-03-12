@@ -53,7 +53,7 @@
 (() => {
     'use strict';
     //const params = PluginManagerEx.createParameter(document.currentScript);
-    const regex = /\w{1,}|\d?[ :]{1,}\d{1,}|(\\CCS\[\d{1}\]\d{1,}.?)+/g;
+    const regex = /\w{1,}.?|\d?[ :↓←→↑\%]{1,}\d{1,}|(\\CCS\[\d{1}\]\d{1,}.?)+/g;
 
     const _Window_Base_drawText = Window_Base.prototype.drawText;
     Window_Base.prototype.drawText = function (text, x, y, maxWidth, align) {
@@ -66,7 +66,7 @@
 
         // 描画後にフォント設定を戻す
         if (regex.test(text)) {
-            this.resetFontSettings();
+            this.contents.fontFace = $gameSystem.mainFontFace();
         }
     };
 
@@ -77,10 +77,6 @@
         }
         const textState = this.createTextState(text, x, y, width);
         this.processAllText(textState);
-        // 描画後にフォント設定を戻す
-        if (regex.test(text)) {
-            this.resetFontSettings();
-        }
 
         return textState.outputWidth;
     };
