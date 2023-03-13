@@ -248,8 +248,14 @@
         membersCantEliminate = $v.get(param.membersCantEliminateVarId).toString().split(",");
         this._partyMemberWindow.setReserveMemberWindow(this._reserveMemberWindow);
         this._reserveMemberWindow.setPartyMemberWindow(this._partyMemberWindow);
+        this._partyMemberWindow.setStatusWindow(this._statusWindow);
+        this._reserveMemberWindow.setStatusWindow(this._statusWindow);
         this._partyMemberWindow.activate();
         this._reserveMemberWindow.deactivate();
+
+        const actor = this._partyMemberWindow.itemAt(0);
+        this._statusWindow.setActor(actor);
+        this._statusWindow.refresh();
     };
 
     /**
@@ -602,10 +608,11 @@
      */
     Scene_PartyChange.prototype.statusWindowRect = function () {
         const mrect = this.modeWindowRect();
+        const prect = this.partyMemberWindowRect();
         const wx = mrect.width;
         const wy = mrect.y;
         const ww = (Graphics.boxWidth - wx) - RIGHTSIDE_OFFSET;
-        const wh = Graphics.boxHeight - TOPSIDE_OFFSET;
+        const wh = Graphics.boxHeight - prect.y - prect.height - TOPSIDE_OFFSET;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -749,24 +756,6 @@
         });
 
         $v.set(param.reserveMemberVarId, removed.join(","));
-    };
-
-    /**
-     * ソートキーをひとつ前に進める
-     */
-    Scene_PartyChange.prototype.moveSortKeyForward = function () {
-        this._sortKeyWindow.moveSortKeyForward();
-        this._sortKeyWindow.refresh();
-        this._reserveMemberWindow.refresh();
-    };
-
-    /**
-     * ソートキーをひとつ後ろに戻す
-     */
-    Scene_PartyChange.prototype.moveSortKeyBackward = function () {
-        this._sortKeyWindow.moveSortKeyBackward();
-        this._sortKeyWindow.refresh();
-        this._reserveMemberWindow.refresh();
     };
 
     //-----------------------------------------------------------------------------
@@ -923,13 +912,6 @@
     };
 
     /**
-     * ステータスウィンドウの内容を選択に合わせて更新する
-     */
-    Window_PartyChangeBase.prototype.updateStatus = function () {
-        this.setStatusWindowItem(this.item());
-    };
-
-    /**
      * 描画更新
      */
     Window_PartyChangeBase.prototype.refresh = function () {
@@ -941,6 +923,20 @@
                 ? this.drawItem(i, true)
                 : this.drawItem(i, false);
         }
+    };
+
+    const _Window_Selectable_select = Window_Selectable.prototype.select;
+    /**
+     * アクターを選択するたびにステータスウィンドウの描画を更新
+     * @param {number} index 
+     */
+    Window_PartyChangeBase.prototype.select = function (index) {
+        if (this._statusWindow) {
+            this.refresh();
+            this._statusWindow.setActor(this.itemAt(index));
+            this._statusWindow.refresh();
+        }
+        _Window_Selectable_select.call(this, index);
     };
 
     /**
@@ -1043,6 +1039,8 @@
             return !EXCLUDED_ACTORS.includes(a.actorId());
         });
         this._list.push(null);
+        console.log("party list----");
+        console.log(this._list);
     };
 
     /**
@@ -1053,18 +1051,22 @@
         r.refresh();
         const row = Math.floor(this.index() / this.maxCols());
         const col = this.index() % this.maxCols();
-        const rowMax = Math.floor(this.itemsCount() / this.maxCols());
+        const rowMax = Math.floor((this.itemsCount() - 1) / this.maxCols());
 
         // いちばん下の行を選択中の場合は控えメンバーウィンドウに移る
         if (row === rowMax) {
-            let destIndex = col >= r.itemsCount() + 1 ? r.itemsCount() : col;
-            if (!r.itemAt(0) && destIndex > 0) destIndex--;  // workaround
+            let destIndex = 0;
+            if (r.itemsCount() > col) {
+                destIndex = col;
+            } else {
+                destIndex = r.itemsCount() - 1;
+            }
             this.deselect();
             this.deactivate();
             r.activate();
             r.forceSelect(destIndex);
-            // console.log(`col: ${col} count: ${r.itemsCount() + 1}`);
-            // console.log(`destIndex: ${destIndex}`);
+            console.log(`col: ${col} count: ${r.itemsCount()}`);
+            console.log(`destIndex: ${destIndex}`);
         }
     };
 
@@ -1087,6 +1089,7 @@
     Window_ReserveChangeMember.prototype.initialize = function (rect) {
         Window_PartyChangeBase.prototype.initialize.call(this, rect);
 
+        // Donut Machine 用特殊仕様
         this._dnmcActive = false;
         try {
             const test = new DataActor();
@@ -1164,6 +1167,37 @@
             this._list.push(new Game_Actor(r));
         }
         this._list.push(null);
+        console.log("reserve list----");
+        console.log(this._list);
+        console.log("reserve var----");
+        console.log(reserves);
+    };
+
+    /**
+     * 控えメンバーウィンドウのいちばん下の行にいるときはそれ以上下にいかない
+     * @returns void
+     */
+    Window_ReserveChangeMember.prototype.cursorDown = function () {
+        const row = Math.floor(this.index() / this.maxCols());
+        const rowMax = Math.floor((this.itemsCount() - 1) / this.maxCols());
+
+        if (row === rowMax) {
+            // いちばん下の行を選択中は動かない
+            this.smoothSelect(this.index());
+        } else {
+            Window_Selectable.prototype.cursorDown.call(this, false);
+        }
+    };
+
+    /**
+     * 控えメンバーウィンドウ内で右を押した時の処理
+     */
+    Window_ReserveChangeMember.prototype.cursorRight = function () {
+        if (this.itemsCount() - 1 === this.index()) {
+            this.smoothSelect(this.index());
+        } else {
+            Window_Selectable.prototype.cursorRight.call(this, false);
+        }
     };
 
     /**
@@ -1177,15 +1211,19 @@
 
         // いちばん上の行を選択中の場合はパーティーメンバーウィンドウに移る
         if (row === 0) {
-            const destLine = Math.floor(p.maxItems() / p.maxCols());
-            const itemsCountOnLastLine = p.itemsCount() % p.maxCols();
-            const destCol = col > itemsCountOnLastLine - 1 ? itemsCountOnLastLine - 1 : col;
-            const destIndex = destLine * (p.maxCols() - 1) + destCol;
+            let destLine = Math.floor(p.itemsCount() / p.maxCols());
+            if (p.itemsCount() % p.maxCols() === 0) destLine--;
+            let itemsCountOnLastLine = p.itemsCount() % p.maxCols();
+            if (itemsCountOnLastLine === 0) itemsCountOnLastLine += p.maxCols();
+            const destCol = col > itemsCountOnLastLine ? itemsCountOnLastLine - 1 : col;
+            const destIndex = destLine * p.maxCols() + col;
             this.deselect();
             this.deactivate();
             p.activate();
             p.forceSelect(destIndex);
-            // console.log(`destLine: ${destLine}, icoll: ${itemsCountOnLastLine}, destCol: ${destCol}, destIndex: ${destIndex}`);
+            console.log(`destLine: ${destLine}, icoll: ${itemsCountOnLastLine}, destCol: ${destCol}, destIndex: ${destIndex}`);
+        } else {
+            Window_Selectable.prototype.cursorUp.call(this, false);
         }
     };
 
@@ -1233,6 +1271,13 @@
         const keyIndex = $v.get(param.sortKeyVarId);
         const keyName = SORT_KEYS[keyIndex];
         this.drawText(keyName, 0, 0, this.width, "center");
+    };
+
+    /**
+     * 現在のソートキーを描画
+     */
+    Window_ReserveMemberSortKey.prototype.refresh = function () {
+        this.drawSortKey();
     };
 
     //-----------------------------------------------------------------------------
@@ -1301,8 +1346,8 @@
         this.drawText(expTotal, x, y + lh * 0, this.width * 0.4);
         this.drawText(expNext, x, y + lh * 2, this.width * 0.4);
         this.resetTextColor();
-        this.drawText(this.expTotalValue(), x, y + lh * 1, this.width * 0.4, "right");
-        this.drawText(this.expNextValue(), x, y + lh * 3, this.width * 0.4, "right");
+        this.drawText(this.expTotalValue(), x, y + lh * 1, this.width * 0.3, "right");
+        this.drawText(this.expNextValue(), x, y + lh * 3, this.width * 0.3, "right");
     };
 
     //-----------------------------------------------------------------------------
@@ -1351,6 +1396,19 @@
 
     Window_XuidasStatusTraits.prototype.initilize = function () {
         Window_Base.prototype.initialize.call(this);
+    };
+
+    //-----------------------------------------------------------------------------
+    // Game_Actor
+
+    const _Game_Actor_nickname = Game_Actor.prototype.nickname;
+    /**
+     * undefinedなんて出ないようにする
+     * @returns string
+     */
+    Game_Actor.prototype.nickname = function () {
+        const nickname = _Game_Actor_nickname.call(this);
+        return nickname ? nickname : "";
     };
 
 })();
