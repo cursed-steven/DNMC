@@ -496,9 +496,7 @@
                 // TODO 未テスト
                 const a = r.marked();
                 const b = r.index();
-                console.table(this._list);
-                this._list = this._list.swap(a, b);
-                console.table(this._list);
+                this.swapReservers(a, b);
                 r.refresh();
             }
             r.unmark();
@@ -563,6 +561,19 @@
             // シーン終了
             this.popScene();
         }
+    };
+
+    /**
+     * 控えメンバーのa項めとb項めを入れ替える
+     * @param {number} a 
+     * @param {number} b 
+     * @returns void
+     */
+    Scene_PartyChange.prototype.swapReservers = function (a, b) {
+        let org = $v.get(param.reserveMemberVarId).toString().split(",");
+        if (!org[a] || !org[b]) return;
+
+        $v.set(param.reserveMemberVarId, org.swap(a, b).join(","));
     };
 
     /**
@@ -918,7 +929,7 @@
         this.contents.clear();
         this.makeItemList();
         for (let i = 0; i < this._list.length; i++) {
-            // console.log(`i: ${i} / marked: ${this._marked}`);
+            // console.log(`i: ${i} / e: ${this._list[i]} / marked: ${this._marked}`);
             i === this._marked
                 ? this.drawItem(i, true)
                 : this.drawItem(i, false);
