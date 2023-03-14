@@ -329,6 +329,8 @@
      * パーティーメンバーウィンドウでOK押下時の処理
      */
     Scene_PartyChange.prototype.onPartyOk = function () {
+        CSVN_base.logGroup("onPartyOk");
+
         const p = this._partyMemberWindow;
         const r = this._reserveMemberWindow;
         if (p.isMarked()) {
@@ -340,6 +342,7 @@
                 const a = p.marked();
                 const b = p.index();
                 $gameParty.swapOrder(a, b);
+                CSVN_base.log(`party swapped: ${a}, ${b}`);
             }
             p.unmark();
         } else {
@@ -357,6 +360,7 @@
                         // 人数超過がないか確認
                         if ($gameParty.members().length + 1 > PARTY_MAX_LENGTH) {
                             SoundManager.playBuzzer();
+                            CSVN_base.logWarn("too many party members.");
                         } else {
                             // パーティーに移動
                             this.moveToParty(r2p.actorId());
@@ -369,12 +373,14 @@
                         if ($gameParty.members().length === 1) {
                             // パーティーから誰もいなくなるのはNG
                             SoundManager.playBuzzer();
+                            CSVN_base.logWarn("1 member needed at least.");
                         } else {
                             this.moveToReserve(p2r.actorId());
                         }
                     } else {
                         // どちらも空欄を選んだ(=buzz)
                         SoundManager.playBuzzer();
+                        CSVN_base.logWarn("both empty.");
                     }
                 }
                 p.unmark();
@@ -388,6 +394,8 @@
         }
         p.activate();
         p.refresh();
+
+        CSVN_base.logGroupEnd("onPartyOK");
     };
 
     /**
@@ -485,6 +493,8 @@
      * ※控えメンバー側にはパーティーメンバーをマークしたあときている前提
      */
     Scene_PartyChange.prototype.onReserveOk = function () {
+        CSVN_base.logGroup("onReserveOK");
+
         const p = this._partyMemberWindow;
         const r = this._reserveMemberWindow;
         if (r.isMarked()) {
@@ -493,7 +503,6 @@
                 // マークされているメンバーの上でさらに選択→マーク解除
             } else {
                 // 別のパーティーメンバーを選択→ソートキーを任意に変更して順番入替
-                // TODO 未テスト
                 const a = r.marked();
                 const b = r.index();
                 this.swapReservers(a, b);
@@ -515,6 +524,7 @@
                         if ($gameParty.members().length === 1) {
                             // パーティーに誰もいなくなるのはNG
                             SoundManager.playBuzzer();
+                            CSVN_base.logWarn(); (`1 member needed at least.`);
                         } else {
                             this.moveToReserve(p2r.actorId());
                         }
@@ -526,6 +536,7 @@
                         // 人数超過がないか確認
                         if ($gameParty.members().length + 1 > PARTY_MAX_LENGTH) {
                             SoundManager.playBuzzer();
+                            CSVN_base.logWarn("too many party members.");
                         } else {
                             // パーティーに移動
                             this.moveToParty(r2p.actorId());
@@ -533,6 +544,7 @@
                     } else {
                         // どちらも空欄を選んだ(=buzz)
                         SoundManager.playBuzzer();
+                        CSVN_base.logWarn("both empty.");
                     }
                 }
                 p.unmark();
@@ -546,6 +558,8 @@
         }
         r.activate();
         r.refresh();
+
+        CSVN_base.logGroupEnd("onReserveOK");
     };
 
     /**
@@ -574,6 +588,7 @@
         if (!org[a] || !org[b]) return;
 
         $v.set(param.reserveMemberVarId, org.swap(a, b).join(","));
+        CSVN_base.log(`reservers swapped: ${a}, ${b}`);
     };
 
     /**
@@ -593,6 +608,7 @@
     Scene_PartyChange.prototype.moveToReserve = function (actorId) {
         this.addToReserve(actorId);
         $gameParty.removeActor(parseInt(actorId));
+        CSVN_base.log(`p-out: ${actorId}`);
     };
 
     /**
@@ -602,6 +618,7 @@
     Scene_PartyChange.prototype.moveToParty = function (actorId) {
         this.removeFromReserve(actorId);
         $gameParty.addActor(parseInt(actorId));
+        CSVN_base.log(`p-in: ${actorId}`);
     };
 
     /**
@@ -763,7 +780,7 @@
     Scene_PartyChange.prototype.removeFromReserve = function (actorId) {
         let reserves = $v.get(param.reserveMemberVarId).toString().split(",");
         const removed = reserves.filter(r => {
-            return parseInt(r) !== 0 && parseInt(r) === actorId;
+            return r !== 0 && r !== actorId;
         });
 
         $v.set(param.reserveMemberVarId, removed.join(","));
@@ -934,6 +951,7 @@
                 ? this.drawItem(i, true)
                 : this.drawItem(i, false);
         }
+        // CSVN_base.log(`${this.constructor.name} refreshed.`);
     };
 
     const _Window_Selectable_select = Window_Selectable.prototype.select;
@@ -955,6 +973,7 @@
      */
     Window_PartyChangeBase.prototype.mark = function () {
         this._marked = this.index();
+        CSVN_base.log(`${this.constructor.name} marked: ${this.index()}`);
         if (this.markedItem()) {
             this.drawItem(this.index(), true);
             this.refresh()
@@ -965,6 +984,7 @@
      * 項目を選択されていない状態にする
      */
     Window_PartyChangeBase.prototype.unmark = function () {
+        CSVN_base.log(`${this.constructor.name} unmarked`);
         this._marked = -1;
         this.drawItem(this.index(), false);
         this.refresh()
@@ -1050,8 +1070,8 @@
             return !EXCLUDED_ACTORS.includes(a.actorId());
         });
         this._list.push(null);
-        console.log("party list----");
-        console.log(this._list);
+        // console.log("party list----");
+        // console.log(this._list);
     };
 
     /**
@@ -1076,8 +1096,8 @@
             this.deactivate();
             r.activate();
             r.forceSelect(destIndex);
-            console.log(`col: ${col} count: ${r.itemsCount()}`);
-            console.log(`destIndex: ${destIndex}`);
+            // console.log(`col: ${col} count: ${r.itemsCount()}`);
+            // console.log(`destIndex: ${destIndex}`);
         }
     };
 
@@ -1178,10 +1198,10 @@
             this._list.push(new Game_Actor(r));
         }
         this._list.push(null);
-        console.log("reserve list----");
-        console.log(this._list);
-        console.log("reserve var----");
-        console.log(reserves);
+        // console.log("reserve list----");
+        // console.log(this._list);
+        // console.log("reserve var----");
+        // console.log(reserves);
     };
 
     /**
@@ -1232,7 +1252,7 @@
             this.deactivate();
             p.activate();
             p.forceSelect(destIndex);
-            console.log(`destLine: ${destLine}, icoll: ${itemsCountOnLastLine}, destCol: ${destCol}, destIndex: ${destIndex}`);
+            // console.log(`destLine: ${destLine}, icoll: ${itemsCountOnLastLine}, destCol: ${destCol}, destIndex: ${destIndex}`);
         } else {
             Window_Selectable.prototype.cursorUp.call(this, false);
         }
