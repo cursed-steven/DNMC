@@ -255,7 +255,9 @@
 
         const actor = this._partyMemberWindow.itemAt(0);
         this._statusWindow.setActor(actor);
+        this._statusParamsWindow.setActor(actor);
         this._statusWindow.refresh();
+        this._statusParamsWindow.refresh();
     };
 
     /**
@@ -973,10 +975,14 @@
      * @param {number} index 
      */
     Window_PartyChangeBase.prototype.select = function (index) {
+        this.refresh();
         if (this._statusWindow) {
-            this.refresh();
             this._statusWindow.setActor(this.itemAt(index));
             this._statusWindow.refresh();
+        }
+        if (this._statusParamsWindow) {
+            this._statusParamsWindow.setActor(this.itemAt(index));
+            this._statusParamsWindow.refresh();
         }
         _Window_Selectable_select.call(this, index);
     };
@@ -1412,6 +1418,31 @@
      */
     Window_XuidasStatusParams.prototype.maxItems = function () {
         return 8;
+    };
+
+    /**
+     * 行高は気少し詰める
+     * @returns number
+     */
+    Window_XuidasStatusParams.prototype.itemHeight = function () {
+        return this.lineHeight() * 0.9;
+    };
+
+    /**
+     * 各パラメータの描画
+     * @param {number} index 
+     */
+    Window_XuidasStatusParams.prototype.drawItem = function (index) {
+        const rect = this.itemLineRect(index);
+        const paramId = index;
+        const name = TextManager.param(paramId);
+        const value = this._actor.param(paramId);
+
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText(name, rect.x, rect.y, this.width * 0.8 - this.itemPadding());
+
+        this.resetTextColor();
+        this.drawText(value, rect.x, rect.y, this.width * 0.8 - this.itemPadding(), "right");
     };
 
     //-----------------------------------------------------------------------------
