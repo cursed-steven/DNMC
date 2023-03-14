@@ -177,20 +177,6 @@
     const LABEL_RESERVE_LIST = param.labelForReserveList;
     const TOPSIDE_OFFSET = param.topSideOffset;
     const RIGHTSIDE_OFFSET = param.rightSideOffset;
-    const SORT_KEYS = [
-        TextManager.mhp,
-        TextManager.mmp,
-        TextManager.atk,
-        TextManager.def,
-        TextManager.mat,
-        TextManager.mdf,
-        TextManager.agi,
-        TextManager.luk,
-        "ID",
-        param.labelForClass,
-        param.labelForLevel,
-        "任意"
-    ];
     let membersCantChange = [];
     let membersCantEliminate = [];
 
@@ -251,9 +237,11 @@
         const r = this._reserveMemberWindow;
         p.setReserveMemberWindow(r);
         r.setPartyMemberWindow(p);
+        p.setSortKeyWindow(this._sortKeyWindow);
         p.setStatusWindow(this._statusWindow);
         p.setStatusParamsWindow(this._statusParamsWindow);
         p.setStatusEquipWindow(this._statusEquipWindow);
+        r.setSortKeyWindow(this._sortKeyWindow);
         r.setStatusWindow(this._statusWindow);
         r.setStatusParamsWindow(this._statusParamsWindow);
         r.setStatusEquipWindow(this._statusEquipWindow);
@@ -317,10 +305,8 @@
         this._partyMemberWindow = new Window_PartyChangeMember(rect);
         this._partyMemberWindow.setHandler("ok", this.onPartyOk.bind(this));
         this._partyMemberWindow.setHandler("cancel", this.onPartyCancel.bind(this));
-        this._partyMemberWindow.setHandler("pageup", this.toggleStatus.bind(this));
-        this._partyMemberWindow.setHandler("pagedown", this.toggleStatus.bind(this));
-        this._partyMemberWindow.setHandler("menu", this.moveSortKeyForward.bind(this));
-        this._partyMemberWindow.setHandler("shift", this.moveSortKeyBackward.bind(this));
+        this._partyMemberWindow.setHandler("pagedown", this.moveSortKeyForward.bind(this, "party"));
+        this._partyMemberWindow.setHandler("pageup", this.moveSortKeyBackward.bind(this, "party"));
         this.addWindow(this._partyMemberWindow);
     };
 
@@ -462,10 +448,8 @@
         this._reserveMemberWindow = new Window_ReserveChangeMember(rect);
         this._reserveMemberWindow.setHandler("ok", this.onReserveOk.bind(this));
         this._reserveMemberWindow.setHandler("cancel", this.onReserveCancel.bind(this));
-        this._reserveMemberWindow.setHandler("pageup", this.toggleStatus.bind(this));
-        this._reserveMemberWindow.setHandler("pagedown", this.toggleStatus.bind(this));
-        this._reserveMemberWindow.setHandler("menu", this.moveSortKeyForward.bind(this));
-        this._reserveMemberWindow.setHandler("shift", this.moveSortKeyBackward.bind(this));
+        this._reserveMemberWindow.setHandler("pagedown", this.moveSortKeyForward.bind(this));
+        this._reserveMemberWindow.setHandler("pageup", this.moveSortKeyBackward.bind(this));
         this.addWindow(this._reserveMemberWindow);
     };
 
@@ -601,6 +585,34 @@
     };
 
     /**
+     * ソートキーをひとつ進める
+     */
+    Scene_PartyChange.prototype.moveSortKeyForward = function (activeWindow) {
+        switch (activeWindow) {
+            case "party":
+                this._partyMemberWindow.moveSortKeyForward();
+                break;
+            case "reserve":
+                this._reserveMemberWindow.moveSortKeyForward();
+                break;
+        }
+    };
+
+    /**
+     * ソートキーをひとつ戻す
+     */
+    Scene_PartyChange.prototype.moveSortKeyBackward = function (activeWindow) {
+        switch (activeWindow) {
+            case "party":
+                this._partyMemberWindow.moveSortKeyBackward();
+                break;
+            case "reserve":
+                this._reserveMemberWindow.moveSortKeyBackward();
+                break;
+        }
+    };
+
+    /**
      * 控えメンバーのa項めとb項めを入れ替える
      * @param {number} a 
      * @param {number} b 
@@ -713,31 +725,6 @@
     };
 
     /**
-     * ステータスウィンドウを「パラメータ・装備」と「代表的なスキル一覧」を切り替える。
-     */
-    Scene_PartyChange.prototype.toggleStatus = function () {
-        this._statusWindow.toggleStatus();
-    };
-
-    /**
-     * ソートキーを昇順に1つ変更
-     */
-    Scene_PartyChange.prototype.moveSortKeyForward = function () {
-        this._sortKeyWindow.moveSortKeyForward();
-        this._partyMemberWindow.refresh();
-        this._reserveMemberWindow.refresh();
-    };
-
-    /**
-     * ソートキーを降順に1つ変更
-     */
-    Scene_PartyChange.prototype.moveSortKeyBackward = function () {
-        this._sortKeyWindow.moveSortKeyBackward();
-        this._partyMemberWindow.refresh();
-        this._reserveMemberWindow.refresh();
-    };
-
-    /**
      * ソートキーウィンドウの作成
      */
     Scene_PartyChange.prototype.createSortKeyWindow = function () {
@@ -806,6 +793,14 @@
         Window_MenuStatus.prototype.initialize.call(this, rect);
         this._list = [];
         this._marked = -1;
+    };
+
+    /**
+     * ソートキーウィンドウ(の参照)を保持する
+     * @param {Window_ReserveMemberSortKey} sortKeyWindow 
+     */
+    Window_PartyChangeBase.prototype.setSortKeyWindow = function (sortKeyWindow) {
+        this._sortKeyWindow = sortKeyWindow;
     };
 
     /**
@@ -1039,6 +1034,24 @@
         // $gameParty.setMenuActor(actor);
     };
 
+    /**
+     * ソートキーを昇順に1つ変更
+     */
+    Window_PartyChangeBase.prototype.moveSortKeyForward = function () {
+        this._sortKeyWindow.moveSortKeyForward();
+        // TODO
+        this.activate();
+    };
+
+    /**
+     * ソートキーを降順に1つ変更
+     */
+    Window_PartyChangeBase.prototype.moveSortKeyBackward = function () {
+        this._sortKeyWindow.moveSortKeyBackward();
+        // TODO
+        this.activate();
+    };
+
     //-----------------------------------------------------------------------------
     // Window_PartyChangeMember
     //
@@ -1238,7 +1251,7 @@
 
         if (row === rowMax) {
             // いちばん下の行を選択中は動かない
-            this.smoothSelect(this.index());
+            this.reselect();
         } else {
             Window_Selectable.prototype.cursorDown.call(this, false);
         }
@@ -1249,7 +1262,7 @@
      */
     Window_ReserveChangeMember.prototype.cursorRight = function () {
         if (this.itemsCount() - 1 === this.index()) {
-            this.smoothSelect(this.index());
+            this.reselect();
         } else {
             Window_Selectable.prototype.cursorRight.call(this, false);
         }
@@ -1300,7 +1313,22 @@
      */
     Window_ReserveMemberSortKey.prototype.initialize = function (rect) {
         Window_Base.prototype.initialize.call(this, rect);
-        this._sortKey = $v.get(param.sortKeyVarId);
+        this._sortKeys = [
+            TextManager.param(0),
+            TextManager.param(1),
+            TextManager.param(2),
+            TextManager.param(3),
+            TextManager.param(4),
+            TextManager.param(5),
+            TextManager.param(6),
+            TextManager.param(7),
+            "ID",
+            param.labelForClass,
+            param.labelForLevel,
+            "任意"
+        ];
+        this._sortKey = 0;
+        this.refresh();
     };
 
     /**
@@ -1308,7 +1336,10 @@
      */
     Window_ReserveMemberSortKey.prototype.moveSortKeyForward = function () {
         this._sortKey++;
+        this._sortKey = this._sortKey % this._sortKeys.length;
+
         $v.set(param.sortKeyVarId, this._sortKey);
+        this.refresh();
     };
 
     /**
@@ -1316,16 +1347,22 @@
      */
     Window_ReserveMemberSortKey.prototype.moveSortKeyBackward = function () {
         this._sortKey--;
+        if (this._sortKey < 0) this._sortKey = this._sortKeys.length - 1;
+
         $v.set(param.sortKeyVarId, this._sortKey);
+        this.refresh();
     };
 
     /**
      * ソートキー名の描画
      */
     Window_ReserveMemberSortKey.prototype.drawSortKey = function () {
+        this.contents.clear();
         const keyIndex = $v.get(param.sortKeyVarId);
-        const keyName = SORT_KEYS[keyIndex];
-        this.drawText(keyName, 0, 0, this.width, "center");
+        const keyName = this._sortKeys[keyIndex];
+        const xOffset = 14;
+        const yOffset = 6;
+        this.drawText(keyName, -xOffset, yOffset, this.width, "center");
     };
 
     /**
@@ -1333,6 +1370,14 @@
      */
     Window_ReserveMemberSortKey.prototype.refresh = function () {
         this.drawSortKey();
+    };
+
+    /**
+     * 設定中のソートキーを返す
+     * @returns number
+     */
+    Window_ReserveMemberSortKey.prototype.getSortKey = function () {
+        return this._sortKey;
     };
 
     //-----------------------------------------------------------------------------
