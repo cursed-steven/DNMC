@@ -341,8 +341,13 @@
                 // 別のパーティーメンバーを選択→順番入替
                 const a = p.marked();
                 const b = p.index();
-                $gameParty.swapOrder(a, b);
-                CSVN_base.log(`party swapped: ${a}, ${b}`);
+                if (!p.markedItem() || !p.item()) {
+                    SoundManager.playBuzzer();
+                    CSVN_base.logWarn("cant swap empty.");
+                } else {
+                    $gameParty.swapOrder(a, b);
+                    CSVN_base.log(`party swapped: ${a}, ${b}`);
+                }
             }
             p.unmark();
         } else {
@@ -505,8 +510,13 @@
                 // 別のパーティーメンバーを選択→ソートキーを任意に変更して順番入替
                 const a = r.marked();
                 const b = r.index();
-                this.swapReservers(a, b);
-                r.refresh();
+                if (!r.markedItem() || !r.item()) {
+                    SoundManager.playBuzzer();
+                    CSVN_base.logWarn("cant swap empty.");
+                } else {
+                    this.swapReservers(a, b);
+                    r.refresh();
+                }
             }
             r.unmark();
         } else {
