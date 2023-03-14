@@ -268,6 +268,9 @@
         this.createPartyLabelWindow();
         this.createReserveLabelWindow();
         this.createStatusWindow();
+        this.createStatusParamsWindow();
+        this.createStatusEquipWindow();
+        this.createStatusTraitsWindow();
         this.createSortKeyWindow();
     };
 
@@ -668,11 +671,11 @@
      * @returns Rectangle
      */
     Scene_PartyChange.prototype.statusParamsWindowRect = function () {
-        const rmrect = this.reserveMemberWindowRect();
-        const wx = rmrect.x + rmrect.width;
-        const wy = rmrect.y;
-        const ww = (Graphics.boxWidth - rmrect.width - RIGHTSIDE_OFFSET) / 3;
-        const wh = Graphics.boxHeight - rmrect.y;
+        const srect = this.statusWindowRect();
+        const wx = srect.x;
+        const wy = srect.y + srect.height;
+        const ww = srect.width * 0.4;
+        const wh = (Graphics.boxHeight - srect.height - TOPSIDE_OFFSET) * 0.7;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -690,12 +693,12 @@
      * @returns Rectangle
      */
     Scene_PartyChange.prototype.statusEquipWindowRect = function () {
-        const rmrect = this.reserveMemberWindowRect();
-        const serect = this.statusParamsWindowRect();
-        const wx = rmrect.x + rmrect.width + serect.width;
-        const wy = rmrect.y;
-        const ww = (Graphics.boxWidth - rmrect.width - RIGHTSIDE_OFFSET) / 3;
-        const wh = Graphics.boxHeight - rmrect.y;
+        const srect = this.statusWindowRect();
+        const prect = this.statusParamsWindowRect();
+        const wx = prect.x + prect.width;
+        const wy = prect.y;
+        const ww = srect.width * 0.6;
+        const wh = prect.height;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -713,12 +716,12 @@
      * @returns Rectangle
      */
     Scene_PartyChange.prototype.statusTraitsWindowRect = function () {
-        const rmrect = this.reserveMemberWindowRect();
-        const serect = this.statusParamsWindowRect();
-        const wx = rmrect.x + rmrect.width + serect.width * 2;
-        const wy = rmrect.y;
-        const ww = (Graphics.boxWidth - rmrect.width - RIGHTSIDE_OFFSET) / 3;
-        const wh = Graphics.boxHeight - rmrect.y;
+        const srect = this.statusWindowRect();
+        const prect = this.statusParamsWindowRect();
+        const wx = srect.x;
+        const wy = prect.y + prect.height;
+        const ww = srect.width;
+        const wh = (Graphics.boxHeight - srect.height - TOPSIDE_OFFSET) * 0.3;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -1432,11 +1435,11 @@
         this.initialize(...arguments);
     }
 
-    Window_XuidasStatusTraits.prototype = Object.create(Window_Base);
+    Window_XuidasStatusTraits.prototype = Object.create(Window_Base.prototype);
     Window_XuidasStatusTraits.prototype.constructor = Window_XuidasStatusTraits;
 
-    Window_XuidasStatusTraits.prototype.initilize = function () {
-        Window_Base.prototype.initialize.call(this);
+    Window_XuidasStatusTraits.prototype.initialize = function (rect) {
+        Window_Base.prototype.initialize.call(this, rect);
     };
 
     //-----------------------------------------------------------------------------
