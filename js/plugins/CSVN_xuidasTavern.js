@@ -246,18 +246,31 @@
         this.createDisplayObjects();
         membersCantChange = $v.get(param.membersCantChangeVarId).toString().split(",");
         membersCantEliminate = $v.get(param.membersCantEliminateVarId).toString().split(",");
-        this._partyMemberWindow.setReserveMemberWindow(this._reserveMemberWindow);
-        this._reserveMemberWindow.setPartyMemberWindow(this._partyMemberWindow);
-        this._partyMemberWindow.setStatusWindow(this._statusWindow);
-        this._reserveMemberWindow.setStatusWindow(this._statusWindow);
-        this._partyMemberWindow.activate();
-        this._reserveMemberWindow.deactivate();
+
+        const p = this._partyMemberWindow;
+        const r = this._reserveMemberWindow;
+        p.setReserveMemberWindow(r);
+        r.setPartyMemberWindow(p);
+        p.setStatusWindow(this._statusWindow);
+        p.setStatusParamsWindow(this._statusParamsWindow);
+        p.setStatusEquipWindow(this._statusEquipWindow);
+        p.setStatusTraitsWindow(this._statusTraitsWindow);
+        r.setStatusWindow(this._statusWindow);
+        r.setStatusParamsWindow(this._statusParamsWindow);
+        r.setStatusEquipWindow(this._statusEquipWindow);
+        r.setStatusTraitsWindow(this._statusTraitsWindow);
+        p.activate();
+        r.deactivate();
 
         const actor = this._partyMemberWindow.itemAt(0);
         this._statusWindow.setActor(actor);
         this._statusParamsWindow.setActor(actor);
+        this._statusEquipWindow.setActor(actor);
+        this._statusTraitsWindow.setActor(actor);
         this._statusWindow.refresh();
         this._statusParamsWindow.refresh();
+        this._statusEquipWindow.refresh();
+        this._statusTraitsWindow.refresh();
     };
 
     /**
@@ -832,6 +845,30 @@
     }
 
     /**
+     * ステータスパラメータウィンドウ(の参照)を保持する
+     * @param {Window_XuidasStatusParams} statusParamsWindow 
+     */
+    Window_PartyChangeBase.prototype.setStatusParamsWindow = function (statusParamsWindow) {
+        this._statusParamsWindow = statusParamsWindow;
+    };
+
+    /**
+     * ステータス装備ウィンドウ(の参照)を保持する
+     * @param {Window_XuidasStatusEquip} statusEquipWindow 
+     */
+    Window_PartyChangeBase.prototype.setStatusEquipWindow = function (statusEquipWindow) {
+        this._statusEquipWindow = statusEquipWindow;
+    };
+
+    /**
+     * ステータス特徴ウィンドウ(の参照)を保持する
+     * @param {Window_XuidasStatusTraits} statusTraitsWindow 
+     */
+    Window_PartyChangeBase.prototype.setStatusTraitsWindow = function (statusTraitsWindow) {
+        this._statusTraitsWindow = statusTraitsWindow;
+    };
+
+    /**
      * 列数は固定
      * @returns number
      */
@@ -983,6 +1020,10 @@
         if (this._statusParamsWindow) {
             this._statusParamsWindow.setActor(this.itemAt(index));
             this._statusParamsWindow.refresh();
+        }
+        if (this._statusEquipWindow) {
+            this._statusEquipWindow.setActor(this.itemAt(index));
+            this._statusEquipWindow.refresh();
         }
         _Window_Selectable_select.call(this, index);
     };
@@ -1433,6 +1474,8 @@
      * @param {number} index 
      */
     Window_XuidasStatusParams.prototype.drawItem = function (index) {
+        if (!this._actor) return;
+
         const rect = this.itemLineRect(index);
         const paramId = index;
         const name = TextManager.param(paramId);
@@ -1457,6 +1500,18 @@
     Window_XuidasStatusEquip.prototype = Object.create(Window_StatusEquip.prototype);
     Window_XuidasStatusEquip.prototype.constructor = Window_XuidasStatusEquip;
 
+    Window_XuidasStatusEquip.prototype.drawItem = function (index) {
+        const rect = this.itemLineRect(index);
+        const equips = this._actor.equips();
+        const item = equips[index];
+        const slotName = this.actorSlotName(this._actor, index);
+        const xOffset = 20;
+
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText(slotName, rect.x - xOffset, rect.y, rect.width * 0.45, rect.height);
+        this.drawItemName(item, rect.x - xOffset + rect.width * 0.45, rect.y, rect.width * 0.55);
+    }
+
     //-----------------------------------------------------------------------------
     // Window_XuidasStatusTraits
     //
@@ -1466,11 +1521,11 @@
         this.initialize(...arguments);
     }
 
-    Window_XuidasStatusTraits.prototype = Object.create(Window_Base.prototype);
+    Window_XuidasStatusTraits.prototype = Object.create(Window_StatusParams.prototype);
     Window_XuidasStatusTraits.prototype.constructor = Window_XuidasStatusTraits;
 
     Window_XuidasStatusTraits.prototype.initialize = function (rect) {
-        Window_Base.prototype.initialize.call(this, rect);
+        Window_StatusParams.prototype.initialize.call(this, rect);
     };
 
     //-----------------------------------------------------------------------------
