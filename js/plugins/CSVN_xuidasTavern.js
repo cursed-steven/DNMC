@@ -254,11 +254,9 @@
         p.setStatusWindow(this._statusWindow);
         p.setStatusParamsWindow(this._statusParamsWindow);
         p.setStatusEquipWindow(this._statusEquipWindow);
-        p.setStatusTraitsWindow(this._statusTraitsWindow);
         r.setStatusWindow(this._statusWindow);
         r.setStatusParamsWindow(this._statusParamsWindow);
         r.setStatusEquipWindow(this._statusEquipWindow);
-        r.setStatusTraitsWindow(this._statusTraitsWindow);
         p.activate();
         r.deactivate();
 
@@ -266,11 +264,9 @@
         this._statusWindow.setActor(actor);
         this._statusParamsWindow.setActor(actor);
         this._statusEquipWindow.setActor(actor);
-        this._statusTraitsWindow.setActor(actor);
         this._statusWindow.refresh();
         this._statusParamsWindow.refresh();
         this._statusEquipWindow.refresh();
-        this._statusTraitsWindow.refresh();
     };
 
     /**
@@ -285,7 +281,6 @@
         this.createStatusWindow();
         this.createStatusParamsWindow();
         this.createStatusEquipWindow();
-        this.createStatusTraitsWindow();
         this.createSortKeyWindow();
     };
 
@@ -297,7 +292,7 @@
         this._modeWindow = new Window_Base(rect);
         // TODO モードごと(入れ替え/除籍/閲覧)にほんとは変わる
         this._modeWindow.changeTextColor(ColorManager.systemColor());
-        this._modeWindow.drawText(LABEL_CHANGE_MODE, 0, LABEL_YOFFSET, CHAR_WIDTH * 4 + 8 * 5);
+        this._modeWindow.drawText(LABEL_CHANGE_MODE, 0, LABEL_YOFFSET, this._modeWindow.width, "center");
         this._modeWindow.resetTextColor();
         this.addWindow(this._modeWindow);
     };
@@ -309,7 +304,7 @@
     Scene_PartyChange.prototype.modeWindowRect = function () {
         const wx = 0;
         const wy = TOPSIDE_OFFSET;
-        const ww = CHAR_WIDTH * 4 + 8 * 7;
+        const ww = Graphics.boxWidth - RIGHTSIDE_OFFSET;
         const wh = this.calcWindowHeight(1, true);
         return new Rectangle(wx, wy, ww, wh);
     };
@@ -454,7 +449,7 @@
         const mrect = this.modeWindowRect();
         const wx = 0;
         const wy = mrect.height + TOPSIDE_OFFSET;
-        const ww = mrect.width;
+        const ww = CHAR_WIDTH * 4 + 8 * 7;
         const wh = this.calcWindowHeight(1, true);
         return new Rectangle(wx, wy, ww, wh);
     };
@@ -665,8 +660,8 @@
     Scene_PartyChange.prototype.statusWindowRect = function () {
         const mrect = this.modeWindowRect();
         const prect = this.partyMemberWindowRect();
-        const wx = mrect.width;
-        const wy = mrect.y;
+        const wx = prect.width;
+        const wy = mrect.y + mrect.height;
         const ww = (Graphics.boxWidth - wx) - RIGHTSIDE_OFFSET;
         const wh = Graphics.boxHeight - prect.y - prect.height - TOPSIDE_OFFSET;
         return new Rectangle(wx, wy, ww, wh);
@@ -690,7 +685,7 @@
         const wx = srect.x;
         const wy = srect.y + srect.height;
         const ww = srect.width * 0.4;
-        const wh = (Graphics.boxHeight - srect.height - TOPSIDE_OFFSET) * 0.7;
+        const wh = Graphics.boxHeight - (srect.y + srect.height);
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -714,29 +709,6 @@
         const wy = prect.y;
         const ww = srect.width * 0.6;
         const wh = prect.height;
-        return new Rectangle(wx, wy, ww, wh);
-    };
-
-    /**
-     * ステータス特徴ウィンドウの作成
-     */
-    Scene_PartyChange.prototype.createStatusTraitsWindow = function () {
-        const rect = this.statusTraitsWindowRect();
-        this._statusTraitsWindow = new Window_XuidasStatusTraits(rect);
-        this.addWindow(this._statusTraitsWindow);
-    };
-
-    /**
-     * ステータス特徴ウィンドウ領域
-     * @returns Rectangle
-     */
-    Scene_PartyChange.prototype.statusTraitsWindowRect = function () {
-        const srect = this.statusWindowRect();
-        const prect = this.statusParamsWindowRect();
-        const wx = srect.x;
-        const wy = prect.y + prect.height;
-        const ww = srect.width;
-        const wh = (Graphics.boxHeight - srect.height - TOPSIDE_OFFSET) * 0.3;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -858,14 +830,6 @@
      */
     Window_PartyChangeBase.prototype.setStatusEquipWindow = function (statusEquipWindow) {
         this._statusEquipWindow = statusEquipWindow;
-    };
-
-    /**
-     * ステータス特徴ウィンドウ(の参照)を保持する
-     * @param {Window_XuidasStatusTraits} statusTraitsWindow 
-     */
-    Window_PartyChangeBase.prototype.setStatusTraitsWindow = function (statusTraitsWindow) {
-        this._statusTraitsWindow = statusTraitsWindow;
     };
 
     /**
@@ -1511,22 +1475,6 @@
         this.drawText(slotName, rect.x - xOffset, rect.y, rect.width * 0.45, rect.height);
         this.drawItemName(item, rect.x - xOffset + rect.width * 0.45, rect.y, rect.width * 0.55);
     }
-
-    //-----------------------------------------------------------------------------
-    // Window_XuidasStatusTraits
-    //
-    // The window for displaying selected members traits on the party change screen.
-
-    function Window_XuidasStatusTraits() {
-        this.initialize(...arguments);
-    }
-
-    Window_XuidasStatusTraits.prototype = Object.create(Window_StatusParams.prototype);
-    Window_XuidasStatusTraits.prototype.constructor = Window_XuidasStatusTraits;
-
-    Window_XuidasStatusTraits.prototype.initialize = function (rect) {
-        Window_StatusParams.prototype.initialize.call(this, rect);
-    };
 
     //-----------------------------------------------------------------------------
     // Game_Actor
