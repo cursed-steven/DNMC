@@ -6,7 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
-// 1.0.0  2023/03/07 初版
+// 1.0.0  2023/03/xx 初版
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -108,6 +108,28 @@
  * @type string
  * @default Lv
  * 
+ * @param topSideOffset
+ * @text 上側の空きスペースの幅
+ * @desc デフォルト(816x624)の場合1以上にすると相当せまいはずです
+ * @type number
+ * @default 0
+ * 
+ * @param rightSideOffset
+ * @text 右側の空きスペースの幅
+ * @desc デフォルト(816x624)の場合1以上にすると相当せまいはずです
+ * @type number
+ * @default 0
+ * 
+ * @param showMhpMmp
+ * @text MHP/MMP表示有無
+ * @type boolean
+ * @default false
+ * 
+ * @param showEquipSlotName
+ * @text 装備スロット名表示有無
+ * @type boolean
+ * @default false
+ * 
  * @command disableChange
  * @text 入れ替え禁止メンバー追加
  * 
@@ -135,16 +157,6 @@
  * @arg actorId
  * @text 除籍禁止解除アクター
  * @type actor
- * 
- * @param topSideOffset
- * @text 上側の空きスペースの幅
- * @type number
- * @default 0
- * 
- * @param rightSideOffset
- * @text 右側の空きスペースの幅
- * @type number
- * @default 0
  * 
  * @command changeStart
  * @text 入替シーン開始
@@ -177,6 +189,8 @@
     const LABEL_RESERVE_LIST = param.labelForReserveList;
     const TOPSIDE_OFFSET = param.topSideOffset;
     const RIGHTSIDE_OFFSET = param.rightSideOffset;
+    const SHOW_MHP_MMP = param.showMhpMmp;
+    const SHOW_EQUIP_SLOT_NAME = param.showEquipSlotName;
     let membersCantChange = [];
     let membersCantEliminate = [];
 
@@ -1135,6 +1149,8 @@
             r.forceSelect(destIndex);
             // console.log(`col: ${col} count: ${r.itemsCount()}`);
             // console.log(`destIndex: ${destIndex}`);
+        } else {
+            Window_Selectable.prototype.cursorDown.call(this);
         }
     };
 
@@ -1467,7 +1483,7 @@
      * @returns number
      */
     Window_XuidasStatusParams.prototype.maxItems = function () {
-        return 8;
+        return SHOW_MHP_MMP ? 8 : 6;
     };
 
     /**
@@ -1486,9 +1502,16 @@
         if (!this._actor) return;
 
         const rect = this.itemLineRect(index);
-        const paramId = index;
+        let paramId = 0;
+        if (!SHOW_MHP_MMP) {
+            paramId = index + 2;
+            if (paramId > 7) return;
+        } else {
+            paramId = index;
+        }
+
         const name = TextManager.param(paramId);
-        const value = this._actor.param(paramId);
+        const value = this._actor[PARAM_NAMES[paramId]];  // paramでとれないことがある
 
         this.changeTextColor(ColorManager.systemColor());
         this.drawText(name, rect.x, rect.y, this.width * 0.8 - this.itemPadding());
@@ -1509,6 +1532,10 @@
     Window_XuidasStatusEquip.prototype = Object.create(Window_StatusEquip.prototype);
     Window_XuidasStatusEquip.prototype.constructor = Window_XuidasStatusEquip;
 
+    /**
+     * 装備名描画
+     * @param {number} index 
+     */
     Window_XuidasStatusEquip.prototype.drawItem = function (index) {
         const rect = this.itemLineRect(index);
         const equips = this._actor.equips();
@@ -1516,9 +1543,13 @@
         const slotName = this.actorSlotName(this._actor, index);
         const xOffset = 20;
 
-        this.changeTextColor(ColorManager.systemColor());
-        this.drawText(slotName, rect.x - xOffset, rect.y, rect.width * 0.45, rect.height);
-        this.drawItemName(item, rect.x - xOffset + rect.width * 0.45, rect.y, rect.width * 0.55);
+        if (SHOW_EQUIP_SLOT_NAME === true) {
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText(slotName, rect.x - xOffset, rect.y, rect.width * 0.45, rect.height);
+            this.drawItemName(item, rect.x - xOffset + rect.width * 0.45, rect.y, rect.width * 0.55);
+        } else {
+            this.drawItemName(item, rect.x, rect.y, rect.width);
+        }
     }
 
     //-----------------------------------------------------------------------------

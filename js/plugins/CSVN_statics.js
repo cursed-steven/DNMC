@@ -58,6 +58,17 @@ const PARAM = {
     LUK: 7
 };
 
+const PARAM_NAMES = [
+    "mhp",
+    "mmp",
+    "atk",
+    "def",
+    "mat",
+    "mdf",
+    "agi",
+    "luk"
+];
+
 const ADDITIONAL_PARAM = {
     HIT_RATE: 0,
     EVADE_RATE: 1,
