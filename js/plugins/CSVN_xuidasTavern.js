@@ -44,15 +44,14 @@
  * @type number
  * @default 48
  * 
- * @param faceWidth
- * @text 顔画像幅
- * @type number
- * @default 144
- * 
- * @param faceHeight
- * @text 顔画像高さ
- * @type number
- * @default 144
+ * @param faceOrChar
+ * @text 顔グラ or キャラ
+ * @type select
+ * @option 顔
+ * @value 0
+ * @option キャラ
+ * @value 1
+ * @default 0
  * 
  * @param actorsMaxLength
  * @text アクター最大人数
@@ -177,6 +176,7 @@
     const EXCLUDED_ACTORS = param.excludedActors ? param.excludedActors : [];
     const CHAR_WIDTH = param.charWidth;
     const CHAR_HEIGHT = param.charHeight;
+    const FACE_OR_CHAR = param.faceOrChar;
     const PARTY_MAX_LENGTH = 8;
     const ACTORS_MAX_LENGTH = param.actorsMaxLength;
     const LABEL_YOFFSET = 4;
@@ -1550,7 +1550,14 @@
      */
     Window_XuidasStatus.prototype.drawBlock2 = function () {
         const y = this.lineHeight();
-        this.drawActorFace(this._actor, 0, y);
+        switch (FACE_OR_CHAR) {
+            case 0:
+                this.drawActorFace(this._actor, 0, y);
+                break;
+            case 1:
+                this.drawActorCharacter(this._actor, 0, y);
+                break;
+        }
         this.drawBasicInfo(this.width * 0.3, y);
         this.drawExpInfo(this.width * 0.6, y);
     };
@@ -1582,6 +1589,23 @@
         this.resetTextColor();
         this.drawText(this.expTotalValue(), x, y + lh * 1, this.width * 0.3, "right");
         this.drawText(this.expNextValue(), x, y + lh * 3, this.width * 0.3, "right");
+    };
+
+    /**
+     * アクターキャラクターの描画
+     * @param {Game_Actor} actor 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    Window_XuidasStatus.prototype.drawActorCharacter = function (actor, x, y) {
+        if (actor) {
+            this.drawCharacter(
+                actor.characterName(),
+                actor.characterIndex(),
+                x + CHAR_WIDTH / 2,
+                y + CHAR_HEIGHT
+            );
+        }
     };
 
     //-----------------------------------------------------------------------------
