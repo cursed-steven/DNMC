@@ -190,14 +190,17 @@
     const SHOW_MHP_MMP = param.showMhpMmp;
     const SHOW_EQUIP_SLOT_NAME = param.showEquipSlotName;
     let membersCantChange = [];
+    const cantChangeName = "【入替禁止】";
     let membersCantEliminate = [];
 
     PluginManagerEx.registerCommand(script, "disableChange", args => {
         // 入れ替え禁止メンバー追加
+        addToCantChange(args.actorId);
     });
 
     PluginManagerEx.registerCommand(script, "enableChange", args => {
         // 入れ替え禁止メンバー除去(=入れ替えできるようになる)
+        removeFromCantChange(args.actorId);
     });
 
     PluginManagerEx.registerCommand(script, "disableEliminate", args => {
@@ -219,6 +222,37 @@
     PluginManagerEx.registerCommand(script, "browseStart", args => {
         SceneManager.push(Scene_PartyBrowse);
     });
+
+    /**
+     * 入替禁止追加実処理
+     * @param {number} actorId 
+     */
+    function addToCantChange(actorId) {
+        if (cantChange(actorId)) return;
+
+        membersCantChange = $v.get(param.membersCantChangeVarId).toString().split(",");
+        membersCantChange.push(actorId.toString());
+        $v.set(param.membersCantChangeVarId, membersCantChange.join(","));
+    }
+
+    /**
+     * 入替禁止解除実処理
+     * @param {number} actorId 
+     */
+    function removeFromCantChange(actorId) {
+        membersCantChange = $v.get(param.membersCantChangeVarId).toString().split(",");
+        membersCantChange = membersCantChange.filter(m => m != actorId);
+        $v.set(param.membersCantChangeVarId, membersCantChange.join(","));
+    }
+
+    /**
+     * 指定したアクターが入替禁止かどうかを返す
+     * @param {number} actorId 
+     * @returns boolean
+     */
+    function cantChange(actorId) {
+        return membersCantChange.toString().split(",").includes(actorId.toString());
+    }
 
     //-----------------------------------------------------------------------------
     // Scene_PartyChange
@@ -353,12 +387,22 @@
                 // 別のパーティーメンバーを選択→順番入替
                 const a = p.marked();
                 const b = p.index();
-                if (!p.markedItem() || !p.item()) {
+                if (!p.item()) {
+                    // 選択したメンバーが空欄だった
                     SoundManager.playBuzzer();
                     CSVN_base.logWarn("cant swap empty.");
+                } else if (cantChange(p.item().actorId())) {
+                    // 選択したメンバーが入替禁止だった
+                    SoundManager.playBuzzer();
+                    CSVN_base.logWarn("that member cant change.");
                 } else {
-                    $gameParty.swapOrder(a, b);
-                    CSVN_base.log(`party swapped: ${a}, ${b}`);
+                    if (!p.markedItem() || !p.item()) {
+                        SoundManager.playBuzzer();
+                        CSVN_base.logWarn("cant swap empty.");
+                    } else {
+                        $gameParty.swapOrder(a, b);
+                        CSVN_base.log(`party swapped: ${a}, ${b}`);
+                    }
                 }
             }
             p.unmark();
@@ -371,7 +415,13 @@
                     // 控えメンバーで先に誰か選んでいる
                     if (p2r) {
                         // パーティーメンバーからも誰か選んだ(=入替)
-                        this.partyReserveExchange(p2r.actorId(), r2p.actorId());
+                        if (cantChange(p2r.actorId())) {
+                            // 選んだパーティーメンバーが入替禁止だった
+                            SoundManager.playBuzzer();
+                            CSVN_base.logWarn("that member cant change.");
+                        } else {
+                            this.partyReserveExchange(p2r.actorId(), r2p.actorId());
+                        }
                     } else {
                         // パーティーメンバーからは空欄を選んだ(控えからの単純加入)
                         // 人数超過がないか確認
@@ -391,6 +441,10 @@
                             // パーティーから誰もいなくなるのはNG
                             SoundManager.playBuzzer();
                             CSVN_base.logWarn("1 member needed at least.");
+                        } else if (cantChange(p2r.actorId())) {
+                            // 選んだのが入替禁止メンバーだった
+                            SoundManager.playBuzzer();
+                            CSVN_base.logWarn("that member cant change.");
                         } else {
                             this.moveToReserve(p2r.actorId());
                         }
@@ -952,8 +1006,15 @@
         if (actor) {
             const fontSize = $gameSystem.mainFontSize() / 2;
             this.contents.fontSize = fontSize;
-            this.drawText(actor.name(), rect.x, rect.y + CHAR_HEIGHT - fontSize, CHAR_WIDTH, "center");
+            let actorName = actor.name();
+            if (cantChange(actor.actorId())) {
+                this.changeTextColor(ColorManager.systemColor());
+                actorName = cantChangeName;
+            }
+
+            this.drawText(actorName, rect.x, rect.y + CHAR_HEIGHT - fontSize, CHAR_WIDTH, "center");
             this.contents.fontSize = $gameSystem.mainFontSize();
+            this.resetTextColor();
         }
     };
 
@@ -1616,11 +1677,12 @@
 
     const _Game_Actor_nickname = Game_Actor.prototype.nickname;
     /**
-     * undefinedなんて出ないようにする
+     * undefinedなんて出ないようにする、入替禁止を表示する
      * @returns string
      */
     Game_Actor.prototype.nickname = function () {
-        const nickname = _Game_Actor_nickname.call(this);
+        let nickname = _Game_Actor_nickname.call(this);
+        if (cantChange(this.actorId())) nickname = cantChangeName;
         return nickname ? nickname : "";
     };
 
