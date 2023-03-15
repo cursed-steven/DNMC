@@ -53,6 +53,20 @@
  * @value 1
  * @default 0
  * 
+ * @param charOffsetX
+ * @text キャラグラの場合の表示位置補正(X)
+ * @type number
+ * @max 144
+ * @min 0
+ * @default 60
+ * 
+ * @param charOffsetY
+ * @text キャラグラの場合の表示位置補正(Y)
+ * @type number
+ * @max 144
+ * @min 0
+ * @default 60
+ * 
  * @param actorsMaxLength
  * @text アクター最大人数
  * @desc これを超えると除籍が必要になる人数
@@ -1602,8 +1616,8 @@
             this.drawCharacter(
                 actor.characterName(),
                 actor.characterIndex(),
-                x + CHAR_WIDTH / 2,
-                y + CHAR_HEIGHT
+                x + CHAR_WIDTH / 2 + param.charOffsetX,
+                y + CHAR_HEIGHT + param.charOffsetY
             );
         }
     };
