@@ -177,8 +177,6 @@
     const EXCLUDED_ACTORS = param.excludedActors ? param.excludedActors : [];
     const CHAR_WIDTH = param.charWidth;
     const CHAR_HEIGHT = param.charHeight;
-    const FACE_WIDTH = param.faceWidth;
-    const FACE_HEIGHT = param.faceHeight;
     const PARTY_MAX_LENGTH = 8;
     const ACTORS_MAX_LENGTH = param.actorsMaxLength;
     const LABEL_YOFFSET = 4;
@@ -259,6 +257,7 @@
         r.setStatusWindow(this._statusWindow);
         r.setStatusParamsWindow(this._statusParamsWindow);
         r.setStatusEquipWindow(this._statusEquipWindow);
+
         p.activate();
         r.deactivate();
 
@@ -601,29 +600,21 @@
     /**
      * ソートキーをひとつ進める
      */
-    Scene_PartyChange.prototype.moveSortKeyForward = function (activeWindow) {
-        switch (activeWindow) {
-            case "party":
-                this._partyMemberWindow.moveSortKeyForward();
-                break;
-            case "reserve":
-                this._reserveMemberWindow.moveSortKeyForward();
-                break;
-        }
+    Scene_PartyChange.prototype.moveSortKeyForward = function () {
+        this._reserveMemberWindow.moveSortKeyForward();
+        this._partyMemberWindow.deactivate();
+        this._reserveMemberWindow.activate();
+        this._reserveMemberWindow.forceSelect(0);
     };
 
     /**
      * ソートキーをひとつ戻す
      */
-    Scene_PartyChange.prototype.moveSortKeyBackward = function (activeWindow) {
-        switch (activeWindow) {
-            case "party":
-                this._partyMemberWindow.moveSortKeyBackward();
-                break;
-            case "reserve":
-                this._reserveMemberWindow.moveSortKeyBackward();
-                break;
-        }
+    Scene_PartyChange.prototype.moveSortKeyBackward = function () {
+        this._reserveMemberWindow.moveSortKeyBackward();
+        this._partyMemberWindow.deactivate();
+        this._reserveMemberWindow.activate();
+        this._reserveMemberWindow.forceSelect(0);
     };
 
     /**
@@ -638,6 +629,8 @@
 
         $v.set(param.reserveMemberVarId, org.swap(a, b).join(","));
         CSVN_base.log(`reservers swapped: ${a}, ${b}`);
+
+        this._sortKeyWindow.setSortKeyAny();
     };
 
     /**
@@ -1053,8 +1046,7 @@
      */
     Window_PartyChangeBase.prototype.moveSortKeyForward = function () {
         this._sortKeyWindow.moveSortKeyForward();
-        // TODO
-        this.activate();
+        this.sortByCurrentKey();
     };
 
     /**
@@ -1062,8 +1054,7 @@
      */
     Window_PartyChangeBase.prototype.moveSortKeyBackward = function () {
         this._sortKeyWindow.moveSortKeyBackward();
-        // TODO
-        this.activate();
+        this.sortByCurrentKey();
     };
 
     //-----------------------------------------------------------------------------
@@ -1300,7 +1291,7 @@
             let itemsCountOnLastLine = p.itemsCount() % p.maxCols();
             if (itemsCountOnLastLine === 0) itemsCountOnLastLine += p.maxCols();
             const destCol = col > itemsCountOnLastLine ? itemsCountOnLastLine - 1 : col;
-            const destIndex = destLine * p.maxCols() + col;
+            const destIndex = destLine * p.maxCols() + destCol;
             this.deselect();
             this.deactivate();
             p.activate();
@@ -1309,6 +1300,38 @@
         } else {
             Window_Selectable.prototype.cursorUp.call(this, false);
         }
+    };
+
+    /**
+     * ソート実行
+     */
+    Window_ReserveChangeMember.prototype.sortByCurrentKey = function () {
+        const sortKeyParamName = this.detailedSortKey();
+        const filtered = this._list.filter(i => i);
+
+        let sorted = filtered.sort((a, b) => {
+            // console.log(`${sortKeyParamName} a:${a[sortKeyParamName]} b:${b[sortKeyParamName]}`);
+            return b[sortKeyParamName] - a[sortKeyParamName];
+        });
+        sorted.push(null);
+        this._list = sorted;
+        const sortedIds = sorted.reduce((ids, actor) => {
+            if (actor) {
+                ids.push(actor.actorId());
+            }
+            return ids;
+        }, []);
+        $v.set(param.reserveMemberVarId, sortedIds.join(","));
+        this.refresh();
+    };
+
+    /**
+     * 設定中のソートキーに対応する内部プロパティ名を返す
+     * @param {number} sortKey 
+     * @returns string
+     */
+    Window_PartyChangeBase.prototype.detailedSortKey = function () {
+        return this._sortKeyWindow.getSortKeyParamNames()[this._sortKeyWindow.getSortKey()];
     };
 
     //-----------------------------------------------------------------------------
@@ -1329,19 +1352,35 @@
      */
     Window_ReserveMemberSortKey.prototype.initialize = function (rect) {
         Window_Base.prototype.initialize.call(this, rect);
+        const descending1 = "(高い順)";
+        const descending2 = "(降順)";
         this._sortKeys = [
-            TextManager.param(0),
-            TextManager.param(1),
-            TextManager.param(2),
-            TextManager.param(3),
-            TextManager.param(4),
-            TextManager.param(5),
-            TextManager.param(6),
-            TextManager.param(7),
-            "ID",
-            param.labelForClass,
-            param.labelForLevel,
+            TextManager.param(0) + descending1,
+            TextManager.param(1) + descending1,
+            TextManager.param(2) + descending1,
+            TextManager.param(3) + descending1,
+            TextManager.param(4) + descending1,
+            TextManager.param(5) + descending1,
+            TextManager.param(6) + descending1,
+            TextManager.param(7) + descending1,
+            "ID" + descending2,
+            param.labelForClass + descending2,
+            param.labelForLevel + descending1,
             "任意"
+        ];
+        this._sortKeyParamNames = [
+            PARAM_NAMES[0],
+            PARAM_NAMES[1],
+            PARAM_NAMES[2],
+            PARAM_NAMES[3],
+            PARAM_NAMES[4],
+            PARAM_NAMES[5],
+            PARAM_NAMES[6],
+            PARAM_NAMES[7],
+            "_actorId",
+            "_classId",
+            "_level",
+            ""
         ];
         this._sortKey = 0;
         this.refresh();
@@ -1365,6 +1404,16 @@
         this._sortKey--;
         if (this._sortKey < 0) this._sortKey = this._sortKeys.length - 1;
 
+        $v.set(param.sortKeyVarId, this._sortKey);
+        this.refresh();
+    };
+
+    /**
+     * ソートキーを「任意」にセットする
+     * ※最後に「任意」をおいておく前提
+     */
+    Window_ReserveMemberSortKey.prototype.setSortKeyAny = function () {
+        this._sortKey = this._sortKeys.length - 1;
         $v.set(param.sortKeyVarId, this._sortKey);
         this.refresh();
     };
@@ -1394,6 +1443,14 @@
      */
     Window_ReserveMemberSortKey.prototype.getSortKey = function () {
         return this._sortKey;
+    };
+
+    /**
+     * 設定可能なソートキーに対応する内部プロパティ名リストを返す
+     * @returns string[]
+     */
+    Window_ReserveMemberSortKey.prototype.getSortKeyParamNames = function () {
+        return this._sortKeyParamNames;
     };
 
     //-----------------------------------------------------------------------------
@@ -1543,7 +1600,9 @@
         const slotName = this.actorSlotName(this._actor, index);
         const xOffset = 20;
 
-        if (SHOW_EQUIP_SLOT_NAME === true) {
+        // console.log(typeof SHOW_EQUIP_SLOT_NAME);
+        // console.log(SHOW_EQUIP_SLOT_NAME);
+        if (SHOW_EQUIP_SLOT_NAME === "true") {
             this.changeTextColor(ColorManager.systemColor());
             this.drawText(slotName, rect.x - xOffset, rect.y, rect.width * 0.45, rect.height);
             this.drawItemName(item, rect.x - xOffset + rect.width * 0.45, rect.y, rect.width * 0.55);
