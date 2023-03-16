@@ -139,14 +139,14 @@
  * @default false
  * 
  * @command disableChange
- * @text 入れ替え禁止メンバー追加
+ * @text 入替禁止メンバー追加
  * 
  * @arg actorId
  * @text 入れ替えを禁止するアクター
  * @type actor
  * 
  * @command enableChange
- * @text 入れ替え禁止メンバー除去
+ * @text 入替禁止メンバー除去
  * 
  * @arg actorId
  * @text 入れ替え禁止を解除するアクター
@@ -160,7 +160,7 @@
  * @type actor
  * 
  * @command enableEliminate
- * @text 除籍禁止解除アクター
+ * @text 除籍禁止メンバー除去
  * 
  * @arg actorId
  * @text 除籍禁止解除アクター
@@ -171,9 +171,6 @@
  * 
  * @command eliminateStart
  * @text 除籍シーン開始
- * 
- * @command browseStart
- * @text 閲覧シーン開始
  */
 
 (() => {
@@ -201,6 +198,7 @@
     const SHOW_EQUIP_SLOT_NAME = param.showEquipSlotName;
     let membersCantChange = [];
     const cantChangeName = "【入替禁止】";
+    const cantEliminateName = "【除籍禁止】";
     let membersCantEliminate = [];
 
     PluginManagerEx.registerCommand(script, "disableChange", args => {
@@ -215,10 +213,12 @@
 
     PluginManagerEx.registerCommand(script, "disableEliminate", args => {
         // 除籍禁止メンバーの追加
+        addToCantEliminate(args.actorId);
     });
 
     PluginManagerEx.registerCommand(script, "enableEliminate", args => {
         // 除籍禁止メンバーの除去(=除籍できるようになる)
+        removeFromCantEliminate(args.actorId);
     });
 
     PluginManagerEx.registerCommand(script, "changeStart", args => {
@@ -935,9 +935,18 @@
         const p = this._partyMemberWindow;
         if (p.isMarked()) {
             // すでにマークされていてメッセージも出ている
+            this.eliminate(p.markedItem().actorId());
             this._modeWindow.drawEliminated(p.markedItem());
             this.setTimer(300);
             p.unmark();
+        } else if (!p.item()) {
+            // 選択したメンバーが空欄だった            
+            SoundManager.playBuzzer();
+            CSVN_base.logWarn("empty cant eliminate.");
+        } else if (cantEliminate(p.item().actorId())) {
+            // 選択したメンバーが除籍禁止だった            
+            SoundManager.playBuzzer();
+            CSVN_base.logWarn("that member cant eliminate.");
         } else {
             // マークして確認メッセージを出す
             this._modeWindow.drawConfirmMode(p.item());
@@ -955,18 +964,71 @@
      */
     Scene_PartyEliminate.prototype.onPartyCancel = function () {
         const p = this._partyMemberWindow;
-        this.setTimer(0);
-        p.unmark();
-        p.activate();
-        p.refresh();
+        if (p.isMarked()) {
+            this.setTimer(0);
+            p.unmark();
+            p.activate();
+            p.refresh();
+        } else {
+            this.popScene();
+        }
     };
 
+    /**
+     * 控え側で決定したときの処理
+     */
     Scene_PartyEliminate.prototype.onReserveOk = function () {
-        // TODO
+        CSVN_base.logGroup("Scene_PartyEliminate::onReserveOk");
+
+        const r = this._reserveMemberWindow;
+        if (r.isMarked()) {
+            // すでにマークされてメッセージも出ている
+            this._modeWindow.drawEliminated(r.markedItem());
+            this.eliminate(r.markedItem().actorId());
+            this.setTimer(300);
+            u.unmark();
+        } else if (!r.item()) {
+            // 選択したメンバーが空欄だった            
+            SoundManager.playBuzzer();
+            CSVN_base.logWarn("empty cant eliminate.");
+        } else if (cantEliminate(r.item().actorId())) {
+            // 選択したメンバーが除籍禁止だった
+            SoundManager.playBuzzer();
+            CSVN_base.logWarn("that member cant eliminate.");
+        } else {
+            // マークして確認メッセージを出す
+            this._modeWindow.drawConfirmMode(r.item());
+            this.setTimer(-1);
+            r.mark();
+        }
+        r.activate();
+        r.refresh();
+
+        CSVN_base.logGroupEnd("Scene_PartyEliminate::onReserveOk");
     };
 
+    /**
+     * 控え側でキャンセルした時の処理
+     */
     Scene_PartyEliminate.prototype.onReserveCancel = function () {
-        // TODO
+        const r = this._reserveMemberWindow;
+        if (r.isMarked()) {
+            this.setTimer(0);
+            r.unmark();
+            r.activate();
+            r.refresh();
+        } else {
+            this.popScene();
+        }
+    };
+
+    /**
+     * 除籍(=パーティーからも控えからもいなくなる)
+     * @param {number} actorId 
+     */
+    Scene_PartyEliminate.prototype.eliminate = function (actorId) {
+        $gameParty.removeActor(actorId);
+        this.removeFromReserve(actorId);
     };
 
     /**
@@ -1225,11 +1287,17 @@
             const fontSize = $gameSystem.mainFontSize() / 2;
             this.contents.fontSize = fontSize;
             let actorName = actor.name();
-            if (cantChange(actor.actorId())) {
-                this.changeTextColor(ColorManager.systemColor());
-                actorName = cantChangeName;
+            if (SceneManager.isCurrentScene(Scene_PartyChange)) {
+                if (cantChange(actor.actorId())) {
+                    this.changeTextColor(ColorManager.systemColor());
+                    actorName = cantChangeName;
+                }
+            } else if (SceneManager.isCurrentScene(Scene_PartyEliminate)) {
+                if (cantEliminate(actor.actorId())) {
+                    this.changeTextColor(ColorManager.deathColor());
+                    actorName = cantEliminateName;
+                }
             }
-
             this.drawText(actorName, rect.x, rect.y + CHAR_HEIGHT - fontSize, CHAR_WIDTH, "center");
             this.contents.fontSize = $gameSystem.mainFontSize();
             this.resetTextColor();
@@ -1933,12 +2001,17 @@
 
     const _Game_Actor_nickname = Game_Actor.prototype.nickname;
     /**
-     * undefinedなんて出ないようにする、入替禁止を表示する
+     * undefinedなんて出ないようにする、入替禁止/除籍禁止を表示する
      * @returns string
      */
     Game_Actor.prototype.nickname = function () {
         let nickname = _Game_Actor_nickname.call(this);
-        if (cantChange(this.actorId())) nickname = cantChangeName;
+
+        if (SceneManager.isCurrentScene(Scene_PartyChange)) {
+            if (cantChange(this.actorId())) nickname = cantChangeName;
+        } else if (SceneManager.isCurrentScene(Scene_PartyEliminate)) {
+            if (cantEliminate(this.actorId())) nickname = cantEliminateName;
+        }
         return nickname ? nickname : "";
     };
 
