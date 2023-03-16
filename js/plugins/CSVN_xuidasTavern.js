@@ -92,11 +92,6 @@
  * @type string
  * @default 除籍
  * 
- * @param labelForBrowseMode
- * @text 閲覧コマンドラベル
- * @type string
- * @default 閲覧
- * 
  * @param labelForPartyList
  * @text パーティーリストタイトルラベル
  * @type string
@@ -196,7 +191,8 @@
     const LABEL_YOFFSET = 4;
     const LABEL_CHANGE_MODE = param.labelForChangeMode;
     const LABEL_ELIMINATE_MODE = param.labelForEliminateMode;
-    const LABEL_BROWSE_MODE = param.labelForBrowseMode;
+    const LABEL_ELIMINATE_CONFIRM = "ほんとうに%1を%2しますか？";
+    const LABEL_ELIMINATED = "%1を%2しました。";
     const LABEL_PARTY_LIST = param.labelForPartyList;
     const LABEL_RESERVE_LIST = param.labelForReserveList;
     const TOPSIDE_OFFSET = param.topSideOffset;
@@ -233,13 +229,10 @@
         SceneManager.push(Scene_PartyEliminate);
     });
 
-    PluginManagerEx.registerCommand(script, "browseStart", args => {
-        SceneManager.push(Scene_PartyBrowse);
-    });
-
     /**
      * 入替禁止追加実処理
      * @param {number} actorId 
+     * @returns void
      */
     function addToCantChange(actorId) {
         if (cantChange(actorId)) return;
@@ -266,6 +259,38 @@
      */
     function cantChange(actorId) {
         return membersCantChange.toString().split(",").includes(actorId.toString());
+    }
+
+    /**
+     * 除籍禁止追加実処理
+     * @param {number} actorId 
+     * @returns void
+     */
+    function addToCantEliminate(actorId) {
+        if (cantEliminate(actorId)) return;
+
+        membersCantEliminate = $v.get(param.membersCantEliminateVarId).toString().split(",");
+        membersCantEliminate.push(actorId.toString());
+        $v.set(param.membersCantEliminateVarId, membersCantEliminate.join(","));
+    }
+
+    /**
+     * 除籍禁止解除実処理
+     * @param {number} actorId 
+     */
+    function removeFromCantEliminate(actorId) {
+        membersCantEliminate = $v.get(param.membersCantEliminateVarId).toString().split(",");
+        membersCantEliminate = membersCantEliminate.filter(m => m != actorId);
+        $v.set(param.membersCantEliminateVarId, membersCantEliminate.join(","));
+    }
+
+    /**
+     * 指定したアクターが除籍禁止かどうかを返す
+     * @param {number} actorId 
+     * @returns boolean
+     */
+    function cantEliminate(actorId) {
+        return membersCantEliminate.toString().split(",").includes(actorId.toString());
     }
 
     //-----------------------------------------------------------------------------
@@ -297,6 +322,7 @@
         const r = this._reserveMemberWindow;
         p.setReserveMemberWindow(r);
         r.setPartyMemberWindow(p);
+
         p.setSortKeyWindow(this._sortKeyWindow);
         p.setStatusWindow(this._statusWindow);
         p.setStatusParamsWindow(this._statusParamsWindow);
@@ -339,7 +365,6 @@
     Scene_PartyChange.prototype.createModeWindow = function () {
         const rect = this.modeWindowRect();
         this._modeWindow = new Window_Base(rect);
-        // TODO モードごと(入れ替え/除籍/閲覧)にほんとは変わる
         this._modeWindow.changeTextColor(ColorManager.systemColor());
         this._modeWindow.drawText(LABEL_CHANGE_MODE, 0, LABEL_YOFFSET, this._modeWindow.width, "center");
         this._modeWindow.resetTextColor();
@@ -389,7 +414,7 @@
      * パーティーメンバーウィンドウでOK押下時の処理
      */
     Scene_PartyChange.prototype.onPartyOk = function () {
-        CSVN_base.logGroup("onPartyOk");
+        CSVN_base.logGroup("Scene_PartyChange::onPartyOk");
 
         const p = this._partyMemberWindow;
         const r = this._reserveMemberWindow;
@@ -480,7 +505,7 @@
         p.activate();
         p.refresh();
 
-        CSVN_base.logGroupEnd("onPartyOK");
+        CSVN_base.logGroupEnd("Scene_PartyChange::onPartyOk");
     };
 
     /**
@@ -576,7 +601,7 @@
      * ※控えメンバー側にはパーティーメンバーをマークしたあときている前提
      */
     Scene_PartyChange.prototype.onReserveOk = function () {
-        CSVN_base.logGroup("onReserveOK");
+        CSVN_base.logGroup("Scene_PartyChange::onReserveOK");
 
         const p = this._partyMemberWindow;
         const r = this._reserveMemberWindow;
@@ -647,7 +672,7 @@
         r.activate();
         r.refresh();
 
-        CSVN_base.logGroupEnd("onReserveOK");
+        CSVN_base.logGroupEnd("Scene_PartyChange::onReserveOK");
     };
 
     /**
@@ -846,6 +871,129 @@
         });
 
         $v.set(param.reserveMemberVarId, removed.join(","));
+    };
+
+    //-----------------------------------------------------------------------------
+    // Scene_PartyEliminate
+    //
+    // The scene class of the party member eliminate screen.
+
+    function Scene_PartyEliminate() {
+        this.initialize(...arguments);
+    }
+
+    Scene_PartyEliminate.prototype = Object.create(Scene_PartyChange.prototype);
+    Scene_PartyEliminate.prototype.constructor = Scene_PartyEliminate;
+
+    Scene_PartyEliminate.prototype.initialize = function () {
+        Scene_PartyChange.prototype.initialize.call(this);
+    };
+
+    /**
+     * モードウィンドウ作成
+     */
+    Scene_PartyEliminate.prototype.createModeWindow = function () {
+        const rect = this.modeWindowRect();
+        this._modeWindow = new Window_EliminateMode(rect);
+        this.addWindow(this._modeWindow);
+    };
+
+    Scene_PartyEliminate.prototype.onPartyOk = function () {
+        CSVN_base.logGroup("Scene_PartyEliminate::onPartyOk");
+
+        const p = this._partyMemberWindow;
+        if (p.isMarked()) {
+            // すでにマークされていてメッセージも出ている
+            this._modeWindow.drawEliminated(p.markedItem());
+            p.unmark();
+        } else {
+            // マークして確認メッセージを出す
+            this._modeWindow.drawConfirmMode(p.item());
+            p.mark();
+        }
+        p.activate();
+        p.refresh();
+
+        CSVN_base.logGroupEnd("Scene_PartyEliminate::onPartyOk");
+    };
+
+    Scene_PartyEliminate.prototype.onReserveOk = function () {
+        // TODO
+    };
+
+    Scene_PartyEliminate.prototype.confirmEliminate = function () {
+        // TODO
+    };
+
+    //-----------------------------------------------------------------------------
+    // Window_EliminateMode
+    //
+    // The window class for displaying party arrange modes.
+
+    function Window_EliminateMode() {
+        this.initialize(...arguments);
+    }
+
+    Window_EliminateMode.prototype = Object.create(Window_Base.prototype);
+    Window_EliminateMode.prototype.constructor = Window_EliminateMode;
+
+    /**
+     * モードウィンドウ初期化
+     * @param {Rectangle} rect 
+     */
+    Window_EliminateMode.prototype.initialize = function (rect) {
+        Window_Base.prototype.initialize.call(this, rect);
+        this._mode = "normal";
+        this.drawNormalMode();
+    };
+
+    /**
+     * 選択前状態の描画
+     */
+    Window_EliminateMode.prototype.drawNormalMode = function () {
+        this._mode = "normal";
+        this.contents.clear();
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText(LABEL_ELIMINATE_MODE, 0, LABEL_YOFFSET, this.width, "center");
+        this.resetTextColor();
+    };
+
+    /**
+     * 選択中で除籍実行確認中の描画
+     * @param {Game_Actor} actor 
+     */
+    Window_EliminateMode.prototype.drawConfirmMode = function (actor) {
+        this._mode = "confirm";
+        this.contents.clear();
+        this.contents.fontSize = $gameSystem.mainFontSize() * 1.4;
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText(
+            LABEL_ELIMINATE_CONFIRM.format(actor.name(), LABEL_ELIMINATE_MODE),
+            0,
+            LABEL_YOFFSET,
+            this.width,
+            "center"
+        );
+        this.resetTextColor();
+        this.contents.fontSize = $gameSystem.mainFontSize();
+    };
+
+    /**
+     * 除籍完了表示モード
+     * @param {Game_Actor} actor 
+     */
+    Window_EliminateMode.prototype.drawEliminated = function (actor) {
+        this._mode = "eliminated";
+        this.contents.clear();
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText(
+            LABEL_ELIMINATED.format(actor.name(), LABEL_ELIMINATE_MODE),
+            0,
+            LABEL_YOFFSET,
+            this.width,
+            "center"
+        );
+        this.resetTextColor();
     };
 
     //-----------------------------------------------------------------------------
