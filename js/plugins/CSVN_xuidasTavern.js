@@ -342,6 +342,9 @@
         this._statusWindow.refresh();
         this._statusParamsWindow.refresh();
         this._statusEquipWindow.refresh();
+
+        p.setMode("change");
+        r.setMode("change");
     };
 
     /**
@@ -885,8 +888,33 @@
     Scene_PartyEliminate.prototype = Object.create(Scene_PartyChange.prototype);
     Scene_PartyEliminate.prototype.constructor = Scene_PartyEliminate;
 
+    /**
+     * 除籍シーン初期化
+     */
     Scene_PartyEliminate.prototype.initialize = function () {
         Scene_PartyChange.prototype.initialize.call(this);
+        this._timer = 0;
+    };
+
+    /**
+     * パーティ側、控え側のウィンドウモードを除籍用にする
+     */
+    Scene_PartyEliminate.prototype.create = function () {
+        Scene_PartyChange.prototype.create.call(this);
+        this._partyMemberWindow.setMode("eliminate");
+        this._reserveMemberWindow.setMode("eliminate");
+    };
+
+    /**
+     * 除籍完了表示の場合はフレームカウント、カウント0で通常表示
+     */
+    Scene_PartyEliminate.prototype.update = function () {
+        Scene_PartyChange.prototype.update.call(this);
+        if (this._timer > 0) {
+            this._timer--;
+        } else if (this._timer === 0) {
+            this._modeWindow.drawNormalMode();
+        }
     };
 
     /**
@@ -898,6 +926,9 @@
         this.addWindow(this._modeWindow);
     };
 
+    /**
+     * パーティー側で決定を押したときの処理
+     */
     Scene_PartyEliminate.prototype.onPartyOk = function () {
         CSVN_base.logGroup("Scene_PartyEliminate::onPartyOk");
 
@@ -905,10 +936,12 @@
         if (p.isMarked()) {
             // すでにマークされていてメッセージも出ている
             this._modeWindow.drawEliminated(p.markedItem());
+            this.setTimer(300);
             p.unmark();
         } else {
             // マークして確認メッセージを出す
             this._modeWindow.drawConfirmMode(p.item());
+            this.setTimer(-1);
             p.mark();
         }
         p.activate();
@@ -917,12 +950,31 @@
         CSVN_base.logGroupEnd("Scene_PartyEliminate::onPartyOk");
     };
 
+    /**
+     * パーティー側でキャンセルした時の処理
+     */
+    Scene_PartyEliminate.prototype.onPartyCancel = function () {
+        const p = this._partyMemberWindow;
+        this.setTimer(0);
+        p.unmark();
+        p.activate();
+        p.refresh();
+    };
+
     Scene_PartyEliminate.prototype.onReserveOk = function () {
         // TODO
     };
 
-    Scene_PartyEliminate.prototype.confirmEliminate = function () {
+    Scene_PartyEliminate.prototype.onReserveCancel = function () {
         // TODO
+    };
+
+    /**
+     * 除籍完了表示タイマーのセット(フレーム単位)
+     * @param {number} duration 
+     */
+    Scene_PartyEliminate.prototype.setTimer = function (duration) {
+        this._timer = duration;
     };
 
     //-----------------------------------------------------------------------------
@@ -943,7 +995,6 @@
      */
     Window_EliminateMode.prototype.initialize = function (rect) {
         Window_Base.prototype.initialize.call(this, rect);
-        this._mode = "normal";
         this.drawNormalMode();
     };
 
@@ -951,9 +1002,8 @@
      * 選択前状態の描画
      */
     Window_EliminateMode.prototype.drawNormalMode = function () {
-        this._mode = "normal";
         this.contents.clear();
-        this.changeTextColor(ColorManager.systemColor());
+        this.changeTextColor(ColorManager.deathColor());
         this.drawText(LABEL_ELIMINATE_MODE, 0, LABEL_YOFFSET, this.width, "center");
         this.resetTextColor();
     };
@@ -963,10 +1013,9 @@
      * @param {Game_Actor} actor 
      */
     Window_EliminateMode.prototype.drawConfirmMode = function (actor) {
-        this._mode = "confirm";
         this.contents.clear();
         this.contents.fontSize = $gameSystem.mainFontSize() * 1.4;
-        this.changeTextColor(ColorManager.systemColor());
+        this.changeTextColor(ColorManager.deathColor());
         this.drawText(
             LABEL_ELIMINATE_CONFIRM.format(actor.name(), LABEL_ELIMINATE_MODE),
             0,
@@ -983,9 +1032,8 @@
      * @param {Game_Actor} actor 
      */
     Window_EliminateMode.prototype.drawEliminated = function (actor) {
-        this._mode = "eliminated";
         this.contents.clear();
-        this.changeTextColor(ColorManager.systemColor());
+        this.changeTextColor(ColorManager.deathColor());
         this.drawText(
             LABEL_ELIMINATED.format(actor.name(), LABEL_ELIMINATE_MODE),
             0,
@@ -1016,6 +1064,14 @@
         Window_MenuStatus.prototype.initialize.call(this, rect);
         this._list = [];
         this._marked = -1;
+    };
+
+    /**
+     * モード設定
+     * @param {string} mode 
+     */
+    Window_PartyChangeBase.prototype.setMode = function (mode) {
+        this._mode = mode;
     };
 
     /**
@@ -1215,6 +1271,20 @@
             this._statusEquipWindow.refresh();
         }
         _Window_Selectable_select.call(this, index);
+    };
+
+    const _Window_Selectable_isCursorMovable = Window_Selectable.prototype.isCursorMovable;
+    /**
+     * 除籍モードで選択中は動けなくする
+     * @returns boolean
+     */
+    Window_PartyChangeBase.prototype.isCursorMovable = function () {
+        // console.log(`window: ${this.constructor.name}, mode: ${this._mode}, marked: ${this.isMarked()}`);
+        if (this._mode === "eliminate" && this.isMarked()) {
+            return false;
+        } else {
+            return _Window_Selectable_isCursorMovable.call(this);
+        }
     };
 
     /**
