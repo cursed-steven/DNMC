@@ -32,6 +32,11 @@
  * @desc 生成したアクターのリストを保持する変数、CSVN_xuidasTavernの使用可能アクターリストと合わせる。
  * @type variable
  * 
+ * @param reserveMemberVarId
+ * @text 控えメンバーを入れる変数ID
+ * @desc CSVN_xuidasTavernと必ず合わせること
+ * @type variable
+ * 
  * @command generate
  * @text アクター生成
  * 
@@ -43,6 +48,13 @@
  * 
  * @command joinLatest
  * @text 生成したアクターを加入させる
+ * 
+ * @arg index
+ * @text 直前生成分のインデックス
+ * @type number
+ * 
+ * @command reserveLatest
+ * @text 生成したアクターを控えに追加する
  * 
  * @arg index
  * @text 直前生成分のインデックス
@@ -224,6 +236,20 @@ class DataActor {
     PluginManagerEx.registerCommand(script, "joinLatest", args => {
         const actorId = $gameTemp.getLatestGenerated()[args.index].id
         $gameParty.addActor(actorId);
+    });
+
+    /**
+     * 直近で生成したアクターを控えメンバーに入れる
+     */
+    PluginManagerEx.registerCommand(script, "reserveLatest", args => {
+        const actorId = $gameTemp.getLatestGenerated()[args.index].id
+        let reserves = $v.get(param.reserveMemberVarId).toString().split(",");
+        reserves.push(actorId);
+        // 0は除外しておく
+        reserves = reserves.filter(r => {
+            return parseInt(r) !== 0;
+        });
+        $v.set(param.reserveMemberVarId, reserves.join(","));
     });
 
     /**
