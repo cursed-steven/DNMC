@@ -104,6 +104,9 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
     };
 
     const _Scene_Battle_onItemOk = Scene_Battle.prototype.onItemOk;
+    /**
+     * アイテムを選択して対象者を選択中にもHUDが見えるように
+     */
     Scene_Battle.prototype.onItemOk = function () {
         _Scene_Battle_onItemOk.call(this);
         this._statusWindow.show();
