@@ -47,7 +47,8 @@ Scene_Comparison.prototype.constructor = Scene_Comparison;
     Scene_Comparison.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
     Scene_Comparison.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;
     Scene_Comparison.prototype.menuStatusWindowRect = Scene_Menu.prototype.statusWindowRect;
-
+    Scene_Comparison.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
+    Scene_Comparison.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
 
     /**
      * 選択後コマンドウィンドウの作成。
@@ -99,6 +100,7 @@ Scene_Comparison.prototype.constructor = Scene_Comparison;
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
         this._buttonGuide.refresh();
+        this.createQuestHUD();
         this.createComparisonWindow();
     };
 
@@ -109,6 +111,16 @@ Scene_Comparison.prototype.constructor = Scene_Comparison;
         Scene_MenuBase.prototype.start.call(this);
         this._comparisonWindow.refresh();
         this._comparisonWindow.activate();
+    };
+
+    const _Scene_Comparison_update = Scene_Comparison.prototype.update;
+    /**
+     * クエストHUD表示と更新を追加
+     */
+    Scene_Comparison.prototype.update = function () {
+        _Scene_Comparison_update.call(this);
+        this._questHUD.show();
+        this._questHUD.refresh();
     };
 
     /**
