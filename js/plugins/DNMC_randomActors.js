@@ -29,7 +29,7 @@
  * 
  * @param generatedActorsVarId
  * @text 生成アクターIDリスト
- * @desc 生成したアクターのリストを保持する変数
+ * @desc 生成したアクターのリストを保持する変数、CSVN_xuidasTavernの使用可能アクターリストと合わせる。
  * @type variable
  * 
  * @command generate

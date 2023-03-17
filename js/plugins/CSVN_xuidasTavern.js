@@ -6,7 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
-// 1.0.0  2023/03/xx 初版
+// 1.0.0  2023/03/17 初版
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -166,6 +166,14 @@
  * @text 除籍禁止解除アクター
  * @type actor
  * 
+ * @command disableChangeSoon
+ * @text 加入直後のアクターの入替禁止
+ * @desc DNMC_randomActor専用機能
+ * 
+ * @command disableEliminateSoon
+ * @text 加入直後のアクターの除籍禁止
+ * @desc DNMC_randomActor専用機能
+ * 
  * @command changeStart
  * @text 入替シーン開始
  * 
@@ -219,6 +227,14 @@
     PluginManagerEx.registerCommand(script, "enableEliminate", args => {
         // 除籍禁止メンバーの除去(=除籍できるようになる)
         removeFromCantEliminate(args.actorId);
+    });
+
+    PluginManagerEx.registerCommand(script, "disableChangeSoon", args => {
+        addToCantChange($gameTemp.getLatestGenerated()[0].id);
+    });
+
+    PluginManagerEx.registerCommand(script, "disableEliminateSoon", args => {
+        addToCantEliminate($gameTemp.getLatestGenerated()[0].id);
     });
 
     PluginManagerEx.registerCommand(script, "changeStart", args => {
