@@ -728,7 +728,7 @@
         const actor = this.actor(index);
         const rect = this.itemRect(index);
         const x = 8;
-        const y = 8;
+        const y = 0;
         const width = rect.width / 5;
         this.changeTextColor(ColorManager.hpColor(actor));
         this.drawText(
@@ -746,7 +746,9 @@
      * @param {number} index
      */
     Window_Exp.prototype.drawLv = function (ba0, index) {
-        const rect = this.itemRect(index);
+        let rect = this.itemRect(index);
+        rect.y -= 12;
+
         this.drawText(
             TextManager.levelA + ": ",
             rect.width / 5 + this.itemPadding() * 4,
@@ -769,12 +771,14 @@
      */
     Window_Exp.prototype.drawExp = function (ba0, index) {
         const actor = this.actor(index);
-        const rect = this.itemRect(index);
+        let rect = this.itemRect(index);
         const current = ba0.after.exp;
         const next = actor.expForLevel(actor._level + 1);
         const diff = next - current;
         const earned = BattleManager._rewards.exp;
         let tmpX = 0;
+
+        rect.y -= 12;
 
         this.drawExpParamName(rect, index);
         tmpX = rect.width / 10 * 3 + this.itemPadding() * 4 + this.textWidth("Lv: 00 ");
@@ -788,7 +792,7 @@
         this.drawExpValue(earned, tmpX, rect.y);
         tmpX += this.textWidth("0000000 ");
 
-        this.drawText("→ Left: ", tmpX, rect.y + 12, this.textWidth("→ Left: "));
+        this.drawText("→ Left: ", tmpX, rect.y + 10, this.textWidth("→ Left: "));
         tmpX += this.textWidth("→ Left: ");
 
         this.drawExpValue(diff, tmpX, rect.y, actor.isMaxLevel());
