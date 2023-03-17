@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2023/02/09 初版
+// 1.0.1  2023/03/17 逃走禁止スイッチ対応
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -22,6 +23,10 @@
  * @orderAfter DNMC_sceneBattle
  * 
  * @help DNMC_battleCommandUI.js
+ * 
+ * @param noEscapeSwId
+ * @text 逃走禁止スイッチ
+ * @type switch
  * 
  * @param setSkillVarIndex
  * @text セット中スキル変数開始
@@ -282,7 +287,14 @@
                 this.commandGuard();
                 break;
             case COMMON_SKILL_IDS.ESCAPE:
-                this.commandEscape();
+                if ($s.get(param.noEscapeSwId)) {
+                    // 逃走禁止
+                    SoundManager.playBuzzer();
+                    this.logSkillNg("noEscape");
+                    return;
+                } else {
+                    this.commandEscape();
+                }
                 break;
             case COMMON_SKILL_IDS.ITEM:
                 this.commandItem();
@@ -313,6 +325,7 @@
      * @param {string} reason 
      */
     Scene_Battle.prototype.logSkillNg = function (reason) {
+        console.log(`reason: ${reason}`);
         const head = "【スキル使用不可】";
         switch (reason) {
             case "wtypeNg":
@@ -326,6 +339,9 @@
                 break;
             case "stypeSealed":
                 this._logWindow.push("skillNgReason", head + "スキルタイプ封印");
+                break;
+            case "noEscape":
+                this._logWindow.push("skillNgReason", "撤退禁止");
                 break;
         }
     };
