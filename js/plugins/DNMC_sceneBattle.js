@@ -72,19 +72,7 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
      */
     Scene_Battle.prototype.statusWindowRect = function () {
         const ww = 160;
-        const wh = this.HUDHeight();
-        const wx = Graphics.boxWidth - ww;
-        const wy = this.calcWindowHeight(3, true);
-        return new Rectangle(wx, wy, ww, wh);
-    };
-
-    /**
-     * HUD領域に変更
-     * @returns Rectangle
-     */
-    Scene_Battle.prototype.actorWindowRect = function () {
-        const ww = 160;
-        const wh = this.HUDHeight() * 2;
+        const wh = (Graphics.boxHeight - this.calcWindowHeight(3, true)) / 4 * $gameParty.members().length;
         const wx = Graphics.boxWidth - ww;
         const wy = this.calcWindowHeight(3, true);
         return new Rectangle(wx, wy, ww, wh);
@@ -103,11 +91,23 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
     };
 
     /**
-     * HUDの高さを返す
-     * @returns number
+     * 味方選択ウィンドウの領域変更
+     * @returns Rectangle
      */
-    Scene_Battle.prototype.HUDHeight = function () {
-        return this.calcWindowHeight(3.7 * $gameParty.battleMembers().length, true);
+    Scene_Battle.prototype.actorWindowRect = function () {
+        const er = this.enemyWindowRect();
+        const ww = 160;
+        const wh = this.calcWindowHeight($gameParty.battleMembers().length, true);
+        const wx = er.x + er.width - ww;
+        const wy = er.y - wh;
+        return new Rectangle(wx, wy, ww, wh);
+    };
+
+    const _Scene_Battle_onItemOk = Scene_Battle.prototype.onItemOk;
+    Scene_Battle.prototype.onItemOk = function () {
+        _Scene_Battle_onItemOk.call(this);
+        this._statusWindow.show();
+        this._statusWindow.refresh();
     };
 
     //-----------------------------------------------------------------------------
@@ -123,7 +123,7 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
         const rect = this.itemRect(index);
         const x = rect.x;
         const y = rect.y;
-        const lineHeight = this.lineHeight() * 0.6;
+        const lineHeight = this.lineHeight() * 0.55;
         this.drawActorName(actor, x, y);
         this.placeTimeGauge(actor, x, y + lineHeight);
         this.placeBasicGauges(actor, x, y + lineHeight * 2);

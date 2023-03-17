@@ -478,11 +478,20 @@
      */
     Window_BattleActor.prototype.initialize = function (rect) {
         _Window_BattleActor_initialize.call(this, rect);
-        this.setBackgroundType(2);
+        this.frameVisible = true;
     };
 
-    // HUDと同じ内容に
-    Window_BattleActor.prototype.drawItem = Window_BattleHUD.prototype.drawItem;
+    /**
+     * 対象者選択ウィンドウの1人分を描画する(名前のみ)。
+     * @param {number} index 
+     */
+    Window_BattleActor.prototype.drawItem = function (index) {
+        const actor = this.actor(index);
+        const rect = this.itemRect(index);
+        const x = rect.x;
+        const y = rect.y;
+        this.drawActorName(actor, x + 16, y);
+    }
 
     /**
      * HUDに合わせて修正
@@ -497,7 +506,7 @@
      * @returns number
      */
     Window_BattleActor.prototype.numVisibleRows = function () {
-        return 4;
+        return $gameParty.battleMembers().length;
     };
 
     Window_BattleActor.prototype.itemHeight = function () {
