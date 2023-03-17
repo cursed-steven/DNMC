@@ -81,7 +81,7 @@ var $plugins =
 {"name":"________BATTLE________","status":false,"description":"----------------------------------------------------------------","parameters":{}},
 {"name":"HPConsumeSkill","status":false,"description":"HP消費技","parameters":{"Consume HP Color":"17"}},
 {"name":"MPP_EncounterEffect","status":true,"description":"エンカウント時の演出を特殊なエフェクトに変更します。","parameters":{"Effect Type":"5","Effect Color":"255,255,255"}},
-{"name":"SVActorPositionMZ","status":true,"description":"[Ver1.1.5]サイドビュー戦闘においてアクター達の画面表示位置を設定します。","parameters":{"actor1 Xpos":"800","actor1 Ypos":"400","actor2 Xpos":"800 + 32","actor2 Ypos":"400 + 80","actor3 Xpos":"800 + 32 * 2","actor3 Ypos":"400 + 80 * 2","actor4 Xpos":"800 + 32 * 3","actor4 Ypos":"400 + 80 * 3"}},
+{"name":"SVActorPositionMZ","status":true,"description":"[Ver1.1.5]サイドビュー戦闘においてアクター達の画面表示位置を設定します。","parameters":{"actor1 Xpos":"640","actor1 Ypos":"320","actor2 Xpos":"640 + 32","actor2 Ypos":"320 + 80","actor3 Xpos":"640 + 32 * 2","actor3 Ypos":"320 + 80 * 2","actor4 Xpos":"640 + 32 * 3","actor4 Ypos":"320 + 80 * 3"}},
 {"name":"DNMC_randomTroop","status":true,"description":"バイオームごとに敵グループをランダム生成します","parameters":{"terrain":"57","tmpBiomeVarId":"3","turnCountVarId":"58","stateInterested":"46"}},
 {"name":"DNMC_enemyTypeToTraits","status":true,"description":"metaに定義したタイプから自動的に一定の特徴を追加する。","parameters":{}},
 {"name":"CSVN_criticalSound","status":true,"description":"クリティカル発生時に指定したSEを演奏します。","parameters":{"name1":"retro/echo/Damage_06","volume1":"50","pitch1":"100","flashColor1":"{\"R\":\"0\",\"G\":\"0\",\"B\":\"255\",\"A\":\"128\"}","flashDuration1":"12","name2":"retro/echo/Damage_06","volume2":"50","pitch2":"100","flashColor2":"{\"R\":\"255\",\"G\":\"0\",\"B\":\"0\",\"A\":\"128\"}","flashDuration2":"12"}},
