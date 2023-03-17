@@ -25,6 +25,13 @@
  * @desc テスト用等でウィンドウに登場させたくないもの
  * @type actor[]
  * 
+ * @param partyMaxSize
+ * @text パーティー最大人数
+ * @type number
+ * @max 8
+ * @min 1
+ * @default 8
+ * 
  * @param actorListVarId
  * @text 使用可能アクターリスト
  * @desc このセーブファイル内で使えるアクターのリスト(※DNMC_randomActors.js対策)
@@ -191,7 +198,7 @@
     const CHAR_WIDTH = param.charWidth;
     const CHAR_HEIGHT = param.charHeight;
     const FACE_OR_CHAR = param.faceOrChar;
-    const PARTY_MAX_LENGTH = 8;
+    const PARTY_MAX_LENGTH = param.partyMaxSize;
     const ACTORS_MAX_LENGTH = param.actorsMaxLength;
     const LABEL_YOFFSET = 4;
     const LABEL_CHANGE_MODE = param.labelForChangeMode;
@@ -1512,9 +1519,7 @@
      * @returns number
      */
     Window_PartyChangeMember.prototype.maxItems = function () {
-        return $gameParty.members().length + 1 < PARTY_MAX_LENGTH
-            ? $gameParty.members().length + 1
-            : PARTY_MAX_LENGTH;
+        return PARTY_MAX_LENGTH + 1;
     };
 
     /**
