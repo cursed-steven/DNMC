@@ -237,6 +237,10 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
             case "Scene_Battle":
                 // this.drawSceneBattleGuide();
                 break;
+            case "Scene_PartyChange":
+            case "Scene_PartyEliminate":
+                this.drawScenePartyChangeGuide();
+                break;
         }
         this.contents.fontSize = $gameSystem.mainFontSize();
     };
@@ -319,6 +323,14 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
     Window_ButtonGuide.prototype.drawSceneComparisonGuide = function () {
         this.drawButton("pageup", "モード切替", 0, 0);
         this.drawButton("pagedown", "モード切替", 0, this.fontSize * this.lhr);
+    };
+
+    /**
+     * Scene_PartyChange/Scene_PartyEliminateのボタンガイド
+     */
+    Window_ButtonGuide.prototype.drawScenePartyChangeGuide = function () {
+        this.drawButton("pageup", "控え側ソートキー変更", 0, 0);
+        this.drawButton("pagedown", "控え側ソートキー変更", 0, this.fontSize * this.lhr);
     };
 
     /**

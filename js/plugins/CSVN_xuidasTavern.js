@@ -342,6 +342,15 @@
     Scene_PartyChange.prototype = Object.create(Scene_MenuBase.prototype);
     Scene_PartyChange.prototype.constructor = Scene_PartyChange;
 
+    const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
+    const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
+    Scene_PartyChange.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
+    Scene_PartyChange.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
+    Scene_PartyChange.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
+
+    /**
+     * 入れ替えシーン作成
+     */
     Scene_PartyChange.prototype.initialize = function () {
         Scene_MenuBase.prototype.initialize.call(this);
     };
@@ -382,6 +391,12 @@
 
         p.setMode("change");
         r.setMode("change");
+
+        if (isDNMCActive()) {
+            _Scene_Map_createMapHUD.call(this);
+            _Scene_Map_createButtonGuide.call(this);
+            this._buttonGuide.refresh();
+        }
     };
 
     /**
@@ -815,7 +830,7 @@
         const wx = prect.width;
         const wy = mrect.y + mrect.height;
         const ww = (Graphics.boxWidth - wx) - RIGHTSIDE_OFFSET;
-        const wh = Graphics.boxHeight - prect.y - prect.height - TOPSIDE_OFFSET;
+        const wh = this.calcWindowHeight(5, true);
         return new Rectangle(wx, wy, ww, wh);
     };
 
