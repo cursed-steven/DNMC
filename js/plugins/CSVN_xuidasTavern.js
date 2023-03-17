@@ -316,26 +316,6 @@
         return membersCantEliminate.toString().split(",").includes(actorId.toString());
     }
 
-    /**
-     * Donut Machine の中で使われているかどうかの判別
-     * ※Donut Machine 専用機能
-     * @returns boolean
-     */
-    function isDNMCActive() {
-        let result = false;
-        try {
-            const test = new DataActor();
-            // console.log(`DataActor?: ${typeof test}`);
-            if (typeof test === "object") {
-                result = true;
-            }
-        } catch (e) {
-            CSVN_base.log("Donut Machine not activated, do not mind.");
-        }
-
-        return result;
-    }
-
     //-----------------------------------------------------------------------------
     // Scene_PartyChange
     //
@@ -398,7 +378,7 @@
         p.setMode("change");
         r.setMode("change");
 
-        if (isDNMCActive()) {
+        if (CSVN_base.isDNMCActive()) {
             _Scene_Map_createMapHUD.call(this);
             _Scene_Map_createButtonGuide.call(this);
             this._buttonGuide.refresh();
@@ -1580,7 +1560,7 @@
      */
     Window_ReserveChangeMember.prototype.initialize = function (rect) {
         Window_PartyChangeBase.prototype.initialize.call(this, rect);
-        this._dnmcActive = isDNMCActive();
+        this._dnmcActive = CSVN_base.isDNMCActive();
     };
 
     /**

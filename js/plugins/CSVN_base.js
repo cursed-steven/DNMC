@@ -517,3 +517,23 @@ CSVN_base.logGroupEnd = function (str) {
         console.groupEnd(str);
     }
 };
+
+/**
+ * Donut Machine と競合しないかの確認用
+ * trueだと競合の可能性が高い
+ * @returns boolean
+ */
+CSVN_base.isDNMCActive = function () {
+    let result = false;
+    try {
+        const test = new DataActor();
+        // console.log(`DataActor?: ${typeof test}`);
+        if (typeof test === "object") {
+            result = true;
+        }
+    } catch (e) {
+        this.log("Donut Machine not activated, do not mind.");
+    }
+
+    return result;
+};
