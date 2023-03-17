@@ -26,7 +26,7 @@ var $plugins =
 {"name":"________DATA________","status":true,"description":"----------------------------------------------------------------","parameters":{}},
 {"name":"DNMC_randomWeapons","status":true,"description":"武器をランダム生成する","parameters":{"generatedWeaponsVarId":"408"}},
 {"name":"DNMC_randomArmors","status":true,"description":"防具をランダム生成する","parameters":{"generatedArmorsVarId":"409"}},
-{"name":"DNMC_randomActors","status":true,"description":"アクターをランダム生成する","parameters":{"classSwIx":"101","generatedActorsVarId":"407"}},
+{"name":"DNMC_randomActors","status":true,"description":"アクターをランダム生成する","parameters":{"classSwIx":"101","generatedActorsVarId":"407","reserveMemberVarId":"403"}},
 {"name":"DNMC_randomShop","status":true,"description":"指定した条件で品目がランダムショップを生成します","parameters":{}},
 {"name":"Mano_CurrencyUnit","status":true,"description":"変数やアイテムを消費して購入できるショップが作れます。\r\n競合率・中ぐらい","parameters":{}},
 {"name":"EquipState","status":true,"description":"ステート付与装備 v1.1.0","parameters":{}},
