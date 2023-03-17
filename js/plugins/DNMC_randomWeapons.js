@@ -20,6 +20,11 @@
  * 
  * @help DNMC_randomWeapons.js
  * 
+ * @param generatedWeaponsVarId
+ * @text 生成武器IDリスト
+ * @desc 生成した武器のリストを保持する変数
+ * @type variable
+ * 
  * @command generate
  * @text 武器生成
  * 
@@ -63,6 +68,7 @@ function DNMC_randomWeapons() {
     PluginManagerEx.registerCommand(script, "generate", args => {
         const weapon = randomWeapon(args.rank, args.classId);
         DataManager.registerWeapon(weapon);
+        registerWeaponId(weapon.id);
         $gameTemp.setLatestGenerated([weapon]);
     });
 
@@ -88,6 +94,7 @@ function DNMC_randomWeapons() {
     DNMC_randomWeapons.randomWeapon = function (rank, classId) {
         const weapon = randomWeapon(rank, classId);
         DataManager.registerWeapon(weapon);
+        registerWeaponId(weapon.id);
         $gameTemp.setLatestGenerated([weapon]);
 
         return weapon;
@@ -786,6 +793,12 @@ function DNMC_randomWeapons() {
         weapon.price = price;
 
         return weapon;
+    }
+
+    function registerWeaponId(id) {
+        let registered = $v.get(param.generatedWeaponsVarId).toString().split(",");
+        registered.push(id);
+        $v.set(param.generatedWeaponsVarId, registered.join(","));
     }
 
     /**

@@ -21,6 +21,11 @@
  * 
  * @help DNMC_randomArmors.js
  * 
+ * @param generatedArmorsVarId
+ * @text 生成防具IDリスト
+ * @desc 生成した防具のリストを保持する変数。
+ * @type variable
+ * 
  * @command generate
  * @text 防具生成
  * 
@@ -83,6 +88,7 @@ function DNMC_randomArmors() {
     PluginManagerEx.registerCommand(script, "generate", args => {
         const armor = randomArmor(args.rank, args.type, args.slot);
         DataManager.registerArmor(armor);
+        registerArmorId(armor.id);
         $gameTemp.setLatestGenerated([armor]);
     });
 
@@ -110,6 +116,7 @@ function DNMC_randomArmors() {
         const type = randomTypeId(classId);
         const armor = randomArmor(rank, type, slot);
         DataManager.registerArmor(armor);
+        registerArmorId(armor.id);
         $gameTemp.setLatestGenerated([armor]);
 
         return armor;
@@ -1071,6 +1078,12 @@ function DNMC_randomArmors() {
         armor.price = price;
 
         return armor;
+    }
+
+    function registerArmorId(id) {
+        let registered = $v.get(param.generatedArmorsVarId).toString().split(",");
+        registered.push(id);
+        $v.set(param.generatedArmorsVarId, registered.join(","));
     }
 
     /**
