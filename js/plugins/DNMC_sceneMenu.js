@@ -8,6 +8,7 @@
 // Version
 // 1.0.0  2022/12/24 初版
 // 1.1.0  2023/01/23 Scene_EquipStatus を分離
+// 1.1.1  2023/03/17 クエストHUD対応
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -74,6 +75,9 @@
     Scene_Menu.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
     Scene_Menu.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_Menu.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
+    Scene_Menu.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
+    Scene_Menu.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
+
     /**
      * メニューシーンにHUDを追加。
      */
@@ -82,6 +86,17 @@
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
         this._buttonGuide.refresh();
+        this.createQuestHUD();
+    };
+
+    const _Scene_Menu_update = Scene_Menu.prototype.update;
+    /**
+     * クエストHUDの表示を追加
+     */
+    Scene_Menu.prototype.update = function () {
+        _Scene_Menu_update.call(this);
+        this._questHUD.show();
+        this._questHUD.refresh();
     };
 
     const _Scene_Menu_createCommandWindow = Scene_Menu.prototype.createCommandWindow;

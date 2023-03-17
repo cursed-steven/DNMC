@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2022/12/25 初版
+// 1.0.1  2023/03/17 クエストHUD対応
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -38,6 +39,9 @@
     Scene_Skill.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
     Scene_Skill.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;
     Scene_Skill.prototype.menuStatusWindowRect = Scene_Menu.prototype.statusWindowRect;
+    Scene_Skill.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
+    Scene_Skill.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
+
     /**
      * スキルシーンを作成する(ウィンドウ追加)。
      */
@@ -56,6 +60,7 @@
         this.createSkillCategoryWindow();
         this.createItemWindow();
         this.createActorWindow();
+        this.createQuestHUD();
     };
 
     /**
@@ -221,11 +226,13 @@
 
     const _Scene_Skill_update = Scene_Skill.prototype.update;
     /**
-     * ボタンガイドの描画更新処理を追加
+     * ボタンガイドとクエストHUDの描画更新処理を追加
      */
     Scene_Skill.prototype.update = function () {
         _Scene_Skill_update.call(this);
         this._buttonGuide.refresh();
+        this._questHUD.show();
+        this._questHUD.refresh();
     };
 
     //-----------------------------------------------------------------------------

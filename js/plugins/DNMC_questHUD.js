@@ -78,7 +78,7 @@
 
     const _Scene_Map_update = Scene_Map.prototype.update;
     /**
-     * クエストHUD表示と声真を追加
+     * クエストHUD表示と更新を追加
      */
     Scene_Map.prototype.update = function () {
         _Scene_Map_update.call(this);

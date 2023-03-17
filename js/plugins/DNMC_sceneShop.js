@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2023/01/24 初版
+// 1.0.1  2023/03/17 クエストHUD対応
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -36,6 +37,9 @@
     Scene_Shop.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
     Scene_Shop.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_Shop.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
+    Scene_Shop.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
+    Scene_Shop.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
+
     /**
      * ショップシーンにHUDを追加。
      */
@@ -45,6 +49,17 @@
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
         this._buttonGuide.refresh();
+        this.createQuestHUD();
+    };
+
+    const _Scene_Shop_update = Scene_Shop.prototype.update;
+    /**
+     * クエストHUD表示を追加
+     */
+    Scene_Shop.prototype.update = function () {
+        _Scene_Shop_update.call(this);
+        this._questHUD.show();
+        this._questHUD.refresh();
     };
 
     /**

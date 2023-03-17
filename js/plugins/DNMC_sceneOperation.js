@@ -8,6 +8,7 @@
 // Version
 // 1.0.0  2023/01/23 初版(DNMC_scene_Menuから分離)
 // 1.0.1  2023/03/06 setMoreNumberFontFace.jsの改造に伴ってカスタマイズ
+// 1.0.2  2023/03/17 クエストHUD対応
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -61,6 +62,8 @@ Scene_Operation.prototype.initialize = function () {
     Scene_Operation.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     Scene_Operation.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
     Scene_Operation.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;
+    Scene_Operation.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
+    Scene_Operation.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
 
     /**
      * 作戦シーンの作成。
@@ -80,10 +83,21 @@ Scene_Operation.prototype.initialize = function () {
         this.createSkillTypeWindow();
         this.createSkillCategoryWindow();
         this.createItemWindow();
+        this.createQuestHUD();
 
         this.onCtlrRChange();
         this._ctlrLWindow.forceSelect(0);
         this._currentSide = 0;
+    };
+
+    const _Scene_Operation_update = Scene_Operation.prototype.update;
+    /**
+     * クエストHUD表示を追加
+     */
+    Scene_Operation.prototype.update = function () {
+        _Scene_Operation_update.call(this);
+        this._questHUD.show();
+        this._questHUD.refresh();
     };
 
     /**
