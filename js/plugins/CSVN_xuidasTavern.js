@@ -309,6 +309,27 @@
         return membersCantEliminate.toString().split(",").includes(actorId.toString());
     }
 
+    /**
+     * Donut Machine の中で使われているかどうかの判別
+     * ※Donut Machine 専用機能
+     * @returns boolean
+     */
+    function isDNMCActive() {
+        let result = false;
+        try {
+            const test = new DataActor();
+            // console.log(`DataActor?: ${typeof test}`);
+            if (typeof test === "object") {
+                result = true;
+            }
+        } catch (e) {
+            CSVN_base.log(">>>> " + this.constructor.name + " initialize");
+            CSVN_base.log("Donut Machine not activated, do not mind.");
+        }
+
+        return result;
+    }
+
     //-----------------------------------------------------------------------------
     // Scene_PartyChange
     //
@@ -1002,7 +1023,7 @@
             this._modeWindow.drawEliminated(r.markedItem());
             this.eliminate(r.markedItem().actorId());
             this.setTimer(300);
-            u.unmark();
+            r.unmark();
         } else if (!r.item()) {
             // 選択したメンバーが空欄だった            
             SoundManager.playBuzzer();
@@ -1540,19 +1561,7 @@
      */
     Window_ReserveChangeMember.prototype.initialize = function (rect) {
         Window_PartyChangeBase.prototype.initialize.call(this, rect);
-
-        // Donut Machine 用特殊仕様
-        this._dnmcActive = false;
-        try {
-            const test = new DataActor();
-            // console.log(`DataActor?: ${typeof test}`);
-            if (typeof test === "object") {
-                this._dnmcActive = true;
-            }
-        } catch (e) {
-            CSVN_base.log(">>>> " + this.constructor.name + " initialize");
-            CSVN_base.log("Donut Machine not activated, do not mind.");
-        }
+        this._dnmcActive = isDNMCActive();
     };
 
     /**
