@@ -330,7 +330,6 @@
                 result = true;
             }
         } catch (e) {
-            CSVN_base.log(">>>> " + this.constructor.name + " initialize");
             CSVN_base.log("Donut Machine not activated, do not mind.");
         }
 
@@ -1519,7 +1518,7 @@
      * @returns number
      */
     Window_PartyChangeMember.prototype.maxItems = function () {
-        return PARTY_MAX_LENGTH + 1;
+        return $gameParty.members().length + 1;
     };
 
     /**
