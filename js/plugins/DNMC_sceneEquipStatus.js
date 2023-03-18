@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2023/01/23 初版(DNMC_sceneMenuから分離)
+// 1.0.1  2023/03/18 クエストHUD対応
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -53,6 +54,8 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
     Scene_EquipStatus.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     Scene_EquipStatus.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
     Scene_EquipStatus.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;
+    Scene_EquipStatus.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
+    Scene_EquipStatus.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
 
     /**
      * 装備/ステータスシーンの作成。
@@ -65,6 +68,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
         this._buttonGuide.refresh();
+        this.createQuestHUD();
         this.createHelpWindow();
         this.createStatusWindow();
         this.createCommandWindow();
@@ -299,6 +303,16 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
     Scene_EquipStatus.prototype.hideItemWindow = function () {
         this._slotWindow.activate();
         this._itemWindow.deselect();
+    };
+
+    const _Scene_EquipStatus_update = Scene_EquipStatus.prototype.update;
+    /**
+     * クエストHUD表示と更新を追加
+     */
+    Scene_EquipStatus.prototype.update = function () {
+        _Scene_EquipStatus_update.call(this);
+        this._questHUD.show();
+        this._questHUD.refresh();
     };
 
     Scene_EquipStatus.prototype.commandEquip = Scene_Equip.prototype.commandEquip;

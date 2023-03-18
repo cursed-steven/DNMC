@@ -1,5 +1,5 @@
 //=============================================================================
-// RPG Maker MZ - Plugin Template
+// RPG Maker MZ - DNMC_sceneComparison
 // ----------------------------------------------------------------------------
 // (C)2023 cursed_twitch
 // This software is released under the MIT License.
@@ -19,7 +19,7 @@
  * @base CSVN_base
  * @orderAfter CSVN_base
  * 
- * @help CSVN_pluginTemplate.js
+ * @help DNMC_sceneComparison.js
  */
 
 //-------------------------------------------------------------------------

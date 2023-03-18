@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2022/12/24 初版
+// 1.0.1  2023/03/18 クエストHUD対応
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_twitch
 //=============================================================================
@@ -38,6 +39,9 @@
     Scene_Item.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     Scene_Item.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
     Scene_Item.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;
+    Scene_Item.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
+    Scene_Item.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
+
     /**
      * アイテムシーン作成(ウィンドウの追加)。
      */
@@ -49,6 +53,7 @@
         this._buttonGuide.refresh();
         this.createCommandWindow();
         this.createGoldWindow();
+        this.createQuestHUD();
     };
 
     /**
@@ -121,11 +126,13 @@
 
     const _Scene_Item_update = Scene_Item.prototype.update;
     /**
-     * ボタンガイドの描画更新
+     * ボタンガイドとクエストHUDの描画更新
      */
     Scene_Item.prototype.update = function () {
         _Scene_Item_update.call(this);
         this._buttonGuide.refresh();
+        this._questHUD.show();
+        this._questHUD.refresh();
     };
 
     //-----------------------------------------------------------------------------
