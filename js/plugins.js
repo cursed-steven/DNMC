@@ -79,6 +79,7 @@ var $plugins =
 {"name":"CSVN_xuidasTavern","status":true,"description":"×イーダの酒場。","parameters":{"excludedActors":"[\"1\"]","partyMaxSize":"4","actorListVarId":"407","reserveMemberVarId":"403","charWidth":"48","charHeight":"48","faceOrChar":"1","charOffsetX":"60","charOffsetY":"60","actorsMaxLength":"16","membersCantChangeVarId":"404","labelForChangeMode":"入れ替え","membersCantEliminateVarId":"405","labelForEliminateMode":"除籍","labelForPartyList":"パーティー側","labelForReserveList":"控え側","sortKeyVarId":"406","labelForClass":"職業","labelForLevel":"Lv","topSideOffset":"156","rightSideOffset":"160","showMhpMmp":"true","showEquipSlotName":"true"}},
 {"name":"DarkPlasma_MapNameOnSave","status":true,"description":"セーブ・ロード画面にマップ名を表示する","parameters":{}},
 {"name":"CSVN_excessItems","status":true,"description":"アイテム入手で保持最大数を超えた場合の追加処理","parameters":{"gainedAmount":"84","excessItemsContainer":"82","excessItemId":"83","excessCount":"81","cevId":"22"}},
+{"name":"CSVN_variableFloorDamage2","status":true,"description":"地形タグによってダメージ床の挙動を変化させます。","parameters":{"FDSpecList":"[]"}},
 {"name":"________BATTLE________","status":false,"description":"----------------------------------------------------------------","parameters":{}},
 {"name":"HPConsumeSkill","status":false,"description":"HP消費技","parameters":{"Consume HP Color":"17"}},
 {"name":"MPP_EncounterEffect","status":true,"description":"エンカウント時の演出を特殊なエフェクトに変更します。","parameters":{"Effect Type":"5","Effect Color":"255,255,255"}},
