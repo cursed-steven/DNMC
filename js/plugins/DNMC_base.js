@@ -225,25 +225,18 @@ class Trait_Effect {
     //-----------------------------------------------------------------------------
     // Game_Item
 
-    /*
-     * alpha
-     *     gamma, omega以外全部
-     * gamma
-     *     α-3,4、γ、γ-1,2
-     * omega
-     *     γ-3,4、Ω
-     */
-
     /**
      * 上位スキルかどうかを返す。
      * @returns boolean
      */
     Game_Item.prototype.isOmegaSkill = function () {
         if (!this.isSkill()) return false;
-        if (this.object().name.includes("Ω")) return true;
-        if (this.object().name.includes("γ-3")) return true;
-        if (this.object().name.includes("γ-4")) return true;
-        if (this.object().name.includes("-4")) return true;
+        if (this.object().name.includes("魔")) return true;
+        if (this.object().name.includes("ディア")) return true;
+        if (this.object().name.includes("モーリ")) return true;
+        if (this.object().name.includes("モヴァ")) return true;
+        if (this.object().name.includes("烈") && this.object().name.includes("三")) return true;
+        if (this.object().name.includes("烈") && this.object().name.includes("四")) return true;
         if (this.object().mpCost > 48) return true;
 
         return false;
@@ -255,12 +248,15 @@ class Trait_Effect {
      */
     Game_Item.prototype.isGammaSkill = function () {
         if (!this.isSkill()) return false;
-        if (this.object().name.includes("γ")) return true;
-        if (this.object().name.includes("γ-1")) return true;
-        if (this.object().name.includes("γ-2")) return true;
-        if (this.object().name.includes("α-3")) return true;
-        if (this.object().name.includes("α-4")) return true;
-        if (this.object().name.includes("-3")) return true;
+        if (this.object().name.includes("モーユ")) return true;
+        if (this.object().name.includes("モド")) return true;
+        if (this.object().name.includes("モ")) return true;
+        if (this.object().name.includes("烈") && this.object().name.includes("二")) return true;
+        if (this.object().name.includes("烈")) return true;
+        if (this.object().name.includes("ーリ")) return true;
+        if (this.object().name.includes("ヴァ")) return true;
+        if (this.object().name.includes("強") && this.object().name.includes("三")) return true;
+        if (this.object().name.includes("強") && this.object().name.includes("四")) return true;
         if (this.object().mpCost > 24) return true;
 
         return false;
