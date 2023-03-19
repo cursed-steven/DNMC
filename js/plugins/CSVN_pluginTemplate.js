@@ -199,16 +199,16 @@
 
 /*~struct~Sample:ja
  * 
- * @param key
- * @text キー
- * @desc キー
- * @default key
+ * @param value1
+ * @text 値1
+ * @desc 値1
+ * @default a
  * @type string
  * 
- * @param value
- * @text 値
- * @desc 値
- * @default value
+ * @param value2
+ * @text 値2
+ * @desc 値2
+ * @default b
  * @type string
  */
 
