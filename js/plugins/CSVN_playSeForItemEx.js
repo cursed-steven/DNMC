@@ -1,7 +1,7 @@
 //=============================================================================
 // RPG Maker MZ - CSVN_playSeForItemEx.js
 // ----------------------------------------------------------------------------
-// (C)2022 cursed_twitch
+// (C)2022 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
@@ -9,13 +9,13 @@
 // 1.0.0  2021/07/30 初版
 // 2.0.0  2022/11/19 メモ欄対応廃止、プラグインパラメータによる設定に変更
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc スキルタイプ／アイテムの使用効果に応じて追加の効果音を鳴らします。
- * @author cursed_twitch
+ * @author cursed_steven
  * @base CSVN_statics
  * @orderAfter CSVN_statics
  * 

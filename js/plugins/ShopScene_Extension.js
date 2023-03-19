@@ -237,7 +237,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
             this.bitmap.clear();
             this.bitmap.blt(this._opacityBitmap, 0, 0, pw, ph, 0, 0);
 
-            // cursed_twitch custom(2023/01/24)
+            // cursed_steven custom(2023/01/24)
             this.bitmap.fontFace = $gameSystem.mainFontFace();
             switch (equipState) {
                 case "cannot":
@@ -478,7 +478,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
             this.drawText(actor.name(), x, y, width);
 
             // Draw item
-            // cursed_twitch custom(2023/01/24)
+            // cursed_steven custom(2023/01/24)
             /*
             const halfRightArrowWidth = this.rightArrowWidth() / 2;
             const itemNameWidth = halfWindowWidth - halfRightArrowWidth;
@@ -570,7 +570,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
 
     // アクター切り替え矢印スプライトの座標を設定
     Window_ShopStatus.prototype.setupActorCursors = function (y) {
-        // cursed_twitch custom(2023/01/24)
+        // cursed_steven custom(2023/01/24)
         this._leftActorArrowSprite.show();
         this._leftActorArrowSprite.x = this.padding;
         this._leftActorArrowSprite.y = y + 16;
@@ -587,7 +587,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
     };
 
     Window_ShopStatus.prototype.drawAllParams = function (x, y) {
-        // cursed_twitch custom(2023/01/24)
+        // cursed_steven custom(2023/01/24)
         for (let i = 0; i < 8; i++) {
             this.drawItem(x, y, i);
             y += this.lineHeight();
@@ -623,7 +623,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
     };
 
     Window_ShopStatus.prototype.newEquipValue = function (actor, paramId, newItem, oldItem) {
-        // cursed_twitch custom(2023/01/24)
+        // cursed_steven custom(2023/01/24)
         // return actor.param(paramId) + newItem.params[paramId] - (oldItem ? oldItem.params[paramId] : 0);
 
         const baseValue = actor.paramBase(paramId);
@@ -648,7 +648,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
 
     // 全てのパラメータについて差分を取得
     Window_ShopStatus.prototype.paramsDiff = function (actor, newItem, oldItem) {
-        // cursed_twitch custom(2023/01/24)
+        // cursed_steven custom(2023/01/24)
         const paramIds = [];
         for (let i = 0; i < 8; i++) {
             paramIds.push(i);

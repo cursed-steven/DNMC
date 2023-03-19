@@ -1,20 +1,20 @@
 //=============================================================================
 // RPG Maker MZ - DNMC_questHUD
 // ----------------------------------------------------------------------------
-// (C)2023 cursed_twitch
+// (C)2023 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2023/02/28 初版
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc 進行中クエストの内容を戦闘以外の画面に常駐表示します。
- * @author cursed_twitch
+ * @author cursed_steven
  * @base CSVN_base
  * @base QuestSystem
  * @orderAfter CSVN_base

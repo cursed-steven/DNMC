@@ -1,20 +1,20 @@
 //=============================================================================
 // RPG Maker MZ - CSVN_gameEndWindow
 // ----------------------------------------------------------------------------
-// (C)2023 cursed_twitch
+// (C)2023 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2023/02/21 初版
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc ゲーム終了時のウィンドウの幅を設定
- * @author cursed_twitch
+ * @author cursed_steven
  * @base CSVN_base
  * @orderAfter CSVN_base
  * 

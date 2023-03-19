@@ -1,20 +1,20 @@
 //=============================================================================
 // RPG Maker MZ - CSVN_encounterEx.js
 // ----------------------------------------------------------------------------
-// (C)2022 cursed_twitch
+// (C)2022 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2022/11/17 初版
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc 敵グループに出現条件をつける／歩数を変更する
- * @author cursed_twitch
+ * @author cursed_steven
  * @base CSVN_base
  * @orderAfter CSVN_base
  * 

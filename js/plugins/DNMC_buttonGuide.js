@@ -1,7 +1,7 @@
 //=============================================================================
 // RPG Maker MZ - DNMC_buttonGuide
 // ----------------------------------------------------------------------------
-// (C)2022 cursed_twitch
+// (C)2022 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
@@ -9,13 +9,13 @@
 // 1.0.0  2022/12/22 初版
 // 1.1.0  2023/02/28 Mano_InputConfigの設定を読んでキー表示
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc Donut Machine 専用ボタンガイド
- * @author cursed_twitch
+ * @author cursed_steven
  * @base CSVN_base
  * @base Mano_InputConfig
  * @orderAfter CSVN_base

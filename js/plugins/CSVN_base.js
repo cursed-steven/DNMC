@@ -1,7 +1,7 @@
 //=============================================================================
 // RPG Maker MZ - CSVN_base.js
 // ----------------------------------------------------------------------------
-// (C)2022 cursed_twitch
+// (C)2022 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
@@ -9,13 +9,13 @@
 // 1.0.0  2022/11/13 初版
 // 1.1.0  2022/12/24 定数とクラスの定義をCSVN_staticsに分離
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc CSVN系列の公開プラグインや自作プラグインの基盤にする関数群
- * @author cursed_twitch
+ * @author cursed_steven
  * @base CSVN_statics
  * @orderAfter CSVN_statics
  * 

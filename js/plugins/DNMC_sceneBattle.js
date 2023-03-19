@@ -1,7 +1,7 @@
 //=============================================================================
 // RPG Maker MZ - DNMC_sceneBattle
 // ----------------------------------------------------------------------------
-// (C)2023 cursed_twitch
+// (C)2023 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
@@ -9,13 +9,13 @@
 // 1.0.0  2023/02/05 初版
 // 1.1.0  2023/02/19 HUD化
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc Donut Machine 専用戦闘改変いろいろ
- * @author cursed_twitch
+ * @author cursed_steven
  * @base DNMC_battleCommandUI
  * @orderAfter CSVN_base
  * 

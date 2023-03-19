@@ -1,20 +1,20 @@
 //=============================================================================
 // RPG Maker MZ - DNMC_system3.js
 // ----------------------------------------------------------------------------
-// (C)2022 cursed_twitch
+// (C)2022 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2022/12/23 初版
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc Donut Machine 専用追加システム設定
- * @author cursed_twitch
+ * @author cursed_steven
  * @base CSVN_base
  * @orderAfter CSVN_base
  * 

@@ -223,7 +223,7 @@
     const _Window_SkillList_costWidth = Window_SkillList.prototype.costWidth;
     Window_SkillList.prototype.costWidth = function () {
         const skill = $gameTemp.skillForCost;
-        // 競合対策(cursed_twitch-2023/1/16)
+        // 競合対策(cursed_steven-2023/1/16)
         if (skill && skill.meta && skill.meta.SkillCostText) {
             return this.noteCostWidth(skill);
         }
@@ -236,7 +236,7 @@
     const _Window_SkillList_drawSkillCost =
         Window_SkillList.prototype.drawSkillCost;
     Window_SkillList.prototype.drawSkillCost = function (skill, x, y, width) {
-        // 競合対策(cursed_twitch-2023/1/16)
+        // 競合対策(cursed_steven-2023/1/16)
         if (skill && skill.meta && skill.meta.SkillCostText) {
             const x2 = x + width - this.noteCostWidth(skill);
             this.drawTextEx(displayText(skill), x2, y, width);

@@ -1,7 +1,7 @@
 //=============================================================================
 // RPG Maker MZ - CSVN_conditionChecker.js
 // ----------------------------------------------------------------------------
-// (C)2022 cursed_twitch
+// (C)2022 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
@@ -9,13 +9,13 @@
 // 1.0.0  2022/11/13 初版
 // 1.0.1  2022/11/14 もろもろ追記・修正
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc マップID、リージョン、スイッチ、変数の条件との合致有無を判定する。
- * @author cursed_twitch
+ * @author cursed_steven
  * @base CSVN_base
  * @orderAfter CSVN_base
  * 

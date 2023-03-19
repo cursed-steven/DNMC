@@ -1,20 +1,20 @@
 //=============================================================================
 // RPG Maker MZ - CSVN_fastTravel2.js
 // ----------------------------------------------------------------------------
-// (C)2022 cursed_twitch
+// (C)2022 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2022/11/23 初版
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc ファストトラベルスキル／アイテム
- * @author cursed_twitch
+ * @author cursed_steven
  * @base CSVN_additionalMapInfo
  * @orderAfter CSVN_additionalMapInfo
  * 

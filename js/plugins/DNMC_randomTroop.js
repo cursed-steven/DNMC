@@ -1,7 +1,7 @@
 //=============================================================================
 // RPG Maker MZ - DNMC_randomTroop
 // ----------------------------------------------------------------------------
-// (C)2023 cursed_twitch
+// (C)2023 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
@@ -10,13 +10,13 @@
 // 1.1.0  2023/02/26 座標決定ロジック見直し
 // 1.2.0  2023/03/06 一時バイオーム対応
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc バイオームごとに敵グループをランダム生成します
- * @author cursed_twitch
+ * @author cursed_steven
  * @base DNMC_statics
  * @orderAfter DNMC_statics
  * 

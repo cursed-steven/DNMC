@@ -1,20 +1,20 @@
 //=============================================================================
 // RPG Maker MZ - DNMC_randomActors
 // ----------------------------------------------------------------------------
-// (C)2023 cursed_twitch
+// (C)2023 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2023/01/11 初版
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc アクターをランダム生成する
- * @author cursed_twitch
+ * @author cursed_steven
  * @base DNMC_base
  * @base DNMC_randomWeapons
  * @base DNMC_randomArmors

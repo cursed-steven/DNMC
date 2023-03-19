@@ -1,20 +1,20 @@
 //=============================================================================
 // RPG Maker MZ - DNMC_randomStatics
 // ----------------------------------------------------------------------------
-// (C)2022 cursed_twitch
+// (C)2022 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2022/12/26 初版
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc ランダム生成用定数
- * @author cursed_twitch
+ * @author cursed_steven
  * @base DNMC_system3
  * @orderAfter DNMC_system3
  * 

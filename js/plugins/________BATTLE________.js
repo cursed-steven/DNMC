@@ -5,13 +5,13 @@
 /*:
  * @target MZ
  * @plugindesc ----------------------------------------------------------------
- * @author cursed_twitch
+ * @author cursed_steven
  */
 
 /*:ja
  * @target MZ
  * @plugindesc ----------------------------------------------------------------
- * @author cursed_twitch
+ * @author cursed_steven
  */
 
 //=============================================================================

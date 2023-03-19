@@ -1,7 +1,7 @@
 //=============================================================================
 // RPG Maker MZ - DNMC_sceneItem
 // ----------------------------------------------------------------------------
-// (C)2022 cursed_twitch
+// (C)2022 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
@@ -9,13 +9,13 @@
 // 1.0.0  2022/12/24 初版
 // 1.0.1  2023/03/18 クエストHUD対応
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc Donut Machine 専用アイテムコマンド
- * @author cursed_twitch
+ * @author cursed_steven
  * @base DNMC_sceneMenu
  * @orderAfter DNMC_sceneMenu
  * 

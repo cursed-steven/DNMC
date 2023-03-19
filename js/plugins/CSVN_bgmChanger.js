@@ -1,20 +1,20 @@
 //=============================================================================
 // RPG Maker MZ - CSVN_bgmChanger.js
 // ----------------------------------------------------------------------------
-// (C)2022 cursed_twitch
+// (C)2022 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2022/11/14 初版
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc マップID、リージョン、スイッチ、変数を見て条件を判定し、必要に応じてBGM/BGSを変更する。
- * @author cursed_twitch
+ * @author cursed_steven
  * @base CSVN_conditionChecker
  * @orderAfter CSVN_conditionChecker
  * 

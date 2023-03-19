@@ -1,7 +1,7 @@
 //=============================================================================
 // RPG Maker MZ - DNMC_sceneEquipStatus
 // ----------------------------------------------------------------------------
-// (C)2023 cursed_twitch
+// (C)2023 cursed_steven
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
@@ -9,13 +9,13 @@
 // 1.0.0  2023/01/23 初版(DNMC_sceneMenuから分離)
 // 1.0.1  2023/03/18 クエストHUD対応
 // ----------------------------------------------------------------------------
-// [Twitter]: https://twitter.com/cursed_twitch
+// [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
 
 /*:ja
  * @target MZ
  * @plugindesc 装備/ステータス画面
- * @author cursed_twitch
+ * @author cursed_steven
  * @base DNMC_sceneMenu
  * @orderAfter DNMC_sceneMenu
  * 

@@ -2637,7 +2637,7 @@ https://github.com/pota-gon/GenerateWorld
         const _Window_MenuCommand_addMainCommands = Window_MenuCommand.prototype.addMainCommands;
         Window_MenuCommand.prototype.addMainCommands = function () {
             if (Potadra_checkSwitch(HideRegenerateSwitch, false)) {
-                // cursed_twitch custom (2023/01/24)
+                // cursed_steven custom (2023/01/24)
                 // this.addCommand(RegenerateCommand, "regenerate_world", Potadra_checkSwitch(DisableRegenerateSwitch, false));
             }
             _Window_MenuCommand_addMainCommands.apply(this, arguments);
@@ -2682,7 +2682,7 @@ https://github.com/pota-gon/GenerateWorld
          */
         const _Window_MenuCommand_addMainCommands = Window_MenuCommand.prototype.addMainCommands;
         Window_MenuCommand.prototype.addMainCommands = function () {
-            // cursed_twitch custom (2023/01/24)
+            // cursed_steven custom (2023/01/24)
             // this.addCommand(ExportJsonCommand, "export_map_json");
             _Window_MenuCommand_addMainCommands.apply(this, arguments);
         };
