@@ -53,6 +53,8 @@
  * @value blue
  * @option 緑
  * @value green
+ * @option なし
+ * @value none
  * 
  * @param se
  * @text SE
@@ -171,7 +173,7 @@
         const tt = $gamePlayer.terrainTag();
         const spec = selectFDSpecs(tt);
 
-        if (spec) {
+        if (spec && spec.flahColor !== "none") {
             this.startFlash(FLASH[spec.flashColor], 8);
             this.playSeForDamage(spec);
         } else {
