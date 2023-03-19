@@ -173,8 +173,10 @@
         const tt = $gamePlayer.terrainTag();
         const spec = selectFDSpecs(tt);
 
-        if (spec && spec.flahColor !== "none") {
-            this.startFlash(FLASH[spec.flashColor], 8);
+        if (spec) {
+            if (spec.flashColor !== "none") {
+                this.startFlash(FLASH[spec.flashColor], 8);
+            }
             this.playSeForDamage(spec);
         } else {
             // 指定条件がなければ通常の処理
