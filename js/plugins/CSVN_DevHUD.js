@@ -54,6 +54,12 @@
  * @text テキストY座標オフセット
  * @desc テキスト位置の微調整(Y座標)
  * @type number
+ * @min -12
+ * 
+ * @param heightTweak
+ * @text 領域高さ微調整
+ * @type number
+ * @min -12
  * 
  * @param debugModeSwId
  * @text DEBUG MODE スイッチのID
@@ -70,6 +76,7 @@
 
     const xOffset = param.xTextOffset ? param.xTextOffset : 0;
     const yOffset = param.yTextOffset ? param.yTextOffset : 0;
+    const heightTweak = param.heightTweak ? param.heightTweak : 0;
 
     //-------------------------------------------------------------------------
     // Scene_Map
@@ -91,7 +98,7 @@
         const wx = 0;
         const wy = 0;
         const ww = Graphics.boxWidth - this._menuButton.width - 8;
-        const wh = this.calcWindowHeight(1, true);
+        const wh = this.calcWindowHeight(1, true) + heightTweak;
         return new Rectangle(wx, wy, ww, wh);
     };
 
