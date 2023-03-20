@@ -82,7 +82,7 @@
         const ww = this.mainCommandWidth();
         const wh = this.calcWindowHeight(1, true);
         const wx = Graphics.boxWidth - this.mapHUDRect().width - ww;
-        const wy = this.mapHUDRect().y;
+        const wy = this.calcWindowHeight(3, true);
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -112,7 +112,7 @@
     };
 
     /**
-     * ダミーウィンドウ領域を返す
+     * ダミーウィンドウ(=店の売り物 or パーティーの売り物が並ぶ部分)領域を返す
      * @returns Rectangle
      */
     Scene_Shop.prototype.dummyWindowRect = function () {
@@ -174,7 +174,7 @@
     Scene_Shop.prototype.sellWindowRect = function () {
         const wx = 0;
         const wy = this._categoryWindow.y + this._categoryWindow.height;
-        const ww = this._categoryWindow.width;
+        const ww = this._categoryWindow.width - this._statusWindow.width;
         const wh = this.mainAreaHeight()
             - this._commandWindow.height
             - this._categoryWindow.height
@@ -182,6 +182,9 @@
         return new Rectangle(wx, wy, ww, wh);
     };
 
+    /**
+     * ダミーウィンドウ２(=ステータスウィンドウ領域にあたる)の領域を返す
+     */
     Scene_Shop.prototype.createDummyWindow2 = function () {
         const rect = this.statusWindowRect();
         this._dummyWindow2 = new Window_Base(rect);
@@ -189,12 +192,18 @@
     };
 
     const _Scene_Shop_activateBuyWindow = Scene_Shop.prototype.activateBuyWindow;
+    /**
+     * 買い物ウィンドウの有効化
+     */
     Scene_Shop.prototype.activateBuyWindow = function () {
         _Scene_Shop_activateBuyWindow.call(this);
         this._dummyWindow2.hide();
     };
 
     const _Scene_Shop_commandSell = Scene_Shop.prototype.commandSell;
+    /**
+     * 売り物ウィンドウの有効化
+     */
     Scene_Shop.prototype.commandSell = function () {
         _Scene_Shop_commandSell.call(this);
         if (this._categoryWindow.needsSelection()) {
@@ -205,26 +214,82 @@
     };
 
     const _Scene_Shop_onBuyCancel = Scene_Shop.prototype.onBuyCancel;
+    /**
+     * 買い物ウィンドウでキャンセルしたときの処理
+     */
     Scene_Shop.prototype.onBuyCancel = function () {
         _Scene_Shop_onBuyCancel.call(this);
         this._dummyWindow2.show();
     };
 
     const _Scene_Shop_onSellOk = Scene_Shop.prototype.onSellOk;
+    /**
+     * 売り物ウィンドウでOKしたときの処理
+     */
     Scene_Shop.prototype.onSellOk = function () {
         _Scene_Shop_onSellOk.call(this);
         this._dummyWindow2.hide();
         if (this._categoryWindow.needsSelection()) {
+            // 売り物のカテゴリウィンドウの分ダミー２の高さを削ってY座標を下げる
             this._dummyWindow2.height -= this._categoryWindow.height;
             this._dummyWindow2.y += this._categoryWindow.height;
         }
     };
 
+    const _Scene_Shop_onNumberOk = Scene_Shop.prototype.onNumberOk;
+    /**
+     * 売り買いで数量を決めてOKしたときの処理
+     */
+    Scene_Shop.prototype.onNumberOk = function () {
+        _Scene_Shop_onNumberOk.call(this);
+        switch (this._commandWindow.currentSymbol()) {
+            case "buy":
+                // 
+                break;
+            case "sell":
+                this._dummyWindow2.show();
+                if (this._categoryWindow.needsSelection()) {
+                    // 売り物のカテゴリウィンドウの分ダミー２の高さを増やしてY座標をあげる
+                    this._dummyWindow2.height += this._categoryWindow.height;
+                    this._dummyWindow2.y -= this._categoryWindow.height;
+                }
+                break;
+        }
+    };
+
+    const _Scene_Shop_onNumberCancel = Scene_Shop.prototype.onNumberCancel;
+    /**
+     * 売却数量選択でキャンセルした時の処理
+     */
+    Scene_Shop.prototype.onNumberCancel = function () {
+        _Scene_Shop_onNumberCancel.call(this);
+        this._dummyWindow2.show();
+        if (this._categoryWindow.needsSelection()) {
+            // 売り物のカテゴリウィンドウの分ダミー２の高さを増やしてY座標をあげる
+            this._dummyWindow2.height += this._categoryWindow.height;
+            this._dummyWindow2.y -= this._categoryWindow.height;
+        }
+    };
+
     const _Scene_Shop_onCategoryCancel = Scene_Shop.prototype.onCategoryCancel;
+    /**
+     * 売り物のカテゴリ選択時にキャンセルした時の処理
+     */
     Scene_Shop.prototype.onCategoryCancel = function () {
         _Scene_Shop_onCategoryCancel.call(this);
         this._dummyWindow2.height += this._categoryWindow.height;
         this._dummyWindow2.y -= this._categoryWindow.height;
+    };
+
+    //-----------------------------------------------------------------------------
+    // Window_ShopSell
+
+    /**
+     * 列数変更
+     * @returns number
+     */
+    Window_ShopSell.prototype.maxCols = function () {
+        return 1;
     };
 
 })();
