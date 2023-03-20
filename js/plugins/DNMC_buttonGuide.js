@@ -226,7 +226,7 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
                 this.drawSceneSkillGuide();
                 break;
             case "Scene_EquipStatus":
-                // this.drawSceneEquipStatusGuide();
+                this.drawSceneEquipStatusGuide();
                 break;
             case "Scene_Operation":
                 this.drawSceneOperationGuide();
@@ -285,6 +285,25 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
                 this.drawButton("pagedown", "キャラ→", 0, this.fontSize * this.lhr * 3);
                 break;
             case "Window_SkillList":
+                break;
+        }
+    };
+
+    /**
+     * Scene_EquipStatusのガイド
+     */
+    Window_ButtonGuide.prototype.drawSceneEquipStatusGuide = function () {
+        switch (this.activeWindow) {
+            case "":
+            case "Window_EquipCommand":
+                this.drawButton("left", "←コマンド", 0, 0);
+                this.drawButton("right", "コマンド→", 0, this.fontSize * this.lhr);
+                this.drawButton("pageup", "←キャラ", 0, this.fontSize * this.lhr * 2);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * this.lhr * 3);
+                break;
+            case "Window_EquipDetail":
+                this.drawButton("pageup", "←キャラ", 0, 0);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * this.lhr * 1);
                 break;
         }
     };

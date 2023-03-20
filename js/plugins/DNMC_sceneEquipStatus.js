@@ -67,6 +67,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         this.createMenuStatusWindow();
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
+        this._buttonGuide.show();
         this._buttonGuide.refresh();
         this.createQuestHUD();
         this.createHelpWindow();
@@ -214,7 +215,9 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         const rect = this.equipDetailWindowRect();
         this._detailWindow = new Window_EquipDetail(rect, this.actor());
         this._detailWindow.setHandler("ok", this.onDetailOk.bind(this));
-        this._detailWindow.setHandler("cancel", this.onDetailCancel.bind(this));
+        this._detailWindow.setHandler("cancel", this.onDetailOk.bind(this));
+        this._detailWindow.setHandler("pagedown", this.nextActorsDetail.bind(this));
+        this._detailWindow.setHandler("pageup", this.previousActorsDetail.bind(this));
         this._detailWindow.hide();
         this.addWindow(this._detailWindow);
     };
@@ -241,6 +244,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         this._detailWindow.activate();
         this._itemWindow.hide();
         this._slotWindow.y = Graphics.boxHeight - this._slotWindow.height;
+        this._buttonGuide.setActiveWindow("Window_EquipDetail");
     };
 
     /**
@@ -253,13 +257,23 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         this._itemWindow.show();
         const commandWindowRect = this.commandWindowRect();
         this._slotWindow.y = commandWindowRect.y + commandWindowRect.height;
+        this._buttonGuide.setActiveWindow("Window_EquipCommand");
     };
 
     /**
-     * 装備詳細表示中にキャンセルしたときの処理
+     * 装備詳細表示中にキャラ変えしたときの処理(next)
      */
-    Scene_EquipStatus.prototype.onDetailCancel = function () {
-        this.onDetailOk();
+    Scene_EquipStatus.prototype.nextActorsDetail = function () {
+        this.nextActor();
+        this._detailWindow.refresh();
+    };
+
+    /**
+     * 装備詳細表示中にキャラ変えしたときの処理(prev)
+     */
+    Scene_EquipStatus.prototype.previousActorsDetail = function () {
+        this.previousActor();
+        this._detailWindow.refresh();
     };
 
     /**
@@ -269,6 +283,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         this._itemWindow.show();
         this._itemWindow.activate();
         this._itemWindow.select(0);
+        this._buttonGuide.setActiveWindow("Window_EquipItem");
     };
 
     /**
@@ -311,8 +326,18 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
      */
     Scene_EquipStatus.prototype.update = function () {
         _Scene_EquipStatus_update.call(this);
+        this._buttonGuide.show();
+        this._buttonGuide.refresh();
         this._questHUD.show();
         this._questHUD.refresh();
+    };
+
+    /**
+     * アクター変更
+     */
+    Scene_EquipStatus.prototype.refreshActor = function () {
+        Scene_Equip.prototype.refreshActor.call(this);
+        this._detailWindow.setActor(this.actor());
     };
 
     Scene_EquipStatus.prototype.commandEquip = Scene_Equip.prototype.commandEquip;
@@ -321,7 +346,6 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
     Scene_EquipStatus.prototype.onSlotCancel = Scene_Equip.prototype.onSlotCancel;
     Scene_EquipStatus.prototype.executeEquipChange = Scene_Equip.prototype.executeEquipChange;
     Scene_EquipStatus.prototype.onItemCancel = Scene_Equip.prototype.onItemCancel;
-    Scene_EquipStatus.prototype.refreshActor = Scene_Equip.prototype.refreshActor;
 
     //-----------------------------------------------------------------------------
     // Window_MenuCommand
@@ -541,7 +565,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
     //-------------------------------------------------------------------------
     // Window_EqiupDetail
     //
-    // The window for displaying buffs/debuffs cased by equips.
+    // The window for displaying buffs/debuffs caused by equips.
 
     function Window_EquipDetail() {
         this.initialize(...arguments);
@@ -560,6 +584,17 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         this.contents.fontSize = 12;
         this._actor = actor;
         this.clearAllTraits();
+    };
+
+    /**
+     * 設定アクターの変更
+     * @param {Game_Actor} actor 
+     */
+    Window_EquipDetail.prototype.setActor = function (actor) {
+        if (this._actor !== actor) {
+            this._actor = actor;
+            this.refresh();
+        }
     };
 
     /**
