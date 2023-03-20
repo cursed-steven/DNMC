@@ -598,7 +598,11 @@ function DNMC_randomArmors() {
                 break;
         }
 
-        return value ? tmplParam.replace("{{param}}", param).replace("{{value}}", value) : "";
+        const result = param !== "null" && value !== "null"
+            ? tmpl.replace("{{param}}", param).replace("{{value}}", value)
+            : "";
+
+        return result;
     }
 
     /**
