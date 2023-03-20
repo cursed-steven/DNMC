@@ -70,9 +70,9 @@
      */
     Scene_Map.prototype.questHUDRect = function () {
         const ww = Graphics.boxWidth - 160;
-        const wh = this.calcWindowHeight(2, true);
+        const wh = this.calcWindowHeight(2, true) - 8;
         const wx = 0;
-        const wy = 48;
+        const wy = 40;
         return new Rectangle(wx, wy, ww, wh);
     };
 

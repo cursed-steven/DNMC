@@ -82,7 +82,7 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
         const ww = 160;
         const wh = this.calcWindowHeight(2, true);
         const wx = Graphics.boxWidth - ww;
-        const wy = 48;
+        const wy = 40;
         return new Rectangle(wx, wy, ww, wh);
     };
 
