@@ -282,6 +282,17 @@
     };
 
     //-----------------------------------------------------------------------------
+    // Window_ShopStatus
+
+    /**
+     * ショップシーン拡張(ShopScene_Extension)でキャラを動かせるかのように見えてしまうため装備品情報を非表示化
+     * @returns boolean
+     */
+    Window_ShopStatus.prototype.isEquipItem = function () {
+        return false;
+    };
+
+    //-----------------------------------------------------------------------------
     // Window_ShopSell
 
     /**
