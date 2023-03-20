@@ -253,10 +253,14 @@ function DNMC_randomArmors() {
                     trait.dataId = 0;
                     trait.value = 1;
                 } else if (i === 21) {
-                    // 行動追加率
-                    trait.code = Game_BattlerBase.TRAIT_ACTION_PLUS;
+                    // 攻撃追加回数
+                    trait.code = Game_BattlerBase.TRAIT_ATTACK_TIMES;
                     trait.dataId = 0;
                     trait.value = 1;
+                    // 行動追加率
+                    // trait.code = Game_BattlerBase.TRAIT_ACTION_PLUS;
+                    // trait.dataId = 0;
+                    // trait.value = 1;
                 } else if (22 <= i && i < 44) {
                     // 属性有効度
                     trait.code = Game_BattlerBase.TRAIT_ELEMENT_RATE;
