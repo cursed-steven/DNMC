@@ -200,6 +200,16 @@
         this._dummyWindow2.hide();
     };
 
+    const _Scene_Shop_commandBuy = Scene_Shop.prototype.commandBuy;
+    /**
+     * ステータスウィンドウに「買っている」状態を持たせる
+     */
+    Scene_Shop.prototype.commandBuy = function () {
+        _Scene_Shop_commandBuy.call(this);
+        this._statusWindow.setBuying(true);
+        this._statusWindow.refresh();
+    };
+
     const _Scene_Shop_commandSell = Scene_Shop.prototype.commandSell;
     /**
      * 売り物ウィンドウの有効化
@@ -211,6 +221,7 @@
             this._dummyWindow2.height -= this._categoryWindow.height;
             this._dummyWindow2.y += this._categoryWindow.height;
         }
+        this._statusWindow.setBuying(false);
     };
 
     const _Scene_Shop_onBuyCancel = Scene_Shop.prototype.onBuyCancel;
@@ -220,6 +231,7 @@
     Scene_Shop.prototype.onBuyCancel = function () {
         _Scene_Shop_onBuyCancel.call(this);
         this._dummyWindow2.show();
+        this._statusWindow.setBuying(null);
     };
 
     const _Scene_Shop_onSellOk = Scene_Shop.prototype.onSellOk;
@@ -244,9 +256,10 @@
         _Scene_Shop_onNumberOk.call(this);
         switch (this._commandWindow.currentSymbol()) {
             case "buy":
-                // 
+                this._statusWindow.setBuying(true);
                 break;
             case "sell":
+                this._statusWindow.setBuying(false);
                 this._dummyWindow2.show();
                 if (this._categoryWindow.needsSelection()) {
                     // 売り物のカテゴリウィンドウの分ダミー２の高さを増やしてY座標をあげる
@@ -263,11 +276,18 @@
      */
     Scene_Shop.prototype.onNumberCancel = function () {
         _Scene_Shop_onNumberCancel.call(this);
-        this._dummyWindow2.show();
-        if (this._categoryWindow.needsSelection()) {
-            // 売り物のカテゴリウィンドウの分ダミー２の高さを増やしてY座標をあげる
-            this._dummyWindow2.height += this._categoryWindow.height;
-            this._dummyWindow2.y -= this._categoryWindow.height;
+        switch (this._commandWindow.currentSymbol()) {
+            case "buy":
+                break;
+            case "sell":
+                this._dummyWindow2.show();
+                this._statusWindow.setBuying(false);
+                if (this._categoryWindow.needsSelection()) {
+                    // 売り物のカテゴリウィンドウの分ダミー２の高さを増やしてY座標をあげる
+                    this._dummyWindow2.height += this._categoryWindow.height;
+                    this._dummyWindow2.y -= this._categoryWindow.height;
+                }
+                break;
         }
     };
 
@@ -279,17 +299,36 @@
         _Scene_Shop_onCategoryCancel.call(this);
         this._dummyWindow2.height += this._categoryWindow.height;
         this._dummyWindow2.y -= this._categoryWindow.height;
+        this._statusWindow.setBuying(null);
     };
 
     //-----------------------------------------------------------------------------
     // Window_ShopStatus
 
+    const _Window_ShopStatus_initialize = Window_ShopStatus.prototype.initialize;
     /**
-     * ショップシーン拡張(ShopScene_Extension)でキャラを動かせるかのように見えてしまうため装備品情報を非表示化
+     * いま買っているか売っているかを持たせる場所を追加
+     */
+    Window_ShopStatus.prototype.initialize = function (rect) {
+        _Window_ShopStatus_initialize.call(this, rect);
+        this._buying = null;
+    };
+
+    /**
+     * いま買っているか売っているかをセット
+     * @param {boolean} buying 
+     */
+    Window_ShopStatus.prototype.setBuying = function (buying) {
+        this._buying = buying;
+    };
+
+    /**
+     * ショップシーン拡張(ShopScene_Extension)でキャラを動かせるかのように見えてしまうため
+     * 売却時は装備品情報を非表示化
      * @returns boolean
      */
     Window_ShopStatus.prototype.isEquipItem = function () {
-        return false;
+        return this._buying;
     };
 
     //-----------------------------------------------------------------------------
