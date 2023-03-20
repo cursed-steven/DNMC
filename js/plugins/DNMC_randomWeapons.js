@@ -782,8 +782,8 @@ function DNMC_randomWeapons() {
         }
         const traits = traits1.concat(traits2);
 
-        // 不利な特徴で価格が負の値になる場合があるのでケア
-        if (price < 0) price = 1;
+        // 不利な特徴で価格が0以下になる場合があるのでケア
+        if (price <= 0) price = 1;
 
         let weapon = new DataWeapon();
         weapon.id = id;

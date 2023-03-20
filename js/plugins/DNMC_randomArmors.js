@@ -1070,6 +1070,9 @@ function DNMC_randomArmors() {
             }
         }
 
+        // 不利な特徴で価格が0以下になる場合があるのでケア
+        if (price <= 0) price = 1;
+
         let armor = new DataArmor();
         armor.id = id;
         armor.atypeId = parseInt(atypeId);
