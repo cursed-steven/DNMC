@@ -40,6 +40,11 @@
  * @command generate
  * @text アクター生成
  * 
+ * @arg classId
+ * @text 職業
+ * @desc 0を指定するとランダム、男女選択不可
+ * @type class
+ * 
  * @arg rank
  * @text 武器・防具のランク
  * @type number
@@ -224,7 +229,7 @@ class DataActor {
      * ランダムアクター生成
      */
     PluginManagerEx.registerCommand(script, "generate", args => {
-        const actor = randomActor(args.rank);
+        const actor = randomActor(args.classId, args.rank);
         DataManager.registerActor(actor);
         registerActorId(actor.id);
         $gameTemp.setLatestGenerated([actor]);
@@ -275,24 +280,26 @@ class DataActor {
 
     /**
      * ランダムな職業を選出して関連情報をセットで返す。
+     * @param {number} classId 
      * @returns any
      */
-    function randomClass() {
-        let classId = 0;
+    function randomClass(classId) {
         let swId = 0;
         const sex = ["m", "f"][Math.randomInt(2)];
         const maxId = $dataClasses.length;
 
-        classId = Math.randomInt(maxId);
-        swId = classId + param.classSwIx;
-        let missCount = 0;
-        // 職業アンロックされているものが出るまで再抽選
-        while (!$s.get(swId)) {
-            missCount++;
-            classId = Math.randomInt(maxId);
+        if (classId === 0) {
+            Math.randomInt(maxId);
             swId = classId + param.classSwIx;
-            if (missCount >= 35) {
-                throw new Error("no class unlocked");
+            let missCount = 0;
+            // 職業アンロックされているものが出るまで再抽選
+            while (!$s.get(swId)) {
+                missCount++;
+                classId = Math.randomInt(maxId);
+                swId = classId + param.classSwIx;
+                if (missCount >= 35) {
+                    throw new Error("no class unlocked");
+                }
             }
         }
         const bcf = classId.toString() + sex;
@@ -320,14 +327,16 @@ class DataActor {
 
     /**
      * ランダムなアクターを生成する。
+     * @param {number} classId 
+     * @param {number} rank 
      * @returns DataActor
      */
-    function randomActor(rank) {
+    function randomActor(classId, rank) {
         CSVN_base.logGroup(">> DNMC_randomActors randomActor");
 
         const id = getNewId();
         CSVN_base.log("getNewId----");
-        const bcf = randomClass();
+        const bcf = randomClass(classId);
         CSVN_base.log("randomClass----");
         const initialLevel = $gameParty.averageLevel();
         CSVN_base.log("averageLevel----");
