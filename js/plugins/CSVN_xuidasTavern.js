@@ -1626,7 +1626,7 @@
             if (r === "0") continue;
             if (!$dataActors[r]) continue;
             if (EXCLUDED_ACTORS.includes(r)) continue;
-            this._list.push(new Game_Actor(r));
+            this._list.push($gameActors.actor(r));
         }
         this._list.push(null);
         // console.log("reserve list----");
