@@ -125,7 +125,7 @@ function CSVN_conditionChecker() {
  * @param {number} varId 
  * @param {string} varInequality 
  * @param {number} varValue 
- * @returns 0: 不合致 1: 合致
+ * @returns boolean
  */
 CSVN_conditionChecker.checkCondition = function (
     mapId,
@@ -162,7 +162,7 @@ CSVN_conditionChecker.checkCondition = function (
     }
 
     const toBeEval = "$v.get(" + varId + ") " + varInequality + " " + varValue;
-    CSVN_base.log("toBeEval: " + toBeEval + " | $v[" + varId + "] == " + $v.get(varId));
+    CSVN_base.log("toBeEval: " + toBeEval + " | $v.get(" + varId + ") == " + $v.get(varId));
     let result;
     if (varId !== 0) {
         if (!eval(toBeEval)) {

@@ -9,6 +9,7 @@
 // 1.0.0  2023/02/05 初版
 // 1.1.0  2023/02/26 座標決定ロジック見直し
 // 1.2.0  2023/03/06 一時バイオーム対応
+// 1.3.0  2023/03/20 特定条件を満たすとランダムでないエンカ発生
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
@@ -41,6 +42,65 @@
  * @text 興味が出たステート
  * @desc 興味がないを出さなくなるステート
  * @type state
+ * 
+ * @param Exceptionals
+ * @text 例外的にランダムグルーピングをしない条件
+ * @type struct<Exceptional>[]
+ */
+
+/*~struct~Exceptional:ja
+ *
+ * @param condName
+ * @text 条件名
+ * @desc 動作には関係ない、条件識別用の名称
+ * @type string
+ * 
+ * @param troopId
+ * @text 敵グループID
+ * @type troop
+ * 
+ * @param terrain
+ * @text 地形タグ
+ * @type number
+ * @max 7
+ * @min 0
+ * 
+ * @param sw
+ * @text スイッチ
+ * @desc このスイッチがONだと例外判定になる可能性がある。
+ * @type switch
+ * 
+ * @param var
+ * @text 変数
+ * @desc この変数が設定条件を満たしていると例外判定になる可能性がある。
+ * @type variable
+ * 
+ * @param ineq
+ * @parent var
+ * @text 等号・不等号
+ * @type select
+ * @option 実際値 < 設定値
+ * @value <
+ * @option 実際値 <= 設定値
+ * @value <=
+ * @option 実際値 = 設定値
+ * @value ==
+ * @option 実際値 >= 設定値
+ * @value >=
+ * @option 実際値 > 設定値
+ * @value >
+ * 
+ * @param value
+ * @parent var
+ * @text 変数と比較する設定値
+ * @type number
+ * 
+ * @param rate
+ * @text 上記条件をすべて満たしたうえでこの確率で出現する
+ * @type number
+ * @max 100
+ * @min 0
+ * 
  */
 
 (() => {
@@ -170,11 +230,40 @@
     // Game_Player
 
     /**
-     * 同じグループの中身を動的に決めるのでIDは常に1でよい
+     * 例外条件を全部潜り抜ければ敵グループIDは常に1
      * @returns number
      */
     Game_Player.prototype.makeEncounterTroopId = function () {
-        return 1;
+        // 例外条件の評価(先勝ち)
+        const ex = param.Exceptionals.find(e => {
+            return CSVN_conditionChecker.checkCondition(
+                0,
+                0,
+                e.sw,
+                true,
+                e.var,
+                e.ineq,
+                e.value
+            );
+        });
+        CSVN_base.logGroup("makeEncounterTroopId");
+        CSVN_base.log(ex);
+
+        if (ex) {
+            // 例外条件に合致するものがあった場合、条件のrateの確率でそれを返す
+            if (Math.trueByRate(ex.rate)) {
+                CSVN_base.log("HIT!");
+                CSVN_base.groupEnd("makeEncounterTroopId");
+                return ex.troopId;
+            } else {
+                CSVN_base.groupEnd("makeEncounterTroopId");
+                return 1;
+            }
+        } else {
+            CSVN_base.groupEnd("makeEncounterTroopId");
+            return 1;
+        }
+
     };
 
     /**
@@ -257,7 +346,7 @@
     Game_Troop.prototype.troop = function () {
         let troop = $dataTroops[this._troopId];
 
-        if (this._enemies.length > 0) {
+        if (this._enemies.length > 0 || this._troopId != 1) {
             return troop;
         }
 
