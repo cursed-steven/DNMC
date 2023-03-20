@@ -253,14 +253,14 @@
             // 例外条件に合致するものがあった場合、条件のrateの確率でそれを返す
             if (Math.trueByRate(ex.rate)) {
                 CSVN_base.log("HIT!");
-                CSVN_base.groupEnd("makeEncounterTroopId");
+                CSVN_base.logGroupEnd("makeEncounterTroopId");
                 return ex.troopId;
             } else {
-                CSVN_base.groupEnd("makeEncounterTroopId");
+                CSVN_base.logGroupEnd("makeEncounterTroopId");
                 return 1;
             }
         } else {
-            CSVN_base.groupEnd("makeEncounterTroopId");
+            CSVN_base.logGroupEnd("makeEncounterTroopId");
             return 1;
         }
 
