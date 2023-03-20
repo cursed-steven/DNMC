@@ -1526,10 +1526,12 @@
         // いちばん下の行を選択中の場合は控えメンバーウィンドウに移る
         if (row === rowMax) {
             let destIndex = 0;
-            if (r.itemsCount() > col) {
-                destIndex = col;
+            if (col % r.maxCols() > r.itemsCount() - 1) {
+                // 真下がない場合は次の行の末尾
+                destIndex = r.itemsCount() % r.maxCols() - 1;
             } else {
-                destIndex = r.itemsCount() - 1;
+                // 真下があるなら真下
+                destIndex = col;
             }
             this.deselect();
             this.deactivate();
