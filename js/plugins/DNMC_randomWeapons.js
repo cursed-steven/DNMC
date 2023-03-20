@@ -312,7 +312,7 @@ function DNMC_randomWeapons() {
                 break;
         }
 
-        const result = param !== "null" && value !== "null"
+        const result = param && value
             ? tmpl.replace("{{param}}", param).replace("{{value}}", value)
             : "";
 
