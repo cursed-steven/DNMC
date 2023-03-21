@@ -294,6 +294,7 @@ Scene_Operation.prototype.initialize = function () {
         this._itemWindow.y = wy;
         this._itemWindow.height = wh;
         this._itemWindow.createContents();
+        this._itemWindow.refresh();
     };
 
     /**
@@ -305,6 +306,7 @@ Scene_Operation.prototype.initialize = function () {
         this._itemWindow.y = wy;
         this._itemWindow.height = wh;
         this._itemWindow.createContents();
+        this._itemWindow.refresh();
     };
 
     /**
