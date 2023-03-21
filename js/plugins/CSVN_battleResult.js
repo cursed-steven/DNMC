@@ -321,7 +321,7 @@
 
         if (actor && ba0 && this.isLvUP(ba0)) {
             this.drawActorNameClass(index);
-            this.drawLv(rect, ba0);
+            this.drawLv(rect, ba0, index);
             this.drawParams(actor, rect, ba0);
         }
     };
@@ -350,13 +350,14 @@
      * レベルの変化前後を描画
      * @param {Rectangle} rect 
      * @param {any} ba 
+     * @param {number} index
      */
-    Window_LvUP.prototype.drawLv = function (rect, ba) {
-        if (this.isLvUP(ba)) this.changeTextColor("#FFFF00");
+    Window_LvUP.prototype.drawLv = function (rect, ba, index) {
+        this.changeTextColor("#FFFF00");
         this.drawText(
             TextManager.levelA + ": " + ba.before.lv + " > " + ba.after.lv,
             rect.width / 2,
-            10,
+            10 + this.lineHeight() * index * 3.4,
             rect.width / 2
         );
         this.resetTextColor();
