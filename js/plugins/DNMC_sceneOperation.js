@@ -79,7 +79,6 @@ Scene_Operation.prototype.initialize = function () {
         this.createMenuStatusWindow();
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
-        this._buttonGuide.refresh();
         this.createHelpWindow();
         this.createCtlrLWindow();
         this.createCtlrRWindow();
@@ -95,8 +94,11 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrRWindow.setSkillTypeWindow(this._skillTypeWindow);
         this._ctlrRWindow.setCategoryWindow(this._categoryWindow);
 
+        this._buttonGuide.show();
+        this._buttonGuide.refresh();
+
         this.goBackToLeftSide();
-        this.setCurrentSide();
+        this.setCurrentSide(0);
     };
 
     const _Scene_Operation_update = Scene_Operation.prototype.update;
@@ -105,6 +107,8 @@ Scene_Operation.prototype.initialize = function () {
      */
     Scene_Operation.prototype.update = function () {
         _Scene_Operation_update.call(this);
+        this._buttonGuide.show();
+        this._buttonGuide.refresh();
         this._questHUD.show();
         this._questHUD.refresh();
     };
@@ -252,6 +256,7 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrRWindow.setActor(actor);
         this._skillTypeWindow.setActor(actor);
         this._itemWindow.setActor(actor);
+        this._menuStatusWindow.select(actor.index());
     };
 
     /**
@@ -261,6 +266,7 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrLWindow.setLastIndex();
         this._ctlrLWindow.deactivate();
         this._skillTypeWindow.activate();
+        this._buttonGuide.setActiveWindow("Window_SkillCategory");
         this.setCurrentSide(0);
     };
 
@@ -273,6 +279,7 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrLWindow.deactivate();
         this._ctlrRWindow.activate();
         this._ctlrRWindow.selectLast();
+        this._buttonGuide.setActiveWindow("Window_CtlrR");
     };
 
     /**
@@ -282,6 +289,7 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrRWindow.setLastIndex();
         this._ctlrRWindow.deactivate();
         this._skillTypeWindow.activate();
+        this._buttonGuide.setActiveWindow("Window_SkillCategory");
         this.setCurrentSide(1);
     };
 
@@ -294,6 +302,7 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrRWindow.deactivate();
         this._ctlrLWindow.activate();
         this._ctlrLWindow.selectLast();
+        this._buttonGuide.setActiveWindow("Window_CtlrL");
     };
 
     /**
@@ -302,6 +311,7 @@ Scene_Operation.prototype.initialize = function () {
     Scene_Operation.prototype.onCategoryOk = function () {
         this._itemWindow.activate();
         this._itemWindow.forceSelect(0);
+        this._buttonGuide.setActiveWindow("Window_SkillList");
         this.expandItemWindow();
     };
 
@@ -415,6 +425,16 @@ Scene_Operation.prototype.initialize = function () {
         this._itemWindow.deselect();
         this._categoryWindow.activate();
         this.shrinkItemWindow();
+        this._buttonGuide.setActiveWindow("Window_SkillCategory");
+    };
+
+    /**
+     * アクター変更時のウィンドウ等の処理
+     */
+    Scene_Operation.prototype.onActorChange = function () {
+        Scene_MenuBase.prototype.onActorChange.call(this);
+        this.refreshActor();
+        this.goBackToLeftSide();
     };
 
     //-------------------------------------------------------------------------
