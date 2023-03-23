@@ -9,6 +9,7 @@
 // 1.0.0  2023/01/23 初版(DNMC_scene_Menuから分離)
 // 1.0.1  2023/03/06 setMoreNumberFontFace.jsの改造に伴ってカスタマイズ
 // 1.0.2  2023/03/17 クエストHUD対応
+// 1.1.0  2023/03/22 L側R側の移動をカーソルキーでできるように修正
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
@@ -25,6 +26,11 @@
  * @param setSkillVarIndex
  * @text セット中スキル変数開始
  * @desc この変数の次から14変数に各部アクターのセット中スキルを入れる
+ * @type variable
+ * 
+ * @param lastCurrentSide
+ * @text LRどちら側か
+ * @desc 最後にLRどちら側をさわってたか
  * @type variable
  */
 
@@ -45,8 +51,6 @@ Scene_Operation.prototype.constructor = Scene_Operation;
  */
 Scene_Operation.prototype.initialize = function () {
     Scene_Skill.prototype.initialize.call(this);
-    // 0->Lサイド 1->Rサイド
-    this._currentSide = -1;
 };
 
 (() => {
@@ -76,7 +80,6 @@ Scene_Operation.prototype.initialize = function () {
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
         this._buttonGuide.refresh();
-        this._buttonGuide.setActiveWindow("Window_CtlrL");
         this.createHelpWindow();
         this.createCtlrLWindow();
         this.createCtlrRWindow();
@@ -85,9 +88,15 @@ Scene_Operation.prototype.initialize = function () {
         this.createItemWindow();
         this.createQuestHUD();
 
-        this.onCtlrRChange();
-        this._ctlrLWindow.forceSelect(0);
-        this._currentSide = 0;
+        this._ctlrLWindow.setRightSideWindow(this._ctlrRWindow);
+        this._ctlrLWindow.setSkillTypeWindow(this._skillTypeWindow);
+        this._ctlrLWindow.setCategoryWindow(this._categoryWindow);
+        this._ctlrRWindow.setLeftSideWindow(this._ctlrLWindow);
+        this._ctlrRWindow.setSkillTypeWindow(this._skillTypeWindow);
+        this._ctlrRWindow.setCategoryWindow(this._categoryWindow);
+
+        this.goBackToLeftSide();
+        this.setCurrentSide();
     };
 
     const _Scene_Operation_update = Scene_Operation.prototype.update;
@@ -144,8 +153,8 @@ Scene_Operation.prototype.initialize = function () {
         this._skillTypeWindow.setHelpWindow(this._helpWindow);
         this._skillTypeWindow.setHandler("ok", this.commandCategory.bind(this));
         this._skillTypeWindow.setHandler("cancel", this.onSkillTypeCancel.bind(this));
-        this._skillTypeWindow.setHandler("pagedown", this.onCtlrLChange.bind(this));
-        this._skillTypeWindow.setHandler("pageup", this.onCtlrRChange.bind(this));
+        this._skillTypeWindow.setHandler("pagedown", this.nextActor.bind(this));
+        this._skillTypeWindow.setHandler("pageup", this.previousActor.bind(this));
         this.addWindow(this._skillTypeWindow);
     };
 
@@ -170,7 +179,8 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrLWindow.setActor(this.actor());
         this._ctlrLWindow.setHandler("ok", this.onCtrlLOk.bind(this));
         this._ctlrLWindow.setHandler("cancel", this.popScene.bind(this));
-        this._ctlrLWindow.setHandler("pagedown", this.onCtlrLChange.bind(this));
+        this._ctlrLWindow.setHandler("pagedown", this.nextActor.bind(this));
+        this._ctlrLWindow.setHandler("pageup", this.previousActor.bind(this));
         this.addWindow(this._ctlrLWindow);
     };
 
@@ -198,7 +208,8 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrRWindow.setActor(this.actor());
         this._ctlrRWindow.setHandler("ok", this.onCtrlROk.bind(this));
         this._ctlrRWindow.setHandler("cancel", this.popScene.bind(this));
-        this._ctlrRWindow.setHandler("pageup", this.onCtlrRChange.bind(this));
+        this._ctlrLWindow.setHandler("pagedown", this.nextActor.bind(this));
+        this._ctlrLWindow.setHandler("pageup", this.previousActor.bind(this));
         this.addWindow(this._ctlrRWindow);
     };
 
@@ -215,6 +226,21 @@ Scene_Operation.prototype.initialize = function () {
         const wy = msRect.y + msRect.height;
 
         return new Rectangle(wx, wy, ww, wh);
+    };
+
+    /**
+     * いまLRどちら側かを返す
+     * @returns number
+     */
+    Scene_Operation.prototype.getCurrentSide = function () {
+        return $v.get(param.lastCurrentSide);
+    };
+
+    /**
+     * いまアクティヴなのがLRどちらなのか確定させる。
+     */
+    Scene_Operation.prototype.setCurrentSide = function (side) {
+        $v.set(param.lastCurrentSide, side);
     };
 
     /**
@@ -235,20 +261,18 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrLWindow.setLastIndex();
         this._ctlrLWindow.deactivate();
         this._skillTypeWindow.activate();
-        this._buttonGuide.setActiveWindow("Window_SkillType");
+        this.setCurrentSide(0);
     };
 
     /**
-     * Lサイドウィンドウで R したときの処理
+     * Rサイドウィンドウのスキル選択等して戻る時の処理
      */
-    Scene_Operation.prototype.onCtlrLChange = function () {
+    Scene_Operation.prototype.goBackToRightSide = function () {
         this._skillTypeWindow.deactivate();
         this._categoryWindow.deactivate();
         this._ctlrLWindow.deactivate();
         this._ctlrRWindow.activate();
         this._ctlrRWindow.selectLast();
-        this._currentSide = 1;
-        this._buttonGuide.setActiveWindow("Window_CtlrR");
     };
 
     /**
@@ -258,20 +282,18 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrRWindow.setLastIndex();
         this._ctlrRWindow.deactivate();
         this._skillTypeWindow.activate();
-        this._buttonGuide.setActiveWindow("Window_SkillType");
+        this.setCurrentSide(1);
     };
 
     /**
-     * Rサイドウィンドウで L したときの処理
+     * Lサイドウィンドウのスキル選択等して戻る時の処理
      */
-    Scene_Operation.prototype.onCtlrRChange = function () {
+    Scene_Operation.prototype.goBackToLeftSide = function () {
         this._skillTypeWindow.deactivate();
         this._categoryWindow.deactivate();
         this._ctlrRWindow.deactivate();
         this._ctlrLWindow.activate();
         this._ctlrLWindow.selectLast();
-        this._currentSide = 0;
-        this._buttonGuide.setActiveWindow("Window_CtlrL");
     };
 
     /**
@@ -281,7 +303,6 @@ Scene_Operation.prototype.initialize = function () {
         this._itemWindow.activate();
         this._itemWindow.forceSelect(0);
         this.expandItemWindow();
-        this._buttonGuide.setActiveWindow("Window_SkillList");
     };
 
     /**
@@ -313,14 +334,14 @@ Scene_Operation.prototype.initialize = function () {
      * スキルタイプウィンドウでキャンセルしたときの処理。
      */
     Scene_Operation.prototype.onSkillTypeCancel = function () {
-        switch (this._currentSide) {
+        switch (this.getCurrentSide()) {
             case 0:
                 // L
-                this.onCtlrRChange();
+                this.goBackToLeftSide();
                 break;
             case 1:
                 // R
-                this.onCtlrLChange();
+                this.goBackToRightSide();
                 break;
         }
     };
@@ -332,7 +353,7 @@ Scene_Operation.prototype.initialize = function () {
         let index = -1;
         let currentItem = null;
         const item = this._itemWindow.item();
-        switch (this._currentSide) {
+        switch (this.getCurrentSide()) {
             case 0:
                 // L
                 index = this._ctlrLWindow.index();
@@ -373,15 +394,15 @@ Scene_Operation.prototype.initialize = function () {
 
         this.shrinkItemWindow();
 
-        switch (this._currentSide) {
+        switch (this.getCurrentSide()) {
             case 0:
                 // L
-                this.onCtlrRChange();
+                this.goBackToLeftSide();
                 this._ctlrLWindow.refresh();
                 break;
             case 1:
                 // R
-                this.onCtlrLChange();
+                this.goBackToRightSide();
                 this._ctlrRWindow.refresh();
                 break;
         }
@@ -394,7 +415,6 @@ Scene_Operation.prototype.initialize = function () {
         this._itemWindow.deselect();
         this._categoryWindow.activate();
         this.shrinkItemWindow();
-        this._buttonGuide.setActiveWindow("Window_SkillCategory");
     };
 
     //-------------------------------------------------------------------------
@@ -416,6 +436,31 @@ Scene_Operation.prototype.initialize = function () {
     Window_CtlrL.prototype.initialize = function (rect) {
         Window_SkillList.prototype.initialize.call(this, rect);
         this._lastIndex = 0;
+        this._rightSideWindow = null;
+    };
+
+    /**
+     * R側ウィンドウの参照を持つ
+     * @param {Window_CtlrR} rightSideWindow 
+     */
+    Window_CtlrL.prototype.setRightSideWindow = function (rightSideWindow) {
+        this._rightSideWindow = rightSideWindow;
+    };
+
+    /**
+     * スキルタイプウィンドウの参照を保持する
+     * @param {Window_SkillType} skillTypeWindow 
+     */
+    Window_CtlrL.prototype.setSkillTypeWindow = function (skillTypeWindow) {
+        this._skillTypeWindow = skillTypeWindow;
+    };
+
+    /**
+     * スキルカテゴリウィンドウの参照を保持する
+     * @param {Window_SkillCategory} categoryWindow 
+     */
+    Window_CtlrL.prototype.setCategoryWindow = function (categoryWindow) {
+        this._categoryWindow = categoryWindow;
     };
 
     /**
@@ -569,6 +614,22 @@ Scene_Operation.prototype.initialize = function () {
         return NUMBER_KEY_MAP.KEYBOARD[resultKeyNo];
     };
 
+    /**
+     * L側ウィンドウで右を押したときの処理
+     */
+    Window_CtlrL.prototype.cursorRight = function () {
+        this._skillTypeWindow.deactivate();
+        this._categoryWindow.deactivate();
+        this._rightSideWindow.activate();
+        const row = this.index();
+        this._rightSideWindow.select(row);
+        this.deactivate();
+        this.deselect();
+        $v.set(param.lastCurrentSide, 1);
+
+        Window_Selectable.prototype.cursorRight.call(this);
+    };
+
     //-------------------------------------------------------------------------
     // Window_CtlrR
     //
@@ -588,10 +649,35 @@ Scene_Operation.prototype.initialize = function () {
     Window_CtlrR.prototype.initialize = function (rect) {
         Window_SkillList.prototype.initialize.call(this, rect);
         this._lastIndex = 0;
+        this._leftSideWindow = null;
     };
 
     Window_CtlrR.prototype.maxCols = Window_CtlrL.prototype.maxCols;
     Window_CtlrR.prototype.maxItems = Window_CtlrL.prototype.maxItems;
+
+    /**
+     * L側ウィンドウの参照を保持する
+     * @param {Window_ctlrL} leftSideWindow 
+     */
+    Window_CtlrR.prototype.setLeftSideWindow = function (leftSideWindow) {
+        this._leftSideWindow = leftSideWindow;
+    };
+
+    /**
+     * スキルタイプウィンドウの参照を保持する
+     * @param {Window_SkillType} skillTypeWindow 
+     */
+    Window_CtlrR.prototype.setSkillTypeWindow = function (skillTypeWindow) {
+        this._skillTypeWindow = skillTypeWindow;
+    };
+
+    /**
+     * スキルカテゴリウィンドウの参照を保持する
+     * @param {Window_SkillCategory} categoryWindow 
+     */
+    Window_CtlrR.prototype.setCategoryWindow = function (categoryWindow) {
+        this._categoryWindow = categoryWindow;
+    };
 
     /**
      * Rサイドウィンドウの内容をセットする。
@@ -658,4 +744,21 @@ Scene_Operation.prototype.initialize = function () {
 
     Window_CtlrR.prototype.gamePadBtn = Window_ButtonGuide.prototype.gamePadBtn;
     Window_CtlrR.prototype.keyboardKeysName = Window_CtlrL.prototype.keyboardKeysName;
+
+    /**
+     * R側ウィンドウで左を押した時の処理
+     */
+    Window_CtlrR.prototype.cursorLeft = function () {
+        this._skillTypeWindow.deactivate();
+        this._categoryWindow.deactivate();
+        this._leftSideWindow.activate();
+        const row = this.index();
+        this._leftSideWindow.select(row);
+        this.deactivate();
+        this.deselect()
+        $v.set(param.lastCurrentSide, 0);
+
+        Window_Selectable.prototype.cursorUp.call(this, false);
+    };
+
 })();

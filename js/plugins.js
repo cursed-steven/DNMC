@@ -43,7 +43,7 @@ var $plugins =
 {"name":"DNMC_sceneSkill","status":true,"description":"Donut Machine 専用スキルコマンド","parameters":{}},
 {"name":"DNMC_sceneEquipStatus","status":true,"description":"装備/ステータス画面","parameters":{}},
 {"name":"NoEquipmentText","status":true,"description":"装備画面に装備なしのテキストを追加します。","parameters":{"text":"装備なし"}},
-{"name":"DNMC_sceneOperation","status":true,"description":"作戦画面","parameters":{"setSkillVarIndex":"91"}},
+{"name":"DNMC_sceneOperation","status":true,"description":"作戦画面","parameters":{"setSkillVarIndex":"91","lastCurrentSide":"410"}},
 {"name":"DNMC_sceneComparison","status":true,"description":"比較画面","parameters":{}},
 {"name":"CSVN_gameEndWindow","status":true,"description":"ゲーム終了時のウィンドウの幅を設定","parameters":{"width":"240"}},
 {"name":"NRP_ClassChangeScene","status":true,"description":"v1.042 転職システムを実装する。","parameters":{"ClassList":"","KeepExp":"false","NoDuplicate":"false","ClassChangeMessage":"","SoundSuccess":"","<Layout>":"","SortClassId":"false","ClassListWidth":"280","DisplayListLevel":"true","MessageFontSize":"","DisplayParameters":"0,1,2,3,4,5,6,7","ParamFontSize":"","ParamLineHeight":"36","<Layout Image>":"","ClassImageList":"","UseClassImage":"true","ReverseImagePos":"false","PictureOnScroll":"true","PictureAdjustX":"0","PictureAdjustY":"0","PictureOpacity":"128","<Learn Skills>":"","ShowSkillsType":"page","ShowUnlearnedSkills":"mask","SkillFontSize":"","<Menu Command>":"","ShowMenuCommand":"false","ShowMenuCommandPosition":"3","ClassChangeName":"転職","MenuCommandSwitch":"","ClassChangeSymbol":"classchange"}},
