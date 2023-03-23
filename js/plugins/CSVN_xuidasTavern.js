@@ -333,6 +333,8 @@
     Scene_PartyChange.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
     Scene_PartyChange.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_PartyChange.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
+    Scene_PartyChange.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
+    Scene_PartyChange.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
 
     /**
      * 入れ替えシーン作成
@@ -379,8 +381,6 @@
         r.setMode("change");
 
         if (CSVN_base.isDNMCActive()) {
-            _Scene_Map_createMapHUD.call(this);
-            _Scene_Map_createButtonGuide.call(this);
             this._buttonGuide.refresh();
         }
     };
@@ -398,6 +398,23 @@
         this.createStatusParamsWindow();
         this.createStatusEquipWindow();
         this.createSortKeyWindow();
+
+        if (CSVN_base.isDNMCActive()) {
+            _Scene_Map_createMapHUD.call(this);
+            _Scene_Map_createButtonGuide.call(this);
+            this.createQuestHUD();
+        }
+    };
+
+    /**
+     * シーン更新
+     */
+    Scene_PartyChange.prototype.update = function () {
+        Scene_MenuBase.prototype.update.call(this);
+        if (CSVN_base.isDNMCActive()) {
+            this._questHUD.show();
+            this._questHUD.refresh();
+        }
     };
 
     /**
@@ -908,10 +925,13 @@
     Scene_PartyChange.prototype.removeFromReserve = function (actorId) {
         let reserves = $v.get(param.reserveMemberVarId).toString().split(",");
         const removed = reserves.filter(r => {
-            return r !== 0 && r !== actorId;
+            return r !== 0 && r !== actorId.toString();
         });
-
-        $v.set(param.reserveMemberVarId, removed.join(","));
+        if (removed.length === 0) {
+            $v.set(param.reserveMemberVarId, 0);
+        } else {
+            $v.set(param.reserveMemberVarId, removed.join(","));
+        }
     };
 
     //-----------------------------------------------------------------------------
@@ -952,6 +972,11 @@
             this._timer--;
         } else if (this._timer === 0) {
             this._modeWindow.drawNormalMode();
+        }
+
+        if (CSVN_base.isDNMCActive()) {
+            this._questHUD.show();
+            this._questHUD.refresh();
         }
     };
 
