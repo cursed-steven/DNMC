@@ -518,16 +518,11 @@
  * @type select
  * @option アイテム
  * @value item
- * @option 武器
- * @value weapon
- * @option 防具
- * @value armor
  * @default item
  *
  * @arg id
  * @text アイテムID
- * @desc アイテム(または武器防具)のID
- * @type number
+ * @type item
  * @min 1
  * @default 1
  *
@@ -549,10 +544,6 @@
  * @type select
  * @option アイテム
  * @value item
- * @option 武器
- * @value weapon
- * @option 防具
- * @value armor
  * @default item
  *
  * @arg varIdOfItemId
