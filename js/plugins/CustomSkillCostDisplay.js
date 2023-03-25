@@ -240,12 +240,14 @@
         if (skill && skill.meta && skill.meta.SkillCostText) {
             const x2 = x + width - this.noteCostWidth(skill);
             this.drawTextEx(displayText(skill), x2, y, width);
+            console.log(`displayText ${displayText(skill)}`)
             return;
         }
         if (skill && needsPluralKindCosts(skill)) {
             const x2 = x + width - this.costWidth();
             const text = pluralCostText(skill, this._actor);
             this.drawTextEx(text, x2, y, width);
+            console.log(`text ${text}`);
             return;
         }
         _Window_SkillList_drawSkillCost.call(this, skill, x, y, width);
