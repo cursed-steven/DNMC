@@ -8,6 +8,7 @@
 // Version
 // 1.0.0  2023/01/23 初版(DNMC_sceneMenuから分離)
 // 1.0.1  2023/03/18 クエストHUD対応
+// 1.1.0  2023/03/25 1280x720対応
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
@@ -71,11 +72,11 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         this._buttonGuide.refresh();
         this.createQuestHUD();
         this.createHelpWindow();
-        this.createStatusWindow();
         this.createCommandWindow();
-        this.createEquipDetailWindow();
         this.createSlotWindow();
         this.createItemWindow();
+        this.createStatusWindow();
+        this.createEquipDetailWindow();
         this.refreshActor();
     };
 
@@ -126,11 +127,11 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
      * @returns Rectangle
      */
     Scene_EquipStatus.prototype.statusWindowRect = function () {
-        const slotWindowRect = this.slotWindowRect();
-        const wx = slotWindowRect.x + slotWindowRect.width;
-        const wy = slotWindowRect.y;
+        const itemWindowRect = this.itemWindowRect();
+        const wx = itemWindowRect.x + itemWindowRect.width;
+        const wy = itemWindowRect.y;
         const ww = this.menuCommandWindowRect().x - wx;
-        const wh = slotWindowRect.height + this.itemWindowRect().height;
+        const wh = itemWindowRect.height;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -182,8 +183,8 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         const commandWindowRect = this.commandWindowRect();
         const wx = 0;
         const wy = commandWindowRect.y + commandWindowRect.height;
-        const ww = 288;
-        const wh = this.calcWindowHeight(4, true);
+        const ww = 300;
+        const wh = this.mainAreaBottom() - wy;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -201,10 +202,10 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
      */
     Scene_EquipStatus.prototype.itemWindowRect = function () {
         const slotWindowRect = this.slotWindowRect();
-        const wx = slotWindowRect.x;
-        const wy = slotWindowRect.y + slotWindowRect.height;
-        const ww = slotWindowRect.width;
-        const wh = this.mainAreaBottom() - wy;
+        const wx = slotWindowRect.x + slotWindowRect.width;
+        const wy = slotWindowRect.y;
+        const ww = slotWindowRect.width - 24;
+        const wh = slotWindowRect.height;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -376,6 +377,51 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
     //-----------------------------------------------------------------------------
     // Window_EquipSlot
 
+    const _Window_EquipSlot_itemRect = Window_EquipSlot.prototype.itemRect;
+    Window_EquipSlot.prototype.itemRect = function (index) {
+        const orgRect = _Window_EquipSlot_itemRect.call(this, index);
+        const offset = 104;
+        return new Rectangle(orgRect.x, orgRect.y + offset, orgRect.width, orgRect.height);
+    };
+
+    const _Window_EquipSlot_drawItem = Window_EquipSlot.prototype.drawItem;
+    Window_EquipSlot.prototype.drawItem = function (index) {
+        if (this._actor) {
+            this.drawActorCharacter(
+                this._actor,
+                CHARACTER_IMAGE.WIDTH_OFFSET - 8,
+                CHARACTER_IMAGE.HEIGHT_OFFSET
+            );
+            this.drawActorNameClass();
+            this.drawActorLevel();
+        }
+        _Window_EquipSlot_drawItem.call(this, index);
+    };
+
+    /**
+     * アクターの名前と職業を描画
+     */
+    Window_EquipSlot.prototype.drawActorNameClass = function () {
+        const x = 88;
+        const y = 8;
+        const width = 256;
+        this.changeTextColor(ColorManager.hpColor(this._actor));
+        this.drawText(this._actor.name() + "(" + this._actor.currentClass().name + ")", x, y, width);
+    };
+
+    /**
+     * アクターのレベルを描画
+     */
+    Window_EquipSlot.prototype.drawActorLevel = function () {
+        const x = 88;
+        const y = this.lineHeight() + 16;
+
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText(TextManager.levelA, x, y, 48);
+        this.resetTextColor();
+        this.drawText(this._actor.level, x + this.textWidth("000"), y, 36, "right");
+    };
+
     /**
      * 装備スロット名の幅を算出する
      * @returns number
@@ -386,7 +432,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
             slotNameWidths.push(this.textWidth(this.actorSlotName(this._actor, i)));
         }
 
-        return Math.max.apply(null, slotNameWidths) + this.itemPadding();
+        return Math.max.apply(null, slotNameWidths) + this.itemPadding() * 2;
     };
 
     const _Window_EquipSlot_lineHeight = Window_EquipSlot.prototype.lineHeight;
@@ -413,70 +459,8 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
     Window_EquipStatus.prototype.refresh = function () {
         this.contents.clear();
         if (this._actor) {
-            this.drawActorCharacter(
-                this._actor,
-                CHARACTER_IMAGE.WIDTH_OFFSET,
-                CHARACTER_IMAGE.HEIGHT_OFFSET
-            );
-            this.drawActorNameClass();
-            this.drawActorLevel();
             this.drawExpInfo();
             this.drawAllParams();
-        }
-    };
-
-    /**
-     * アクターの名前と職業を描画
-     */
-    Window_EquipStatus.prototype.drawActorNameClass = function () {
-        const x = 104;
-        const y = 8;
-        const width = 256;
-        this.changeTextColor(ColorManager.hpColor(this._actor));
-        this.drawText(this._actor.name() + "(" + this._actor.currentClass().name + ")", x, y, width);
-    };
-
-    /**
-     * アクターのレベルを描画
-     */
-    Window_EquipStatus.prototype.drawActorLevel = function () {
-        const x = 104;
-        const y = this.lineHeight() + 16;
-
-        this.changeTextColor(ColorManager.systemColor());
-        this.drawText(TextManager.levelA, x, y, 48);
-        this.resetTextColor();
-        this.drawText(this._actor.level, x + this.textWidth("000"), y, 36, "right");
-    };
-
-    /**
-     * アクターの経験値情報を描画する。
-     */
-    Window_EquipStatus.prototype.drawExpInfo = function () {
-        const lineHeight = this.lineHeight();
-        const x = 196;
-        const y = lineHeight + 16;
-
-        const expTotal = TextManager.expTotal.format(TextManager.exp);
-        const expNext = TextManager.expNext.format(TextManager.level);
-        this.changeTextColor(ColorManager.systemColor());
-        this.drawText(expTotal, x, y + lineHeight * 0, this.textWidth(expNext));
-        this.drawText(expNext, x, y + lineHeight * 1, this.textWidth(expNext));
-        this.resetTextColor();
-        this.drawText(this.expTotalValue(), x + this.textWidth(expNext), y + lineHeight * 0, this.textWidth("0000000000"), "right");
-        this.drawText(this.expNextValue(), x + this.textWidth(expNext), y + lineHeight * 1, this.textWidth("0000000000"), "right");
-    };
-    Window_EquipStatus.prototype.expTotalValue = Window_Status.prototype.expTotalValue;
-    Window_EquipStatus.prototype.expNextValue = Window_Status.prototype.expNextValue;
-
-    /**
-     * ステータスウィンドウの内容描画(0-7全部に変更)。
-     */
-    Window_EquipStatus.prototype.drawAllParams = function () {
-        for (let i = 0; i < 8; i++) {
-            const x = this.itemPadding();
-            const y = this.paramY(i);
-            this.drawItem(x, y, i);
         }
     };
 
@@ -499,6 +483,37 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         this.drawRightArrow(paramX + paramWidth * 5, y);
         if (this._tempActor) {
             this.drawNewDiff(paramX + paramWidth * 5 + rightArrowWidth, y, paramId);
+        }
+    };
+
+    /**
+     * アクターの経験値情報を描画する。
+     */
+    Window_EquipStatus.prototype.drawExpInfo = function () {
+        const lineHeight = this.lineHeight();
+        const x = this.itemPadding();
+        const y = this.itemPadding();
+
+        const expTotal = TextManager.expTotal.format(TextManager.exp);
+        const expNext = TextManager.expNext.format(TextManager.level);
+        this.changeTextColor(ColorManager.systemColor());
+        this.drawText(expTotal, x, y, this.textWidth(expNext));
+        this.drawText(expNext, x + this.width / 2, y, this.textWidth(expNext));
+        this.resetTextColor();
+        this.drawText(this.expTotalValue(), x + this.textWidth(expNext), y, this.textWidth("0000000000"), "right");
+        this.drawText(this.expNextValue(), x + this.width / 2 + this.textWidth(expNext), y, this.textWidth("0000000000"), "right");
+    };
+    Window_EquipStatus.prototype.expTotalValue = Window_Status.prototype.expTotalValue;
+    Window_EquipStatus.prototype.expNextValue = Window_Status.prototype.expNextValue;
+
+    /**
+     * ステータスウィンドウの内容描画(0-7全部に変更)。
+     */
+    Window_EquipStatus.prototype.drawAllParams = function () {
+        for (let i = 0; i < 8; i++) {
+            const x = this.itemPadding();
+            const y = this.paramY(i);
+            this.drawItem(x, y, i);
         }
     };
 
@@ -546,7 +561,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
      * @returns number
      */
     Window_EquipStatus.prototype.paramY = function (index) {
-        return Math.floor(this.lineHeight() * (index + 4));
+        return Math.floor(this.lineHeight() * (index + 2));
     }
 
     /**
@@ -559,7 +574,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
 
     const _Window_EquipStatus_lineHeight = Window_EquipStatus.prototype.lineHeight;
     Window_EquipStatus.prototype.lineHeight = function () {
-        return Math.floor(_Window_EquipStatus_lineHeight.call(this) * 0.75);
+        return Math.floor(_Window_EquipStatus_lineHeight.call(this) * 0.82);
     };
 
     //-------------------------------------------------------------------------
