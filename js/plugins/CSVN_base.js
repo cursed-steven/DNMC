@@ -519,8 +519,8 @@ CSVN_base.logGroupEnd = function (str) {
 };
 
 /**
- * Donut Machine と競合しないかの確認用
- * trueだと競合の可能性が高い
+ * Donut Machine と競合しないかの確認用、trueだと競合の可能性が高い。
+ * もしくは Donut Machine 独自仕様の実行に分岐する際の確認に使用。
  * @returns boolean
  */
 CSVN_base.isDNMCActive = function () {
@@ -536,4 +536,18 @@ CSVN_base.isDNMCActive = function () {
     }
 
     return result;
+};
+
+/**
+ * Donut Machine 上で動いているかどうかを確認する手段その２
+ * @returns boolean
+ */
+CSVN_base.isDNMCByGameInfo = function () {
+    this.log(`Title: ${$dataSystem.gameTitle}`);
+    this.log(`> matched? ${$dataSystem.gameTitle === "Donut Machine"}`);
+    this.log(`Game ID: (${typeof $dataSystem.advanced.gameId}) ${$dataSystem.advanced.gameId}`);
+    this.log(`> matched? ${$dataSystem.advanced.gameId === 45552818}`);
+
+    return $dataSystem.gameTitle === "Donut Machine"
+        && $dataSystem.advanced.gameId === 45552818;
 };
