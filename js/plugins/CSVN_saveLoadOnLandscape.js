@@ -28,6 +28,12 @@
  * @min 1
  * @default 20
  * 
+ * @param maxCols
+ * @text 列数
+ * @type number
+ * @max 4
+ * @default 2
+ * 
  * @param characterWidth
  * @text プレイヤーキャラのサイズ(幅)
  * @type number
@@ -65,6 +71,7 @@
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
     const MAX_SAVE_FILES = param.maxSaveFiles ? param.maxSaveFiles : 20;
+    const MAX_COLS = param.maxCols ? param.maxCols : 2;
     const CHAR_WIDTH = param.chararcterWidth ? param.chararcterWidth : 48;
     const CHAR_HEIGHT = param.characterHeight ? param.characterHeight : 48;
 
@@ -93,6 +100,21 @@
     //-----------------------------------------------------------------------------
     // Scene_File
 
+    const _Scene_File_helpWindowRect = Scene_File.prototype.helpWindowRect;
+    /**
+     * プラグインパラメータの上下左右の余白を反映
+     * @returns Rectangle
+     */
+    Scene_File.prototype.helpWindowRect = function () {
+        const orgRect = _Scene_File_helpWindowRect.call(this);
+        return new Rectangle(
+            orgRect.x + param.leftOffset,
+            orgRect.y + param.topOffset,
+            orgRect.width - param.leftOffset - param.rightOffset,
+            orgRect.height
+        );
+    };
+
     const _Scene_File_listWindowRect = Scene_File.prototype.listWindowRect;
     /**
      * プラグインパラメータの上下左右の余白を反映
@@ -116,7 +138,7 @@
      * @returns number
      */
     Window_SavefileList.prototype.maxCols = function () {
-        return 2;
+        return MAX_COLS;
     };
 
     /**
