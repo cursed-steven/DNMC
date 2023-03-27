@@ -10,6 +10,7 @@
 // 1.1.0  2023/02/26 座標決定ロジック見直し
 // 1.2.0  2023/03/06 一時バイオーム対応
 // 1.3.0  2023/03/20 特定条件を満たすとランダムでないエンカ発生
+// 1.5.0  2023/03/27 地形タグではなくリージョンを使う実装に方向転換
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
@@ -23,9 +24,9 @@
  * 
  * @help DNMC_randomTroop.js
  * 
- * @param terrain
- * @text 地形タグ
- * @desc プレイヤーがいる地形タグを格納する変数のID
+ * @param regionVarId
+ * @text リージョン
+ * @desc プレイヤーがいるリージョンを格納する変数のID
  * @type variable
  * 
  * @param tmpBiomeVarId
@@ -127,11 +128,11 @@
     let tmpBiomeName = "";
 
     /**
-     * 指定した地形タグに生息する敵のリストを取得して返す
-     * @param {number} terrain 
+     * 指定したリージョンに生息する敵のリストを取得して返す
+     * @param {number} region 
      */
-    function getEnemiesOnTerrain(terrain) {
-        let biomeName = BIOME_NAMES[terrain];
+    function getEnemiesOnRegion(region) {
+        let biomeName = getBiomeName(region);
         if (!biomeName) {
             // バイオーム名が決まらない場合はイベントか模擬戦。
             biomeName = TMP_BIOME_NAMES[$v.get(param.tmpBiomeVarId)];
@@ -143,6 +144,25 @@
         });
 
         return enemies;
+    }
+
+    /**
+     * リージョンからバイオーム名を返す
+     * ※GenerateWorld対応込み
+     * @param {number} region 
+     * @returns string
+     */
+    function getBiomeName(region) {
+        let biomeName = BIOME_NAMES[region];
+        if (!biomeName) {
+            // GenerateWorls.js対応
+            const key = Object.keys(BIOMES_ON_FIELD).find(k => {
+                return k.toString() === region.toString();
+            });
+            biomeName = BIOMES_ON_FIELD[key];
+        }
+
+        return biomeName;
     }
 
     /**
@@ -350,11 +370,11 @@
             return troop;
         }
 
-        const terrain = DataManager.isBattleTest()
-            ? Math.randomInt(7) + 1
-            : $gameVariables.value(param.terrain);
+        const region = DataManager.isBattleTest()
+            ? Math.randomInt(BIOME_NAMES.length)
+            : $gameVariables.value(param.regionVarId);
 
-        let inBiome = getEnemiesOnTerrain(terrain);
+        let inBiome = getEnemiesOnRegion(region);
         CSVN_base.log(`biome: ${tmpBiomeName}`);
 
         if (inBiome.length === 0) {

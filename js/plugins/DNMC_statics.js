@@ -162,7 +162,7 @@ const COMMON_SKILL_IDS = {
 };
 
 /**
- * 地形タグ定数
+ * リージョン・バイオーム定数
  */
 const BIOMES = {
     GRASS: 1,
@@ -184,6 +184,17 @@ const BIOME_NAMES = [
     "water",
     "dungeon"
 ];
+
+const BIOMES_ON_FIELD = {
+    2: "water",
+    3: "water",
+    18: "grass",
+    22: "woods",
+    34: "desert",
+    38: "desert",
+    42: "snow",
+    46: "snow"
+};
 
 /**
  * キャラクター画像サイズ
