@@ -155,7 +155,7 @@
 
         const tt = $gamePlayer.terrainTag();
         const spec = selectFDSpecs(tt);
-        if (Math.trueByRate(spec.stateRate)) {
+        if (spec && Math.trueByRate(spec.stateRate)) {
             this.addState(spec.state);
             $gameScreen.startFlashForDamage();
         }
