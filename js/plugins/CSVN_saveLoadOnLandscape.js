@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------
 // Version
 // 1.0.0  2023/03/25 初版
+// 1.0.1  2023/03/27 セーブマップ名表示機能追記
 // ----------------------------------------------------------------------------
 // [Twitter]: https://twitter.com/cursed_steven
 //=============================================================================
@@ -16,9 +17,7 @@
  * @plugindesc 横長画面向けのセーブ／ロード画面
  * @author cursed_steven
  * @base CSVN_base
- * @base DarkPlasma_MapNameOnSave
  * @orderAfter CSVN_base
- * @orderAfter DarkPlasma_MapNameOnSave
  * 
  * @help CSVN_saveLoadOnLandscape.js
  * 
@@ -93,6 +92,7 @@
      */
     DataManager.makeSavefileInfo = function () {
         const info = _DataManager_makeSavefileInfo.call(this);
+        info.mapName = $gameMap.displayName();
         info.members = $gameParty.members();
         return info;
     };
@@ -160,6 +160,15 @@
                 info,
                 rect.x + 220,
                 bottom - CHAR_HEIGHT - 32
+            );
+        }
+        if (info.mapName) {
+            this.drawText(
+                info.mapName,
+                rect.x,
+                rect.y,
+                rect.width,
+                "right"
             );
         }
     };
