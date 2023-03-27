@@ -218,6 +218,7 @@
         _Scene_Shop_commandSell.call(this);
         if (this._categoryWindow.needsSelection()) {
             this._dummyWindow2.show();
+            // 売り物のカテゴリウィンドウの分ダミー２の高さを削ってY座標を下げる
             this._dummyWindow2.height -= this._categoryWindow.height;
             this._dummyWindow2.y += this._categoryWindow.height;
         }
@@ -328,7 +329,10 @@
      * @returns boolean
      */
     Window_ShopStatus.prototype.isEquipItem = function () {
-        return this._buying;
+        return this._buying && (
+            DataManager.isWeapon(this._item)
+            || DataManager.isArmor(this._item)
+        );
     };
 
     //-----------------------------------------------------------------------------
