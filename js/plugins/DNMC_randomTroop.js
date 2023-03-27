@@ -153,14 +153,13 @@
      * @returns string
      */
     function getBiomeName(region) {
-        let biomeName = BIOME_NAMES[region];
-        if (!biomeName) {
-            // GenerateWorls.js対応
-            const key = Object.keys(BIOMES_ON_FIELD).find(k => {
-                return k.toString() === region.toString();
-            });
-            biomeName = BIOMES_ON_FIELD[key];
-        }
+        let biomeName = "";
+        // GenerateWorls.js対応
+        const key = Object.keys(BIOMES_ON_FIELD).find(k => {
+            return k.toString() === region.toString();
+        });
+        if (key) biomeName = BIOMES_ON_FIELD[key];
+        if (!biomeName) biomeName = BIOME_NAMES[region];
 
         return biomeName;
     }
