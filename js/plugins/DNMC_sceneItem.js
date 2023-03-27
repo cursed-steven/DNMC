@@ -159,6 +159,14 @@
     //-----------------------------------------------------------------------------
     // Window_ItemList
 
+    /**
+     * 列数変更
+     * @returns number
+     */
+    Window_ItemList.prototype.maxCols = function () {
+        return 3;
+    };
+
     const _Window_ItemList_includes = Window_ItemList.prototype.includes;
     /**
      * 追加したカテゴリに対応したリストに含まれるかどうかを判別して返す。
