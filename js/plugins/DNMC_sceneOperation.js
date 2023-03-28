@@ -568,9 +568,8 @@ Scene_Operation.prototype.initialize = function () {
         const keys = this.keysName(index);
         const rect = this.itemLineRect(index);
         const itemNameWidth = 156;
-        const costWidth = this.width / 2;
+        const costWidth = this.width * 0.5;
         const keysWidth = 48;
-        const offset = index === 0 ? 16 : 0;    // 応急処置
         this.resetTextColor();
         if (skill) {
             this.changePaintOpacity(this.isEnabled(skill));
@@ -595,7 +594,7 @@ Scene_Operation.prototype.initialize = function () {
     };
 
     /**
-     * スキルコストの詳細表示(CustomSkillCostDisplay.js対応)
+     * スキルコストの詳細表示
      * @param {any} skill 
      * @param {Game_Actor} actor 
      * @param {number} x 
@@ -607,14 +606,12 @@ Scene_Operation.prototype.initialize = function () {
             const mpCostHeader = TextManager.mpA + ": ";
             const mpCost = actor ? actor.skillMpCost(skill) : skill.mpCost;
             this.changeTextColor(ColorManager.mpCostColor());
-            if (mpCost > 0) {
-                this.drawText(
-                    mpCostHeader + mpCost,
-                    x,
-                    y,
-                    width / 3
-                );
-            }
+            this.drawText(
+                mpCostHeader + mpCost,
+                x,
+                y,
+                width / 3
+            );
         }
 
         if (skill.tpCost) {

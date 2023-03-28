@@ -389,4 +389,55 @@
         this.callUpdateHelp();
     };
 
+    /**
+     * スキル1件分の描画
+     * @param {number} index 
+     */
+    Window_SkillList.prototype.drawItem = function (index) {
+        const skill = this.itemAt(index);
+        if (skill) {
+            const rect = this.itemLineRect(index);
+            this.changePaintOpacity(this.isEnabled(skill));
+            this.drawItemName(skill, rect.x, rect.y, rect.width * 0.6);
+            this.drawSkillCost(skill, rect.x + rect.width * 0.6, rect.y, rect.width * 0.4);
+            this.changePaintOpacity(1);
+        }
+    };
+
+    /**
+     * スキル1件分のコストの描画
+     * @param {any} skill 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} width 
+     */
+    Window_SkillList.prototype.drawSkillCost = function (skill, x, y, width) {
+        if (skill.mpCost) {
+            const mpCostHeader = TextManager.mpA + ": ";
+            this.changeTextColor(ColorManager.mpCostColor());
+            this.drawText(
+                mpCostHeader + skill.mpCost,
+                x,
+                y,
+                width / 3
+            );
+        }
+
+        if (skill.tpCost) {
+            const tpLimitHeader = TextManager.tpA;
+            const tpLimitFooter = "以下";
+            this.changeTextColor(ColorManager.tpCostColor());
+            if (skill.tpCost < 100) {
+                this.drawText(
+                    tpLimitHeader + skill.tpCost + tpLimitFooter,
+                    x + width / 3,
+                    y,
+                    width / 3 * 2,
+                    "right"
+                );
+            }
+        }
+        this.resetTextColor();
+    };
+
 })();
