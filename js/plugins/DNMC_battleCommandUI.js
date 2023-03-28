@@ -761,7 +761,9 @@
         const width = this.textWidth("000");
 
         this.changeTextColor(ColorManager.tpCostColor());
-        this.drawText(cost, x, y, width, "right");
+        if (cost < 100) {
+            this.drawText(cost, x, y, width, "right");
+        }
         this.resetTextColor();
     };
 
