@@ -36,7 +36,6 @@ var $plugins =
 {"name":"________MENU________","status":false,"description":"----------------------------------------------------------------","parameters":{}},
 {"name":"DNMC_buttonGuide","status":true,"description":"Donut Machine 専用ボタンガイド","parameters":{}},
 {"name":"DNMC_questHUD","status":true,"description":"進行中クエストの内容を戦闘以外の画面に常駐表示します。","parameters":{"orderingStateText":"進行中","reportableStateText":"報告可","noQuestOngoing":"進行中のクエストはありません"}},
-{"name":"CustomSkillCostDisplay","status":true,"description":"[Ver1.0.1+]MP/TP消費欄の文字列をカスタマイズします","parameters":{}},
 {"name":"DNMC_MapHUD","status":true,"description":"Donut Machine 専用HUD","parameters":{}},
 {"name":"DNMC_sceneMenu","status":true,"description":"Donut Machine 専用メニューコマンド","parameters":{"setSkillVarIndex":"91"}},
 {"name":"DNMC_sceneItem","status":true,"description":"Donut Machine 専用アイテムコマンド","parameters":{}},
