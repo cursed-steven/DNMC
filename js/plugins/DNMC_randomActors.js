@@ -42,8 +42,19 @@
  * 
  * @arg classId
  * @text 職業
- * @desc 0を指定するとランダム、男女選択不可
+ * @desc 0を指定するとランダム
  * @type class
+ * 
+ * @arg sex
+ * @text 性別
+ * @desc 指定しなければランダム
+ * @type select
+ * @option ランダム
+ * @value 
+ * @option 男性
+ * @value m
+ * @option 女性
+ * @value f
  * 
  * @arg rank
  * @text 武器・防具のランク
@@ -229,7 +240,7 @@ class DataActor {
      * ランダムアクター生成
      */
     PluginManagerEx.registerCommand(script, "generate", args => {
-        const actor = randomActor(args.classId, args.rank);
+        const actor = randomActor(args.classId, args.sex, args.rank);
         DataManager.registerActor(actor);
         registerActorId(actor.id);
         $gameTemp.setLatestGenerated([actor]);
@@ -281,11 +292,14 @@ class DataActor {
     /**
      * ランダムな職業を選出して関連情報をセットで返す。
      * @param {number} classId 
+     * @param {string} sex
      * @returns any
      */
-    function randomClass(classId) {
+    function randomClass(classId, sex) {
         let swId = 0;
-        const sex = ["m", "f"][Math.randomInt(2)];
+        if (!sex) {
+            ["m", "f"][Math.randomInt(2)];
+        }
         const maxId = $dataClasses.length;
 
         if (classId === 0) {
@@ -328,15 +342,16 @@ class DataActor {
     /**
      * ランダムなアクターを生成する。
      * @param {number} classId 
+     * @param {string} sex
      * @param {number} rank 
      * @returns DataActor
      */
-    function randomActor(classId, rank) {
+    function randomActor(classId, sex, rank) {
         CSVN_base.logGroup(">> DNMC_randomActors randomActor");
 
         const id = getNewId();
         CSVN_base.log("getNewId----");
-        const bcf = randomClass(classId);
+        const bcf = randomClass(classId, sex);
         CSVN_base.log("randomClass----");
         const initialLevel = $gameParty.averageLevel();
         CSVN_base.log("averageLevel----");
