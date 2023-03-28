@@ -357,7 +357,7 @@
         this.drawText(
             TextManager.levelA + ": " + ba.before.lv + " > " + ba.after.lv,
             rect.width / 2,
-            10 + this.lineHeight() * index * 3.4,
+            rect.y + 8,
             rect.width / 2
         );
         this.resetTextColor();
@@ -381,8 +381,8 @@
             paramY = this.paramY(rect, i);
             this.drawParamName(paramX, paramY, i);
             this.drawBeforeParam(before, paramX, paramY);
-            this.drawRightArrow(paramX + 59, paramY);
-            this.drawAfterParam(before, after, paramX, paramY);
+            this.drawRightArrow(paramX + 64, paramY);
+            this.drawAfterParam(before, after, paramX + 8, paramY);
         }
         this.contents.fontSize = $gameSystem.mainFontSize();
     }
@@ -425,11 +425,11 @@
     };
 
     Window_LvUP.prototype.paramX = function (rect, paramId) {
-        return rect.width / 4 * (paramId % 4) + 12;
+        return rect.width / 4 * (paramId % 4) + 8;
     };
 
     Window_LvUP.prototype.paramY = function (rect, paramId) {
-        return rect.y + this.lineHeight() * (1.5 + Math.floor(paramId / 4));
+        return rect.y + this.lineHeight() * 0.8 * (1.3 + Math.floor(paramId / 4));
     }
 
     Window_LvUP.prototype.drawRightArrow = function (x, y) {
@@ -566,11 +566,16 @@
         const rect = this.itemRect(index);
         this.drawPendingItemBackground(index);
 
-        if (actor && ba0) {
-            const diff = ba0.after.skills.filter(s => !ba0.before.skills.includes(s));
-            if (diff.length > 0) {
-                this.drawActorName(index);
-                this.drawNewSkills(rect, diff);
+        if (actor) {
+            if (ba0) {
+                const diff = ba0.after.skills.filter(s => !ba0.before.skills.includes(s));
+                if (diff.length > 0) {
+                    this.drawActorName(index);
+                    this.drawNewSkills(rect, diff);
+                } else {
+                    this.drawActorName(index);
+                    this.drawText("(特になし)", rect.x, rect.y + 8, rect.width, "right");
+                }
             }
         }
     };
@@ -600,9 +605,15 @@
      * @param {number[]} diff 
      */
     Window_LearnedSkills.prototype.drawNewSkills = function (rect, diff) {
-        const width = (rect.width - 16) / 3;
-        for (let i = 0; i < diff.length; i++) {
-            this.drawSkill(rect, diff[i], i);
+        if (diff.length > 3) {
+            for (let i = 0; i < 2; i++) {
+                this.drawSkill(rect, diff[i], i);
+            }
+            this.drawText("etc.", rect.x, rect.y, rect.width, "right");
+        } else {
+            for (let i = 0; i < diff.length; i++) {
+                this.drawSkill(rect, diff[i], i);
+            }
         }
     };
 
