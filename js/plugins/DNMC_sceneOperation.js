@@ -568,7 +568,7 @@ Scene_Operation.prototype.initialize = function () {
         const keys = this.keysName(index);
         const rect = this.itemLineRect(index);
         const itemNameWidth = 156;
-        const costWidth = this.textWidth("0000000");
+        const costWidth = this.width / 2;
         const keysWidth = 48;
         const offset = index === 0 ? 16 : 0;    // 応急処置
         this.resetTextColor();
@@ -581,9 +581,10 @@ Scene_Operation.prototype.initialize = function () {
                 rect.y,
                 itemNameWidth
             );
-            this.drawSkillCost(
+            this.drawDetailedSkillCost(
                 skill,
-                rect.x + keysWidth + itemNameWidth - offset,
+                this._actor,
+                rect.x + this.width - costWidth,
                 rect.y,
                 costWidth
             );
@@ -591,6 +592,46 @@ Scene_Operation.prototype.initialize = function () {
         } else {
             this.drawText(keys, rect.x, rect.y, keysWidth);
         }
+    };
+
+    /**
+     * スキルコストの詳細表示(CustomSkillCostDisplay.js対応)
+     * @param {any} skill 
+     * @param {Game_Actor} actor 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} width 
+     */
+    Window_CtlrL.prototype.drawDetailedSkillCost = function (skill, actor, x, y, width) {
+        if (skill.mpCost) {
+            const mpCostHeader = TextManager.mpA + ": ";
+            const mpCost = actor ? actor.skillMpCost(skill) : skill.mpCost;
+            this.changeTextColor(ColorManager.mpCostColor());
+            if (mpCost > 0) {
+                this.drawText(
+                    mpCostHeader + mpCost,
+                    x,
+                    y,
+                    width / 3
+                );
+            }
+        }
+
+        if (skill.tpCost) {
+            const tpLimitHeader = TextManager.tpA;
+            const tpLimit = actor ? actor.skillTpCost(skill) : skill.tpCost;
+            const tpLimitFooter = "以下";
+            this.changeTextColor(ColorManager.tpCostColor());
+            if (tpLimit < 100) {
+                this.drawText(
+                    tpLimitHeader + tpLimit + tpLimitFooter,
+                    x + width / 3,
+                    y,
+                    width / 3 * 2
+                );
+            }
+        }
+        this.resetTextColor();
     };
 
     /**
@@ -741,6 +782,18 @@ Scene_Operation.prototype.initialize = function () {
      */
     Window_CtlrR.prototype.drawItem = function (index) {
         Window_CtlrL.prototype.drawItem.call(this, index);
+    };
+
+    /**
+     * スキルコスト詳細描画
+     * @param {any} skill 
+     * @param {Game_Actor} actor 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} width 
+     */
+    Window_CtlrR.prototype.drawDetailedSkillCost = function (skill, actor, x, y, width) {
+        Window_CtlrL.prototype.drawDetailedSkillCost.call(this, skill, actor, x, y, width);
     };
 
     /**
