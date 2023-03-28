@@ -309,8 +309,8 @@ Scene_Comparison.prototype.constructor = Scene_Comparison;
 
         for (let i = 0; i < 8; i++) {
             const x = i < 4
-                ? rect.x + this.itemPadding() * 2
-                : rect.x + rect.width / 2 + this.itemPadding() * 2;
+                ? rect.x + this.itemPadding() * 5
+                : rect.x + rect.width / 2 + this.itemPadding() * 5;
             const y = i < 4
                 ? rect.y + this.paramY(i)
                 : rect.y + this.paramY(i - 4);
@@ -382,7 +382,7 @@ Scene_Comparison.prototype.constructor = Scene_Comparison;
         const actor = this.actor(index);
         const rect = this.itemRect(index);
         const x = 100;
-        const y = CHARACTER_IMAGE.HEIGHT;
+        const y = CHARACTER_IMAGE.HEIGHT + this.lineHeight() / 2;
 
         let equip = null;
         for (let i = 0; i < 5; i++) {
@@ -390,7 +390,7 @@ Scene_Comparison.prototype.constructor = Scene_Comparison;
             this.drawItemName(
                 equip,
                 rect.x + x,
-                rect.y + y + this.lineHeight() * 0.9 * i,
+                rect.y + y + this.lineHeight() * i,
                 rect.width
             );
         }
