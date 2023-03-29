@@ -298,7 +298,7 @@ class DataActor {
     function randomClass(classId, sex) {
         let swId = 0;
         if (!sex) {
-            ["m", "f"][Math.randomInt(2)];
+            sex = ["m", "f"][Math.randomInt(2)];
         }
         const maxId = $dataClasses.length;
 
