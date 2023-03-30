@@ -34,6 +34,12 @@
  * @desc イベント・模擬戦用バイオームインデックスを入れる変数
  * @type variable
  * 
+ * @param svActorX
+ * @text SVアクターのX座標
+ * @desc SVACtorPositionMz.jsを使っている場合はその先頭の値
+ * @type number
+ * @default 600
+ * 
  * @param turnCountVarId
  * @text ターン数変数
  * @desc 直近の戦闘の経過ターン数を入れる変数
@@ -112,6 +118,7 @@
     const BOX_WIDTH = Graphics.boxWidth ? Graphics.boxWidth : 816;
     const BOX_HEIGHT = Graphics.boxHeight ? Graphics.boxHeight : 624;
     const MAX_NG_COUNT = 99;
+    const SV_ACTOR_X = param.svActorX ? param.svActorX : 600;
 
     const EXP_RATE = 20;
     const LV_DIFF = 3;
@@ -185,15 +192,13 @@
     }
 
     /**
-     * 敵画像の幅を考慮してほどほどな範囲のランダムX座標を返す
+     * Y座標はランダムで決まるのでX座標は自分の幅の分右に出すだけ
      * @param {any} dEnemy 
+     * @param {number} pw 
      * @returns number
      */
-    function getRandomX(dEnemy) {
-        // 戦闘画面左半分で画像がはみ出さない範囲でランダム
-        const randX = Math.max(0, Math.randomInt(BOX_WIDTH / 2 - enemyWidth(dEnemy))) + enemyWidth(dEnemy);
-        // 補正
-        return randX + 48;
+    function getNextX(dEnemy, pw) {
+        return pw + enemyWidth(dEnemy);
     }
 
     /**
@@ -369,6 +374,9 @@
             return troop;
         }
 
+        // ひとつ前に選出したエネミーのX座標
+        this._prevX = 0;
+
         const region = DataManager.isBattleTest()
             ? Math.randomInt(BIOME_NAMES.length)
             : $gameVariables.value(param.regionVarId);
@@ -400,13 +408,17 @@
         let xy = {};
         for (const ix of indexes) {
             xy = this.getCheckedRandomXY(inBiome[ix]);
+            this._prevX = xy.x;
             member = {
                 "enemyId": inBiome[ix].id,
                 "x": xy.x,
                 "y": xy.y,
                 "hidden": false
             };
-            this._members.push(member);
+            // 自キャラの側にまで入り込んでしまうのは防ぎたい
+            if (this._prevX <= SV_ACTOR_X - 48) {
+                this._members.push(member);
+            }
         }
         troop.members = this._members;
 
@@ -422,49 +434,10 @@
     Game_Troop.prototype.getCheckedRandomXY = function (dEnemy) {
         let ngCount = 0;
         let xy = {
-            x: getRandomX(dEnemy),
+            x: getNextX(dEnemy, this._prevX),
             y: getRandomY(dEnemy)
         };
-
-        while (!this.checkRandomXY(xy)) {
-            ngCount++;
-            // CSVN_base.log(`ng: ${ngCount}`)
-            if (ngCount === MAX_NG_COUNT) {
-                break;
-            } else {
-                xy = {
-                    x: getRandomX(dEnemy),
-                    y: getRandomY(dEnemy)
-                };
-            }
-        }
         return xy;
-    }
-
-    /**
-     * XY座標が妥当かどうか返す
-     * @param {any} xy 
-     * @returns boolean
-     */
-    Game_Troop.prototype.checkRandomXY = function (xy) {
-        let enemy = null;
-        for (const member of this._members) {
-            enemy = $dataEnemies[member.enemyId];
-            const minX = member.x - enemyWidth(enemy) / 2;
-            const minY = member.y - enemyHeight(enemy) / 2;
-            const maxX = member.x + enemyWidth(enemy) / 2;
-            const maxY = member.y + enemyHeight(enemy) / 2;
-
-            // CSVN_base.log(`minX: ${minX} <= x: ${xy.x} <= maxX: ${maxX}`);
-            // CSVN_base.log(`minY: ${minY} <= y: ${xy.y} <= maxY: ${maxY}`);
-
-            if (minX <= xy.x && xy.x <= maxX
-                && minY <= xy.y && xy.y <= maxY) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     //-----------------------------------------------------------------------------
