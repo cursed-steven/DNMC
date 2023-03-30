@@ -226,8 +226,8 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrRWindow.setActor(this.actor());
         this._ctlrRWindow.setHandler("ok", this.onCtrlROk.bind(this));
         this._ctlrRWindow.setHandler("cancel", this.popScene.bind(this));
-        this._ctlrLWindow.setHandler("pagedown", this.nextActor.bind(this));
-        this._ctlrLWindow.setHandler("pageup", this.previousActor.bind(this));
+        this._ctlrRWindow.setHandler("pagedown", this.nextActor.bind(this));
+        this._ctlrRWindow.setHandler("pageup", this.previousActor.bind(this));
         this.addWindow(this._ctlrRWindow);
     };
 
