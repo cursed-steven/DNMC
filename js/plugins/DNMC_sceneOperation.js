@@ -87,6 +87,8 @@ Scene_Operation.prototype.initialize = function () {
         this.createItemWindow();
         this.createQuestHUD();
 
+        this._helpWindow.hide();
+
         this._ctlrLWindow.setRightSideWindow(this._ctlrRWindow);
         this._ctlrLWindow.setSkillTypeWindow(this._skillTypeWindow);
         this._ctlrLWindow.setCategoryWindow(this._categoryWindow);
@@ -171,6 +173,18 @@ Scene_Operation.prototype.initialize = function () {
         const wy = this.calcWindowHeight(8, true) + 48;
         const ww = Graphics.boxWidth - this.mainCommandWidth() - 160;
         const wh = this.calcWindowHeight(1, true);
+        return new Rectangle(wx, wy, ww, wh);
+    };
+
+    /**
+     * スキルリストウィンドウ領域を返す
+     * @returns Rectangle
+     */
+    Scene_Operation.prototype.itemWindowRect = function () {
+        const wx = 0;
+        const wy = this._categoryWindow.y + this._categoryWindow.height;
+        const ww = this._skillTypeWindow.width;
+        const wh = Graphics.boxHeight - wy;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -321,11 +335,12 @@ Scene_Operation.prototype.initialize = function () {
     Scene_Operation.prototype.expandItemWindow = function () {
         const stwr = this.skillTypeWindowRect();
         const wy = stwr.y;
-        const wh = this.mainAreaBottom() - stwr.y
+        const wh = this.mainAreaBottom() - stwr.y;
         this._itemWindow.y = wy;
         this._itemWindow.height = wh;
         this._itemWindow.createContents();
         this._itemWindow.refresh();
+        this._helpWindow.show();
     };
 
     /**
@@ -333,11 +348,12 @@ Scene_Operation.prototype.initialize = function () {
      */
     Scene_Operation.prototype.shrinkItemWindow = function () {
         const wy = this._categoryWindow.y + this._categoryWindow.height;
-        const wh = this.mainAreaBottom() - wy;
+        const wh = Graphics.boxHeight - wy;
         this._itemWindow.y = wy;
         this._itemWindow.height = wh;
         this._itemWindow.createContents();
         this._itemWindow.refresh();
+        this._helpWindow.hide();
     };
 
     /**
