@@ -141,28 +141,28 @@ CSVN_conditionChecker.checkCondition = function (
     if (!switchId) switchId = 0;
     if (!varId) varId = 0;
 
-    CSVN_base.logGroup(this.constructor.name);
+    // CSVN_base.logGroup(this.constructor.name);
 
-    CSVN_base.log($gameMap.mapId() + " | arg(mapId): " + mapId);
+    // CSVN_base.log($gameMap.mapId() + " | arg(mapId): " + mapId);
     if (mapId !== 0 && $gameMap.mapId() !== mapId) {
         CSVN_base.log("mapId unmatch.");
         return false;
     }
 
-    CSVN_base.log($gamePlayer.regionId() + " | arg(region): " + region);
+    // CSVN_base.log($gamePlayer.regionId() + " | arg(region): " + region);
     if (region !== 0 && $gamePlayer.regionId() !== region) {
         CSVN_base.log("region unmatch.");
         return false;
     }
 
-    CSVN_base.log($s.get(switchId) + " | arg(switchValue): " + switchValue);
+    // CSVN_base.log($s.get(switchId) + " | arg(switchValue): " + switchValue);
     if (switchId !== 0 && $s.get(switchId) !== switchValue) {
         CSVN_base.log("switch unmatch.");
         return false;
     }
 
     const toBeEval = "$v.get(" + varId + ") " + varInequality + " " + varValue;
-    CSVN_base.log("toBeEval: " + toBeEval + " | $v.get(" + varId + ") == " + $v.get(varId));
+    // CSVN_base.log("toBeEval: " + toBeEval + " | $v.get(" + varId + ") == " + $v.get(varId));
     let result;
     if (varId !== 0) {
         if (!eval(toBeEval)) {
@@ -171,7 +171,7 @@ CSVN_conditionChecker.checkCondition = function (
         }
     }
 
-    CSVN_base.logGroupEnd(this.constructor.name);
+    // CSVN_base.logGroupEnd(this.constructor.name);
 
     return true;
 }
