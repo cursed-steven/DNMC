@@ -544,7 +544,7 @@
      * @returns number
      */
     Window_LearnedSkills.prototype.maxItems = function () {
-        return 24;
+        return 4;
     };
 
     /**
@@ -552,7 +552,7 @@
      * @returns number
      */
     Window_LearnedSkills.prototype.numVisibleRows = function () {
-        return 2;
+        return 4;
     };
 
     /**
@@ -605,11 +605,9 @@
      * @param {number[]} diff 
      */
     Window_LearnedSkills.prototype.drawNewSkills = function (rect, diff) {
-        if (diff.length > 3) {
-            for (let i = 0; i < 2; i++) {
-                this.drawSkill(rect, diff[i], i);
-            }
-            this.drawText("etc.", rect.x, rect.y, rect.width, "right");
+        if (diff.length > 2) {
+            this.drawSkill(rect, diff[0], 0);
+            this.drawText("etc.", rect.x + rect.width / 3 * 2, rect.y, rect.width, "right");
         } else {
             for (let i = 0; i < diff.length; i++) {
                 this.drawSkill(rect, diff[i], i);
@@ -628,12 +626,12 @@
         this.drawIcon(
             skill.iconIndex,
             rect.x + 8 + rect.width / 3 * (i % 3),
-            rect.y + this.lineHeight() * (Math.floor(i / 3) + 1) + this.itemPadding()
+            rect.y
         );
         this.drawText(
             skill.name,
             rect.x + 8 + rect.width / 3 * (i % 3) + 40,
-            rect.y + this.lineHeight() * (Math.floor(i / 3) + 1) + this.itemPadding()
+            rect.y
         );
     };
 
