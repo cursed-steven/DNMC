@@ -481,7 +481,7 @@
      * @returns number
      */
     Window_DropItems.prototype.maxItems = function () {
-        return 24;
+        return 4;
     };
 
     /**
@@ -505,9 +505,17 @@
      * リスト作成
      */
     Window_DropItems.prototype.makeItemList = function () {
-        this._data = BattleManager._rewards.items;
         if (this.includes(null)) {
             this._data.push(null);
+        } else {
+            if (this._data.length > 3) {
+                const all = BattleManager._rewards.items;
+                for (let i = 0; i < 3; i++) {
+                    this._data.push(all[i]);
+                }
+            } else {
+                this._data = BattleManager._rewards.items;
+            }
         }
     };
 
@@ -607,7 +615,7 @@
     Window_LearnedSkills.prototype.drawNewSkills = function (rect, diff) {
         if (diff.length > 2) {
             this.drawSkill(rect, diff[0], 0);
-            this.drawText("etc.", rect.x + rect.width / 3 * 2, rect.y, rect.width, "right");
+            this.drawText("etc.", rect.x + rect.width / 4 * 3, rect.y, rect.width, "right");
         } else {
             for (let i = 0; i < diff.length; i++) {
                 this.drawSkill(rect, diff[i], i);
@@ -625,13 +633,13 @@
         const skill = $dataSkills[skillId];
         this.drawIcon(
             skill.iconIndex,
-            rect.x + 8 + rect.width / 3 * (i % 3),
-            rect.y
+            rect.x + 8 + rect.width / 4 * (i % 4 + 2),
+            rect.y + 8
         );
         this.drawText(
             skill.name,
-            rect.x + 8 + rect.width / 3 * (i % 3) + 40,
-            rect.y
+            rect.x + 8 + rect.width / 4 * (i % 4 + 2) + 40,
+            rect.y + 8
         );
     };
 
