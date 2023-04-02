@@ -41,10 +41,6 @@
  * @desc ファストトラベル先に登録されているかどうかを保持する変数のID
  * @type variable
  * 
- * @param miniCharSwId
- * @text ミニキャラ化スイッチ
- * @type switch
- * 
  * @command resetFTFlag
  * @text ファストトラベル先訪問履歴のリセット
  */
@@ -66,10 +62,12 @@
  * @type number
  * 
  * @param goOutX
+ * @parent goOutMapId
  * @text 出た先のマップX
  * @type number
  * 
  * @param goOutY
+ * @parent goOutMapId
  * @text 出た先のマップY
  * @type number
  * 
@@ -78,6 +76,7 @@
  * @type number
  * 
  * @param goOutFadeType
+ * @parent goOutRegion
  * @text 外に出るときのフェードタイプ
  * @type select
  * @option 黒
@@ -85,6 +84,18 @@
  * @option 白
  * @value 1
  * @option なし
+ * @value 2
+ * 
+ * @param enableEncounterGoingOut
+ * @parent goOutRegion
+ * @text 外に出るときにエンカ許可する
+ * @type select
+ * @default 0
+ * @option 許可する
+ * @value 0
+ * @option 禁止する
+ * @value 1
+ * @option 変更しない
  * @value 2
  * 
  * @param innFee
@@ -116,10 +127,12 @@
  * @type number
  * 
  * @param travelX
+ * @parent travelMapId
  * @text ファストトラベル時のX座標
  * @type number
  * 
  * @param travelY
+ * @parent travelMapId
  * @text ファストトラベル時のY座標
  * @type number
  * 
@@ -128,10 +141,12 @@
  * @type number
  * 
  * @param boatX
+ * @parent boatMapId
  * @text FT時の小型船のX座標
  * @type number
  * 
  * @param boatY
+ * @parent boatMapId
  * @text FT時の小型船のY座標
  * @type number
  * 
@@ -140,14 +155,17 @@
  * @type number
  * 
  * @param shipX
+ * @parent shipMapId
  * @text FT時の大型船のX座標
  * @type number
  * 
  * @param shipY
+ * @parent shipMapId
  * @text FT時の大型船のY座標
  * @type number
  * 
  * @param getOffShipDir
+ * @parent shipMapId
  * @text 下船方向
  * @type select
  * @option 南
@@ -164,10 +182,12 @@
  * @type number
  * 
  * @param airshipX
+ * @parent airshipMapId
  * @text FT時の飛空艇のX座標
  * @type number
  * 
  * @param airshipY
+ * @parent airshipMapId
  * @text FT時の飛空艇のY座標
  * @type number
  */
@@ -239,6 +259,14 @@
      */
     CSVN_AMI.prototype.goOutFadeType = function () {
         return this._data.goOutFadeType;
+    };
+
+    /**
+     * マップから出るときにエンカ許可するかを返す
+     * @returns number
+     */
+    CSVN_AMI.prototype.enableEncounterGoingOut = function () {
+        return this._data.enableEncounterGoingOut;
     };
 
     /**
@@ -535,6 +563,14 @@
     };
 
     /**
+     * マップから出るときにエンカ許可するかどうかを返す
+     * @returns number
+     */
+    Game_Map.prototype.enableEncounterGoingOut = function () {
+        return this._ami.enableEncounterGoingOut();
+    };
+
+    /**
      * マップにある宿屋の1人分の宿賃を返す
      * @returns number
      */
@@ -696,9 +732,13 @@
         if ($gamePlayer.regionId() === $gameMap.goOutRegion()) {
             CSVN_base.log(">>>> " + this.constructor.name);
             CSVN_base.log($gameMap.goOutSettings());
-            if (param.miniCharSwId) {
-                $s.on(param.miniCharSwId);
+
+            if ($gameMap.enableEncounterGoingOut() == 0) {
+                $gameSystem.enableEncounter();
+            } else if ($gameMap.enableEncounterGoingOut() == 1) {
+                $gameSystem.disableEncounter();
             }
+
             $gamePlayer.reserveTransfer(
                 $gameMap.goOutSettings().mapId,
                 $gameMap.goOutSettings().x,
