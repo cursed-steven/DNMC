@@ -20,13 +20,7 @@
  * 
  * @help MessageWindowPopup_goldAddon.js
  * 
- * original author: トリアコンタン(triacontane)様
- * 
- * @param WindowLinkage
- * @text ウィンドウ連携
- * @desc 選択肢ウィンドウと数値入力ウィンドウをポップアップウィンドウに連動させます。(MessageWindowPopup.jsに設定を合わせること)
- * @default true
- * @type boolean
+ * MessageWindowPopup.js オリジナル版開発: トリアコンタン(triacontane)様
  */
 
 (() => {
