@@ -349,7 +349,7 @@
         const actor = $gameActors.actor(data.actorId);
         const rect = this.itemRect(index);
         this.drawPendingItemBackground(index);
-        this.drawActorNameClass(index);
+        this.drawActorNameClass(data, index);
         this.drawLv(rect, data, index);
         this.drawParams(actor, rect, data);
     };
@@ -358,8 +358,8 @@
      * アクター名と職業を描画
      * @param {number} index 
      */
-    Window_LvUP.prototype.drawActorNameClass = function (index) {
-        const actor = this.actor(index);
+    Window_LvUP.prototype.drawActorNameClass = function (data, index) {
+        const actor = $gameActors.actor(data.actorId);
         const rect = this.itemRect(index);
         const x = 8;
         const y = 8;
