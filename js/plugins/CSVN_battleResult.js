@@ -50,6 +50,7 @@
     Scene_Battle.prototype.create = function () {
         _Scene_Battle_create.call(this);
         $gameTemp._actorsBeforeBattle = [];
+        $gameTemp._actorsAfterBattle = [];
         this.parseBeforeActorsData();
     };
 
@@ -643,7 +644,7 @@
     Window_LearnedSkills.prototype.drawNewSkills = function (rect, diff) {
         if (diff.length > 2) {
             this.drawSkill(rect, diff[0], 0);
-            this.drawText("etc.", rect.x + rect.width / 4 * 3, rect.y, rect.width, "right");
+            this.drawText("etc.", rect.x, rect.y + 8, rect.width, "right");
         } else {
             for (let i = 0; i < diff.length; i++) {
                 this.drawSkill(rect, diff[i], i);
