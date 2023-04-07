@@ -280,8 +280,36 @@
      */
     Window_LvUP.prototype.initialize = function (rect) {
         Window_MenuStatus.prototype.initialize.call(this, rect);
-        this._data = $gameTemp._actorsAfterBattle;
+        this._data = [];
+        this.refresh();
+    };
 
+    /**
+     * 描画更新
+     */
+    Window_LvUP.prototype.refresh = function () {
+        this.makeItemList();
+        for (let i = 0; i < this._data.length; i++) {
+            this.drawItem(i);
+        }
+    };
+
+    /**
+     * 内容作成
+     */
+    Window_LvUP.prototype.makeItemList = function () {
+        this._data = [];
+        let actor = null;
+        let ba = null;
+        let ba0 = null;
+        for (let i = 0; i < $gameTemp._actorsAfterBattle.length; i++) {
+            actor = this.actor(i);
+            ba = $gameTemp._actorsAfterBattle.filter(a => a.actorId === actor._actorId);
+            ba0 = ba[0] ? ba[0] : null;
+            if (actor && ba0 && this.isLvUP(ba0)) {
+                this._data.push($gameTemp._actorsAfterBattle[i]);
+            }
+        }
     };
 
     /**
@@ -297,7 +325,11 @@
      * @returns number
      */
     Window_LvUP.prototype.maxItems = function () {
-        return $gameParty.members().length;
+        if (this._data.length) {
+            this.makeItemList();
+        }
+
+        return this._data.length;
     };
 
     /**
@@ -313,17 +345,13 @@
      * @param number
      */
     Window_LvUP.prototype.drawItem = function (index) {
-        const actor = this.actor(index);
-        const ba = $gameTemp._actorsAfterBattle.filter(a => a.actorId === actor._actorId);
-        const ba0 = ba[0] ? ba[0] : null;
+        const data = this._data[index];
+        const actor = $gameActors.actor(data.actorId);
         const rect = this.itemRect(index);
         this.drawPendingItemBackground(index);
-
-        if (actor && ba0 && this.isLvUP(ba0)) {
-            this.drawActorNameClass(index);
-            this.drawLv(rect, ba0, index);
-            this.drawParams(actor, rect, ba0);
-        }
+        this.drawActorNameClass(index);
+        this.drawLv(rect, data, index);
+        this.drawParams(actor, rect, data);
     };
 
     /**
