@@ -475,7 +475,6 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
      */
     Window_EquipStatus.prototype.drawItem = function (x, y, paramId) {
         _Window_EquipStatus_drawItem.call(this, x, y, paramId);
-        console.log(this._tempActor);
         const paramX = this.paramX();
         const paramWidth = this.paramWidth();
         const rightArrowWidth = this.rightArrowWidth();
