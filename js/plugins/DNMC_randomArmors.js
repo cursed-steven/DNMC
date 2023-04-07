@@ -1028,7 +1028,7 @@ function DNMC_randomArmors() {
             type = Math.randomInt(5) + 1;
         }
         if (!slot) {
-            slot = Math.randomInt(4) + 1;
+            slot = Math.randomInt(5) + 1;
         }
         let atypeSlot = getAtypeSlot(type, slot);
         let mat = randomMaterial(rank, slot);
