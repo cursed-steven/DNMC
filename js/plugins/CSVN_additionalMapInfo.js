@@ -800,9 +800,9 @@
         _Game_Player_performTransfer.call(this);
 
         // 移動が完全に終わってから、ひかえておいたCEVを実行
-        if ($s.get(param.swReservedCev)) {
-            $s.off(param.swReservedCev);
-            $gameTemp.reserveCommonEvent($v.get(param.varReservedCev));
+        if ($gameSwitches.value(param.swReservedCev)) {
+            $gameSwitches.setValue(param.swReservedCev, false);
+            $gameTemp.reserveCommonEvent($gameVariables.value(param.varReservedCev));
         }
     };
 
