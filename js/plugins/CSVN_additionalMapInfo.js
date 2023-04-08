@@ -41,6 +41,16 @@
  * @desc ファストトラベル先に登録されているかどうかを保持する変数のID
  * @type variable
  * 
+ * @param swReservedCev
+ * @text 移動後CEV有無
+ * @desc コモンイベント実行を移動後に控えているかどうか
+ * @type switch
+ * 
+ * @param varReservedCev
+ * @text 移動後CEV保持変数
+ * @desc 移動後に実行するコモンイベントIDを書き込む変数ID
+ * @type variable
+ * 
  * @command resetFTFlag
  * @text ファストトラベル先訪問履歴のリセット
  */
@@ -85,6 +95,11 @@
  * @value 1
  * @option なし
  * @value 2
+ * 
+ * @param goOutCommonEvent
+ * @parent goOutRegion
+ * @text 外に出るときに実行するコモンイベント
+ * @type common_event
  * 
  * @param enableEncounterGoingOut
  * @parent goOutRegion
@@ -259,6 +274,14 @@
      */
     CSVN_AMI.prototype.goOutFadeType = function () {
         return this._data.goOutFadeType;
+    };
+
+    /**
+     * マップから出るときのに実行するコモンイベントIDを返す
+     * @returns number
+     */
+    CSVN_AMI.prototype.goOutCommonEvent = function () {
+        return this._data.goOutCommonEvent;
     };
 
     /**
@@ -563,6 +586,14 @@
     };
 
     /**
+     * マップから出るときに実行するコモンイベントIDを返す
+     * @returns number
+     */
+    Game_Map.prototype.goOutCommonEvent = function () {
+        return this._ami.goOutCommonEvent();
+    };
+
+    /**
      * マップから出るときにエンカ許可するかどうかを返す
      * @returns number
      */
@@ -746,8 +777,32 @@
                 2,
                 $gameMap.goOutFadeType()
             );
+
+            // 移動が完全に終わった後に実行させるために別の場所に
+            // CEV ID をひかえる
+            if ($gameMap.goOutCommonEvent()) {
+                $s.on(param.swReservedCev);
+                $v.set(param.varReservedCev, $gameMap.goOutCommonEvent());
+            }
         } else {
             _Game_Party_onPlayerWalk.call(this);
+        }
+    };
+
+    //-------------------------------------------------------------------------
+    // Game_Player
+
+    const _Game_Player_performTransfer = Game_Player.prototype.performTransfer;
+    /**
+     * 移動が確実に完了した後にCEV実行する
+     */
+    Game_Player.prototype.performTransfer = function () {
+        _Game_Player_performTransfer.call(this);
+
+        // 移動が完全に終わってから、ひかえておいたCEVを実行
+        if ($s.get(param.swReservedCev)) {
+            $s.off(param.swReservedCev);
+            $gameTemp.reserveCommonEvent($v.get(param.varReservedCev));
         }
     };
 
