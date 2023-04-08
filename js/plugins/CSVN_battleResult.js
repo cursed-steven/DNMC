@@ -502,7 +502,7 @@
      * @returns number
      */
     Window_DropItems.prototype.maxCols = function () {
-        return 1;
+        return 2;
     };
 
     /**
@@ -510,7 +510,7 @@
      * @returns number
      */
     Window_DropItems.prototype.maxItems = function () {
-        return 4;
+        return this.maxCols() * this.numVisibleRows();
     };
 
     /**
@@ -537,15 +537,41 @@
         if (this.includes(null)) {
             this._data.push(null);
         } else {
-            if (this._data.length > 3) {
-                const all = BattleManager._rewards.items;
-                for (let i = 0; i < 3; i++) {
+            const all = BattleManager._rewards.items;
+            CSVN_base.log("> dropItems: ");
+            CSVN_base.table(all);
+            if (this._data.length > this.maxItems()) {
+                for (let i = 0; i < this.maxItems() - 1; i++) {
                     this._data.push(all[i]);
                 }
+                this.drawEtc();
             } else {
-                this._data = BattleManager._rewards.items;
+                this._data = all;
             }
         }
+    };
+
+    /**
+     * 1項目ぶんの描画
+     * @param {number} index 
+     */
+    Window_DropItems.prototype.drawItem = function (index) {
+        const item = this.itemAt(index);
+        if (item) {
+            const numberWidth = this.numberWidth();
+            const rect = this.itemLineRect(index);
+            this.changePaintOpacity(this.isEnabled(item));
+            this.drawItemName(item, rect.x, rect.y, rect.width - numberWidth);
+            this.changePaintOpacity(1);
+        }
+    };
+
+    /**
+     * 多い場合のetc表示
+     */
+    Window_DropItems.prototype.drawEtc = function () {
+        const rect = this.itemRect(this.maxItems() - 1);
+        this.drawText("etc.", rect.x, rect.y + 8, "right");
     };
 
     //-----------------------------------------------------------------------------

@@ -489,6 +489,16 @@ CSVN_base.log = function (obj) {
 };
 
 /**
+ * DevToolsManageが有効な場合のみ機能する console.table のラッパー。
+ * @param {any} obj 
+ */
+CSVN_base.table = function (obj) {
+    if (isDevToolsManageActive()) {
+        console.table(obj);
+    }
+};
+
+/**
  * DevToolsManageが有効な場合のみ機能する console.warn のラッパー。
  * @param {string} str 
  */

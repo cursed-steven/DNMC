@@ -374,6 +374,9 @@
             return troop;
         }
 
+        // (主にテスト用)出現数
+        const allCount = 6;
+
         // ひとつ前に選出したエネミーのX座標
         this._prevX = 0;
 
@@ -388,7 +391,7 @@
             return troop;
         }
 
-        let enemyCount = Math.randomInt(8) + 1;
+        let enemyCount = Math.randomInt(allCount) + 1;
         let indexes = [];
         let ix = -1;
 
