@@ -548,7 +548,23 @@
     Game_Map.prototype.setup = function (mapId) {
         CSVN_base.log(">>>> setup");
         _Game_Map_setup.call(this, mapId);
+        this.setupAmi(mapId);
+    };
 
+    /**
+     * 追加情報のセットアップがまだならする
+     */
+    Game_Map.prototype.setupAmiIfNeeded = function () {
+        CSVN_base.log("> AMI set?");
+        if (this._ami._data) this.setupAmi(this.mapId());
+    };
+
+    /**
+     * 追加情報をセットアップ
+     * @param {number} mapId 
+     */
+    Game_Map.prototype.setupAmi = function (mapId) {
+        CSVN_base.log("No, AMI setting up...");
         this._ami = new CSVN_AMI(mapId);
         CSVN_base.log(this._ami);
     };
@@ -558,6 +574,7 @@
      * @returns multiline_string
      */
     Game_Map.prototype.description = function () {
+        this.setupAmiIfNeeded();
         return this._ami.description();
     };
 
@@ -566,6 +583,7 @@
      * @returns any
      */
     Game_Map.prototype.goOutSettings = function () {
+        this.setupAmiIfNeeded();
         return this._ami.goOutSettings();
     };
 
@@ -574,6 +592,7 @@
      * @returns number
      */
     Game_Map.prototype.goOutRegion = function () {
+        this.setupAmiIfNeeded();
         return this._ami.goOutRegion();
     };
 
@@ -582,6 +601,7 @@
      * @returns number
      */
     Game_Map.prototype.goOutFadeType = function () {
+        this.setupAmiIfNeeded();
         return this._ami.goOutFadeType();
     };
 
@@ -590,6 +610,7 @@
      * @returns number
      */
     Game_Map.prototype.goOutCommonEvent = function () {
+        this.setupAmiIfNeeded();
         return this._ami.goOutCommonEvent();
     };
 
@@ -598,6 +619,7 @@
      * @returns number
      */
     Game_Map.prototype.enableEncounterGoingOut = function () {
+        this.setupAmiIfNeeded();
         return this._ami.enableEncounterGoingOut();
     };
 
@@ -606,6 +628,7 @@
      * @returns number
      */
     Game_Map.prototype.innFee = function () {
+        this.setupAmiIfNeeded();
         return this._ami.innFee();
     };
 
@@ -614,6 +637,7 @@
      * @returns boolean
      */
     Game_Map.prototype.canEscape = function () {
+        this.setupAmiIfNeeded();
         return this._ami.canEscape();
     };
 
@@ -622,6 +646,7 @@
      * @returns boolean
      */
     Game_Map.prototype.canTravelFrom = function () {
+        this.setupAmiIfNeeded();
         return this._ami.canTravelFrom();
     };
 
@@ -630,6 +655,7 @@
      * @returns boolean
      */
     Game_Map.prototype.canTravelTo = function () {
+        this.setupAmiIfNeeded();
         return this._ami.canTravelTo();
     };
 
@@ -638,6 +664,7 @@
      * @returns boolean
      */
     Game_Map.prototype.visited = function () {
+        this.setupAmiIfNeeded();
         return this._ami.visited();
     };
 
@@ -645,6 +672,7 @@
      * マップに訪問済みフラグを立てる
      */
     Game_Map.prototype.visit = function () {
+        this.setupAmiIfNeeded();
         this._ami.visit();
     };
 
@@ -653,6 +681,7 @@
      * @returns number
      */
     Game_Map.prototype.travelMapId = function () {
+        this.setupAmiIfNeeded();
         return this._ami.travelMapId();
     };
 
@@ -661,6 +690,7 @@
      * @returns number
      */
     Game_Map.prototype.travelX = function () {
+        this.setupAmiIfNeeded();
         return this._ami.travelX();
     };
 
@@ -669,6 +699,7 @@
      * @returns number
      */
     Game_Map.prototype.travelY = function () {
+        this.setupAmiIfNeeded();
         return this._ami.travelY();
     };
 
@@ -677,6 +708,7 @@
      * @returns number
      */
     Game_Map.prototype.boatMapId = function () {
+        this.setupAmiIfNeeded();
         return this._ami.boatMapId();
     };
 
@@ -685,6 +717,7 @@
      * @returns number
      */
     Game_Map.prototype.boatX = function () {
+        this.setupAmiIfNeeded();
         return this._ami.boatX();
     };
 
@@ -693,6 +726,7 @@
      * @returns number
      */
     Game_Map.prototype.boatY = function () {
+        this.setupAmiIfNeeded();
         return this._ami.boatY();
     };
 
@@ -701,6 +735,7 @@
      * @returns number
      */
     Game_Map.prototype.shipMapId = function () {
+        this.setupAmiIfNeeded();
         return this._ami.shipMapId();
     };
 
@@ -709,6 +744,7 @@
      * @returns number
      */
     Game_Map.prototype.shipX = function () {
+        this.setupAmiIfNeeded();
         return this._ami.shipX();
     };
 
@@ -717,6 +753,7 @@
      * @returns number
      */
     Game_Map.prototype.shipY = function () {
+        this.setupAmiIfNeeded();
         return this._ami.shipY();
     };
 
@@ -725,6 +762,7 @@
      * @returns number
      */
     Game_Map.prototype.getOffShipDir = function () {
+        this.setupAmiIfNeeded();
         return this._ami.getOffShipDir();
     };
 
@@ -733,6 +771,7 @@
      * @returns number
      */
     Game_Map.prototype.airshipMapId = function () {
+        this.setupAmiIfNeeded();
         return this._ami.airshipMapId();
     };
 
@@ -741,6 +780,7 @@
      * @returns number
      */
     Game_Map.prototype.airshipX = function () {
+        this.setupAmiIfNeeded();
         return this._ami.airshipX();
     };
 
@@ -749,6 +789,7 @@
      * @returns number
      */
     Game_Map.prototype.airshipY = function () {
+        this.setupAmiIfNeeded();
         return this._ami.airshipY();
     };
 
@@ -794,7 +835,7 @@
 
     const _Game_Player_performTransfer = Game_Player.prototype.performTransfer;
     /**
-     * 移動が確実に完了した後にCEV実行する
+     * 移動が確実に完了した後にCEV実行し、訪問フラグを立てる
      */
     Game_Player.prototype.performTransfer = function () {
         _Game_Player_performTransfer.call(this);
@@ -804,20 +845,7 @@
             $gameSwitches.setValue(param.swReservedCev, false);
             $gameTemp.reserveCommonEvent($gameVariables.value(param.varReservedCev));
         }
-    };
 
-    //-------------------------------------------------------------------------
-    // Scene_Map
-
-    const _Scene_Map_start = Scene_Map.prototype.start;
-    Scene_Map.prototype.start = function () {
-        CSVN_base.log(">>>> " + this.constructor.name + " start");
-        _Scene_Map_start.call(this);
-
-        // ロードしたときに Game_Map.setup が呼ばれないので
-        if (typeof $gameMap._ami.visit !== "function") {
-            $gameMap.setup($gameMap.mapId());
-        }
         $gameMap.visit();
     };
 })();
