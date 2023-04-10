@@ -72,9 +72,9 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
      */
     Scene_Battle.prototype.statusWindowRect = function () {
         const ww = 160;
-        const wh = (Graphics.boxHeight - this.calcWindowHeight(3, true)) / 4 * $gameParty.members().length + 48;
         const wx = Graphics.boxWidth - ww;
-        const wy = this.calcWindowHeight(3, true) - 48;
+        const wy = 64;
+        const wh = (Graphics.boxHeight - wy) / 4 * $gameParty.members().length;
         return new Rectangle(wx, wy, ww, wh);
     };
 
@@ -109,7 +109,7 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
      */
     Scene_Battle.prototype.createCancelButton = function () {
         _Scene_Battle_createCancelButton.call(this);
-        this._cancelButton.y -= 32;
+        this._cancelButton.y -= 48 * 2;
     };
 
     const _Scene_Battle_onItemOk = Scene_Battle.prototype.onItemOk;
@@ -144,6 +144,14 @@ Window_BattleHUD.prototype.constructor = Window_BattleHUD;
             x + 14,
             y + lineHeight * 3 + this.gaugeLineHeight() * 3 + this.itemPadding()
         );
+    };
+
+    /**
+     * ゲージ高さも縮める
+     * @returns number
+     */
+    Window_BattleHUD.prototype.gaugeLineHeight = function () {
+        return 18;
     };
 
     /**
