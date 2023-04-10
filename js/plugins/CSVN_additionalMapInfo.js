@@ -555,8 +555,7 @@
      * 追加情報のセットアップがまだならする
      */
     Game_Map.prototype.setupAmiIfNeeded = function () {
-        CSVN_base.log("> AMI set?");
-        if (this._ami._data) this.setupAmi(this.mapId());
+        if (typeof this._ami.goOutRegion != "function") this.setupAmi(this.mapId());
     };
 
     /**
@@ -564,7 +563,7 @@
      * @param {number} mapId 
      */
     Game_Map.prototype.setupAmi = function (mapId) {
-        CSVN_base.log("No, AMI setting up...");
+        CSVN_base.log("AMI setting up...");
         this._ami = new CSVN_AMI(mapId);
         CSVN_base.log(this._ami);
     };
