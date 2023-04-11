@@ -95,6 +95,7 @@ Scene_Operation.prototype.initialize = function () {
         this._ctlrRWindow.setLeftSideWindow(this._ctlrLWindow);
         this._ctlrRWindow.setSkillTypeWindow(this._skillTypeWindow);
         this._ctlrRWindow.setCategoryWindow(this._categoryWindow);
+        this._ctlrRWindow.deselect();
 
         this._buttonGuide.show();
         this._buttonGuide.refresh();
@@ -271,6 +272,7 @@ Scene_Operation.prototype.initialize = function () {
         this._skillTypeWindow.setActor(actor);
         this._itemWindow.setActor(actor);
         this._menuStatusWindow.select(actor.index());
+        this._ctlrRWindow.deselect();
     };
 
     /**
