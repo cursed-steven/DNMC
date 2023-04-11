@@ -209,7 +209,7 @@
     function getRandomY(dEnemy) {
         // ステータスウィンドウより上、戦闘背景1より下でかつはみ出さない範囲でランダム
         const bswh = Window_Selectable.prototype.fittingHeight(4);
-        const randY = Math.max(bswh, Math.randomInt(BOX_HEIGHT - bswh - enemyHeight(dEnemy))) + enemyHeight(dEnemy);
+        const randY = Math.min(bswh, Math.randomInt(BOX_HEIGHT - bswh - enemyHeight(dEnemy))) + enemyHeight(dEnemy);
         // 補正
         return randY + 180;
     }
