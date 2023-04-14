@@ -277,7 +277,7 @@
      * @returns number[]
      */
     function randomItem(priceRank, recovery) {
-        const priceRanks = [0, 200, 750, 5000, 50000, 100000];
+        const priceRanks = [0, 300, 1000, 5000, 50000, 100000];
         const items = $dataItems.filter(i => {
             if (!i || !i.name || i.price === 0) return false;
 
