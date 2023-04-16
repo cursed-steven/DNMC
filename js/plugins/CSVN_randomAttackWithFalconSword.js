@@ -74,7 +74,7 @@
                 const traits = weapon.traits;
                 for (const trait of traits) {
                     // 攻撃追加回数に1以上が入っている場合
-                    if (trait.code == additionalAttackTraitCode
+                    if (trait && trait.code == additionalAttackTraitCode
                         && trait.value > 0) {
                         // かつスキルが敵単体 or 敵ランダム複数体向けの場合
                         if (action.checkItemScope([1, 3, 4, 5, 6])) {
