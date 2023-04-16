@@ -66,10 +66,10 @@
  * @text 敵グループID
  * @type troop
  * 
- * @param terrain
- * @text 地形タグ
+ * @param region
+ * @text リージョン
  * @type number
- * @max 7
+ * @max 255
  * @min 0
  * 
  * @param sw
@@ -161,7 +161,7 @@
      */
     function getBiomeName(region) {
         let biomeName = "";
-        // GenerateWorls.js対応
+        // GenerateWorld.js対応
         const key = Object.keys(BIOMES_ON_FIELD).find(k => {
             return k.toString() === region.toString();
         });
@@ -262,7 +262,7 @@
         const ex = param.Exceptionals.find(e => {
             return CSVN_conditionChecker.checkCondition(
                 0,
-                0,
+                e.region,
                 e.sw,
                 true,
                 e.var,
