@@ -76,6 +76,13 @@
  * @text 直前生成分のインデックス
  * @type number
  * 
+ * @command setIdToVarSoon
+ * @text 生成直後のアクターIDを指定変数に格納
+ * 
+ * @arg targetVarId
+ * @text 格納先変数
+ * @type variable
+ * 
  * @command reset
  * @text リセット
  */
@@ -266,6 +273,13 @@ class DataActor {
             return parseInt(r) !== 0;
         });
         $v.set(param.reserveMemberVarId, reserves.join(","));
+    });
+
+    /**
+     * 直近で生成したアクターのIDを指定変数に入れる
+     */
+    PluginManagerEx.registerCommand(script, "setIdToVarSoon", args => {
+        $v.set(args.targetVarId, $gameTemp.getLatestGenerated()[0].id);
     });
 
     /**
