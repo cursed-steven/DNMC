@@ -62,10 +62,10 @@
     'use strict';
 
     const _BattleManager_startAction = BattleManager.startAction;
-    const additionalAttackTraitCode = 34;
     BattleManager.startAction = function () {
         if (this._subject.isActor()) {
             const weapons = this._subject.weapons();
+            const armors = this._subject.armors();
             const action = this._subject.currentAction();
             const item = action.item();
             let addCount = 0;
@@ -74,7 +74,21 @@
                 const traits = weapon.traits;
                 for (const trait of traits) {
                     // 攻撃追加回数に1以上が入っている場合
-                    if (trait && trait.code == additionalAttackTraitCode
+                    if (trait && trait.code == Game_BattlerBase.TRAIT_ATTACK_TIMES
+                        && trait.value > 0) {
+                        // かつスキルが敵単体 or 敵ランダム複数体向けの場合
+                        if (action.checkItemScope([1, 3, 4, 5, 6])) {
+                            addCount += trait.value;
+                        }
+                    }
+                }
+            }
+            for (const armor of armors) {
+                // 装備中の武器の特徴を検査
+                const traits = armor.traits;
+                for (const trait of traits) {
+                    // 攻撃追加回数に1以上が入っている場合
+                    if (trait && trait.code == Game_BattlerBase.TRAIT_ATTACK_TIMES
                         && trait.value > 0) {
                         // かつスキルが敵単体 or 敵ランダム複数体向けの場合
                         if (action.checkItemScope([1, 3, 4, 5, 6])) {
@@ -94,7 +108,7 @@
                 }
                 addCount++;
                 item.repeats *= addCount;
-                //console.log(`repeats: ${item.repeats}`);
+                // console.log(`repeats: ${item.repeats}`);
             }
         }
 
