@@ -174,11 +174,11 @@
  * @type actor
  * 
  * @command disableChangeSoon
- * @text 加入直後のアクターの入替禁止
+ * @text 生成直後のアクターの入替禁止
  * @desc DNMC_randomActor専用機能
  * 
  * @command disableEliminateSoon
- * @text 加入直後のアクターの除籍禁止
+ * @text 生成直後のアクターの除籍禁止
  * @desc DNMC_randomActor専用機能
  * 
  * @command changeStart
@@ -216,38 +216,60 @@
     const cantEliminateName = "【除籍禁止】";
     let membersCantEliminate = [];
 
+    /**
+     * 入れ替え禁止メンバー追加
+     */
     PluginManagerEx.registerCommand(script, "disableChange", args => {
-        // 入れ替え禁止メンバー追加
         addToCantChange(args.actorId);
     });
 
+    /**
+     * 入れ替え禁止メンバー除去(=入れ替えできるようになる)
+     */
     PluginManagerEx.registerCommand(script, "enableChange", args => {
-        // 入れ替え禁止メンバー除去(=入れ替えできるようになる)
         removeFromCantChange(args.actorId);
     });
 
+    /**
+     * 除籍禁止メンバーの追加
+     */
     PluginManagerEx.registerCommand(script, "disableEliminate", args => {
-        // 除籍禁止メンバーの追加
         addToCantEliminate(args.actorId);
     });
 
+    /**
+     * 除籍禁止メンバーの除去(=除籍できるようになる)
+     */
     PluginManagerEx.registerCommand(script, "enableEliminate", args => {
-        // 除籍禁止メンバーの除去(=除籍できるようになる)
         removeFromCantEliminate(args.actorId);
     });
 
+    /**
+     * 生成直後のアクターを入替禁止にする
+     */
     PluginManagerEx.registerCommand(script, "disableChangeSoon", args => {
-        addToCantChange($gameTemp.getLatestGenerated()[0].id);
+        if (typeof $gameTemp.getLatestGenerated == "function")
+            addToCantChange($gameTemp.getLatestGenerated()[0].id);
     });
 
+    /**
+     * 生成直後のアクターを除籍禁止にする
+     */
     PluginManagerEx.registerCommand(script, "disableEliminateSoon", args => {
-        addToCantEliminate($gameTemp.getLatestGenerated()[0].id);
+        if (typeof $gameTemp.getLatestGenerated == "function")
+            addToCantEliminate($gameTemp.getLatestGenerated()[0].id);
     });
 
+    /**
+     * 入替シーン開始
+     */
     PluginManagerEx.registerCommand(script, "changeStart", args => {
         SceneManager.push(Scene_PartyChange);
     });
 
+    /**
+     * 除籍シーン開始
+     */
     PluginManagerEx.registerCommand(script, "eliminateStart", args => {
         SceneManager.push(Scene_PartyEliminate);
     });
