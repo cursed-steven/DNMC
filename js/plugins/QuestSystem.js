@@ -2655,6 +2655,12 @@ var QuestSystem;
             }
         }
         createAllWindow() {
+            // [begin] layout customize by cursed_steven 2023/04/19
+            this.createCommandWindow();
+            Scene_Map.prototype.createMapHUD.call(this);
+            Scene_Map.prototype.createQuestHUD.call(this);
+            Scene_Menu.prototype.createGoldWindow.call(this);
+            // [end] layout customize by cursed_steven 2023/04/19
             this.createQuestCommandWindow();
             this.createQuestListWindow();
             this.createQuestOrderCountWindow();
@@ -2666,6 +2672,36 @@ var QuestSystem;
             this.createQuestCancelWindow();
             super.createAllWindows();
         }
+        // [begin] layout customize by cursed_steven 2023/04/19
+        createCommandWindow() {
+            const rect = this.commandWindowRect();
+            const commandWindow = new Window_MenuCommand(rect);
+            this.addWindow(commandWindow);
+            this._commandWindow = commandWindow;
+            this._commandWindow.deactivate();
+        }
+        mainAreaHeight() {
+            return Scene_Menu.prototype.mainAreaHeight.call(this);
+        }
+        helpAreaHeight() {
+            return Scene_Menu.prototype.helpAreaHeight.call(this);
+        }
+        commandWindowRect() {
+            return Scene_Menu.prototype.commandWindowRect.call(this);
+        }
+        goldWindowRect() {
+            return Scene_Menu.prototype.goldWindowRect.call(this);
+        }
+        mapHUDRect() {
+            return Scene_Map.prototype.mapHUDRect.call(this);
+        }
+        HUDHeight() {
+            return Scene_Map.prototype.HUDHeight.call(this);
+        }
+        questHUDRect() {
+            return Scene_Map.prototype.questHUDRect.call(this);
+        }
+        // [end] layout customize by cursed_steven 2023/04/19
         start() {
             super.start();
             this._questCommandWindow.activate();
@@ -2677,6 +2713,9 @@ var QuestSystem;
         update() {
             super.update();
             this.updateEvent();
+            // layout customize by curses_steven 2023/04/19
+            this._questHUD.show();
+            this._questHUD.refresh();
         }
         updateEvent() {
             if (this._eventState === "start") {
@@ -2771,9 +2810,10 @@ var QuestSystem;
         // Window rectangle
         questCommandWindowRect() {
             const x = 0;
-            let y = 0;
-            if (!this.isBottomButtonMode())
-                y += this.buttonAreaHeight();
+            // layout customize by cursed_steven 2023/04/19
+            let y = this.calcWindowHeight(3, true);
+            // if (!this.isBottomButtonMode())
+            //     y += this.buttonAreaHeight();
             const w = WindowSize.CommandWindowWidth;
             const h = WindowSize.CommandWindowHeight;
             return new Rectangle(x, y, w, h);
@@ -2807,7 +2847,8 @@ var QuestSystem;
             const questOrderCountWindowRect = this.questOrderCountWindowRect();
             const x = questListWindowRect.x + questListWindowRect.width;
             const y = questCommandWindowRect.y;
-            const w = Graphics.boxWidth - x;
+            // layout customize by cursed_steven 2023/04/19
+            const w = Graphics.boxWidth - x - 160 * 2;
             const h = questCommandWindowRect.height + questListWindowRect.height + questOrderCountWindowRect.height;
             return new Rectangle(x, y, w, h);
         }

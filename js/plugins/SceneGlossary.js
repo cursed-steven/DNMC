@@ -1719,6 +1719,15 @@
 
     // [begin] layout customize by cursed_steven 2023/04/19
     /**
+     * クエストHUDの表示と更新を追加
+     */
+    Scene_Glossary.prototype.update = function () {
+        Scene_ItemBase.prototype.update.call(this);
+        this._questHUD.show();
+        this._questHUD.refresh();
+    };
+
+    /**
      * 選択後のコマンドウィンドウ作成。
      */
     Scene_Glossary.prototype.createCommandWindow = function () {

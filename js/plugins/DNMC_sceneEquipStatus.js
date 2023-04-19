@@ -50,6 +50,12 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
 
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
     const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
+
+    //-------------------------------------------------------------------------
+    // Scene_EquipStatus
+    //
+    // The scene class of the equipments/status screen.
+
     Scene_EquipStatus.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
     Scene_EquipStatus.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_EquipStatus.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
@@ -260,6 +266,15 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         const commandWindowRect = this.commandWindowRect();
         this._slotWindow.y = commandWindowRect.y + commandWindowRect.height;
         this._buttonGuide.setActiveWindow("Window_EquipCommand");
+    };
+
+    const _Scene_MenuBase_onActorChange = Scene_MenuBase.prototype.onActorChange;
+    /**
+     * アクター変更時に、装備変更時の計算用一時アクターデータはクリアしておく
+     */
+    Scene_EquipStatus.prototype.onActorChange = function () {
+        _Scene_MenuBase_onActorChange.call(this);
+        this._statusWindow.setTempActor(null);
     };
 
     /**
