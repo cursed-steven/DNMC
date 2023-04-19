@@ -114,18 +114,48 @@
      * @param {number} b 
      * @returns number
      */
-    Math.randomRange = function (a, b) {
-        let rv = Math.randomInt(a + b);
-
-        while ((a > 0 && rv < a) || (a < 0 && rv > a)) {
-            rv = Math.randomInt(a + b);
-        }
-
-        return rv - a;
+    Math.randomRangeInt = function (a, b) {
+        let r = Math.randomInt(Math.abs(a - b));
+        return r + a;
     };
 
     //-----------------------------------------------------------------------------
     // DataManager
+
+    /**
+     * 種別とIDを指定してデータオブジェクトを取得する
+     * @param {number} type 
+     * @param {number} id 
+     * @returns any
+     */
+    DataManager.getData = function (type, id) {
+        let data = null;
+        switch (type) {
+            case 0:
+                data = $dataItems[id];
+                break;
+            case 1:
+                data = $dataWeapons[id];
+                break;
+            case 2:
+                data = $dataArmors[id];
+                break;
+        }
+
+        return data;
+    };
+
+    /**
+     * 隠しアイテムA/Bならtrue
+     * @param {any} item 
+     * @returns boolean
+     */
+    DataManager.isHiddenItem = function (item) {
+        if (!this.isItem(item)) return false;
+
+        return (item.itypeId === ITYPE.HIDDEN_A
+            || item.itypeId === ITYPE.HIDDEN_B);
+    };
 
     /**
      * 回復アイテムならtrue

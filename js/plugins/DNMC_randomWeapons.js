@@ -222,7 +222,7 @@ function DNMC_randomWeapons() {
         let traits = [];
         for (let i = 0; i < mat.traits.length; i++) {
             add = Math.trueByRate(mat.traits[i][0]);
-            value = Math.randomRange(mat.traits[i][1], mat.traits[i][2]);
+            value = Math.randomRangeInt(mat.traits[i][1], mat.traits[i][2]);
             if (add) {
                 trait = new Trait_Effect();
                 if (i < 12) {
