@@ -346,6 +346,7 @@
      * @param number
      */
     Window_LvUP.prototype.drawItem = function (index) {
+        this.contents.clear();
         const data = this._data[index];
         const actor = $gameActors.actor(data.actorId);
         const rect = this.itemRect(index);
