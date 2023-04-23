@@ -114,7 +114,7 @@
 
                 this.makeEncounterCount();
                 if (!result) {
-                    CSVN_base.log(">> " + this.constructor.name + " Encounter cancelled.");
+                    console.log(">> " + this.constructor.name + " Encounter cancelled.");
                     return false;
                 } else {
                     BattleManager.setup(troopId, true, false);
@@ -132,7 +132,7 @@
 
         const dataTroop = $dataTroops[troopId];
         if (dataTroop) {
-            CSVN_base.logGroup(">> CSVN_preventWeakEnemies2 determineLvDiff");
+            console.group(">> CSVN_preventWeakEnemies2 determineLvDiff");
 
             BattleManager.setup(troopId, true, false);
 
@@ -147,7 +147,7 @@
                 }
             }
             troopLvAve = Math.floor(exps / params.rate);
-            CSVN_base.log('troops: ' + troopLvAve);
+            console.log('troops: ' + troopLvAve);
 
             const members = $gameParty.aliveMembers();
             let lvs = 0;
@@ -155,9 +155,9 @@
                 lvs += Number(member._level);
             }
             partyLvAve = Math.floor(lvs / members.length);
-            CSVN_base.log('party: ' + partyLvAve);
+            console.log('party: ' + partyLvAve);
 
-            CSVN_base.logGroupEnd(">> CSVN_preventWeakEnemies2 determineLvDiff");
+            console.groupEnd(">> CSVN_preventWeakEnemies2 determineLvDiff");
 
             return partyLvAve - troopLvAve < params.lvDiff;
         } else {

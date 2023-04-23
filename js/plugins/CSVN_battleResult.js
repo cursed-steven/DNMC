@@ -76,8 +76,8 @@
                 }
             });
         }
-        CSVN_base.log(">>>> " + this.constructor.name + " parseBeforeActorsData");
-        CSVN_base.log($gameTemp._actorsBeforeBattle);
+        console.log(">>>> " + this.constructor.name + " parseBeforeActorsData");
+        console.log($gameTemp._actorsBeforeBattle);
     };
 
     const _Scene_Battle_createDisplayObjects = Scene_Battle.prototype.createDisplayObjects;
@@ -539,7 +539,7 @@
             this._data.push(null);
         } else {
             const all = BattleManager._rewards.items;
-            CSVN_base.log("> dropItems: ");
+            console.log("> dropItems: ");
             CSVN_base.table(all);
             if (this._data.length > this.maxItems()) {
                 for (let i = 0; i < this.maxItems() - 1; i++) {

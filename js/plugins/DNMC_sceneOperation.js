@@ -400,8 +400,8 @@ Scene_Operation.prototype.initialize = function () {
         while (values.length < 8) {
             values.push("");
         }
-        //CSVN_base.log(currentItem);
-        //CSVN_base.log(item);        
+        //console.log(currentItem);
+        //console.log(item);        
         if (currentItem) {
             // 空白でない場所へのセット
             if (item) {

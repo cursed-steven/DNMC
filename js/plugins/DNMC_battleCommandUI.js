@@ -172,14 +172,14 @@
         // ※複数人が同時に入力可能になった場合、
         // 　次の人にまで同じコマンドが入ってしまう問題の対処
         if (this._suspendedFrames > 0) {
-            // CSVN_base.log(`cmd suspended. ${this._suspendedFrames} frames left.`);
+            // console.log(`cmd suspended. ${this._suspendedFrames} frames left.`);
             this._suspendedFrames--;
             return;
         }
 
         // 敵行動などでコマンド入力を受け付けていない場合
         if (BattleManager._cmdSuspended) {
-            //CSVN_base.log("cmd suspended by enemy action.");
+            //console.log("cmd suspended by enemy action.");
             //this._actorCommandWindow.hide();
             return;
         }
@@ -224,16 +224,16 @@
 
         // L1を押している間にさらにABXYを押したときの処理
         if (Input.isPressed("ok")) {
-            CSVN_base.log("LA");
+            console.log("LA");
             this.startAction(0);
         } else if (Input.isPressed("cancel")) {
-            CSVN_base.log("LB");
+            console.log("LB");
             this.startAction(2);
         } else if (Input.isPressed("menu")) {
-            CSVN_base.log("LX");
+            console.log("LX");
             this.startAction(4);
         } else if (Input.isPressed("shift")) {
-            CSVN_base.log("LY");
+            console.log("LY");
             this.startAction(6);
         }
     };
@@ -247,16 +247,16 @@
         });
         // R1を押している間にさらにABXYを押したときの処理
         if (Input.isPressed("ok")) {
-            CSVN_base.log("RA");
+            console.log("RA");
             this.startAction(1);
         } else if (Input.isPressed("cancel")) {
-            CSVN_base.log("RB");
+            console.log("RB");
             this.startAction(3);
         } else if (Input.isPressed("menu")) {
-            CSVN_base.log("RX");
+            console.log("RX");
             this.startAction(5);
         } else if (Input.isPressed("shift")) {
-            CSVN_base.log("RY");
+            console.log("RY");
             this.startAction(7);
         }
     };
@@ -274,7 +274,7 @@
         }
 
         if (!action) {
-            CSVN_base.log("inputting action is negative.");
+            console.log("inputting action is negative.");
             return;
         }
 
@@ -301,7 +301,7 @@
                 break;
             default:
                 if (!skill) {
-                    CSVN_base.log("unknown skill.");
+                    console.log("unknown skill.");
                     return;
                 }
 

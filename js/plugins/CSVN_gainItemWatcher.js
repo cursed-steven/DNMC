@@ -120,7 +120,7 @@
                 $s.on(param.swId);
             } else {
                 for (const cev of cevs) {
-                    CSVN_base.log(`> CEV reserved by gainItemWatcher > ${cev.id}`);
+                    console.log(`> CEV reserved by gainItemWatcher > ${cev.id}`);
                     $gameTemp.reserveCommonEvent(cev.id);
                 }
             }
@@ -142,7 +142,7 @@
         if ($s.get(param.swId)) {
             const cevIds = $v.get(param.varId).split(",");
             for (const cevId of cevIds) {
-                CSVN_base.log(`> CEV reserved by gainItemWatcher > ${cevId}`);
+                console.log(`> CEV reserved by gainItemWatcher > ${cevId}`);
                 $gameTemp.reserveCommonEvent(cevId);
             }
             $s.off(param.swId);

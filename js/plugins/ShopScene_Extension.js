@@ -627,9 +627,9 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
         // return actor.param(paramId) + newItem.params[paramId] - (oldItem ? oldItem.params[paramId] : 0);
 
         const baseValue = actor.paramBase(paramId);
-        // CSVN_base.log("> baseValue: " + TextManager.param(paramId) + " " + baseValue);
+        // console.log("> baseValue: " + TextManager.param(paramId) + " " + baseValue);
 
-        // CSVN_base.logGroup("value from newItem");
+        // console.group("value from newItem");
         const newItemValue = newItem.params[paramId];
         const newItemTraitsValue = newItem.traits.reduce((nitv, t) => {
             if (t && t.code === Game_BattlerBase.TRAIT_PARAM
@@ -640,8 +640,8 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
             }
         }, 1);
         const newValue = Math.floor((baseValue + newItemValue) * newItemTraitsValue);
-        // CSVN_base.log("> newValue: " + newValue);
-        // CSVN_base.logGroupEnd("value from newItem");
+        // console.log("> newValue: " + newValue);
+        // console.groupEnd("value from newItem");
 
         return newValue;
     };

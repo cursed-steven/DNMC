@@ -130,9 +130,9 @@
                  * スキルごとのSE 
                  */
                 const stypeId = $dataSkills[this.item().id].stypeId;
-                CSVN_base.log("stypeId: " + stypeId);
+                console.log("stypeId: " + stypeId);
                 const condition = this.findSkillSESetting(stypeId);
-                CSVN_base.log(condition);
+                console.log(condition);
                 this.playAdditionalSeForItem(condition);
 
                 /*
@@ -145,9 +145,9 @@
                     this.playAdditionalSeForItem(param.settingForMPRecovery);
                 } else {
                     const effects = skill.effects;
-                    //CSVN_base.log(effects);
+                    //console.log(effects);
                     const setting = this.findSkillSESetting(effects);
-                    //CSVN_base.log(setting);
+                    //console.log(setting);
                     this.playAdditionalSeForItem(setting);
                 }
             }
@@ -190,16 +190,16 @@
         if (!SceneManager.isCurrentScene(Scene_Battle)) {
             if (DataManager.isItem(this.item())) {
                 const item = $dataItems[this.item().id];
-                // CSVN_base.log(item);
+                // console.log(item);
                 if (item.damage.type === DAMAGE_TYPE.HP_RECOVERY) {
                     this.playAdditionalSeForItem(param.settingForHPRecovery);
                 } else if (item.damage.type === DAMAGE_TYPE.MP_RECOVERY) {
                     this.playAdditionalSeForItem(param.settingForMPRecovery);
                 } else {
                     const effects = item.effects;
-                    //CSVN_base.log(effects);
+                    //console.log(effects);
                     const setting = this.findItemSESetting(effects);
-                    //CSVN_base.log(setting);
+                    //console.log(setting);
                     this.playAdditionalSeForItem(setting);
                 }
             }

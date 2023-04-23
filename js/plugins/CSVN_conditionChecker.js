@@ -141,37 +141,37 @@ CSVN_conditionChecker.checkCondition = function (
     if (!switchId) switchId = 0;
     if (!varId) varId = 0;
 
-    // CSVN_base.logGroup(this.constructor.name);
+    // console.group(this.constructor.name);
 
-    // CSVN_base.log($gameMap.mapId() + " | arg(mapId): " + mapId);
+    // console.log($gameMap.mapId() + " | arg(mapId): " + mapId);
     if (mapId !== 0 && $gameMap.mapId() !== mapId) {
-        CSVN_base.log("mapId unmatch.");
+        console.log("mapId unmatch.");
         return false;
     }
 
-    // CSVN_base.log($gamePlayer.regionId() + " | arg(region): " + region);
+    // console.log($gamePlayer.regionId() + " | arg(region): " + region);
     if (region !== 0 && $gamePlayer.regionId() !== region) {
-        CSVN_base.log("region unmatch.");
+        console.log("region unmatch.");
         return false;
     }
 
-    // CSVN_base.log($s.get(switchId) + " | arg(switchValue): " + switchValue);
+    // console.log($s.get(switchId) + " | arg(switchValue): " + switchValue);
     if (switchId !== 0 && $s.get(switchId) !== switchValue) {
-        CSVN_base.log("switch unmatch.");
+        console.log("switch unmatch.");
         return false;
     }
 
     const toBeEval = "$v.get(" + varId + ") " + varInequality + " " + varValue;
-    // CSVN_base.log("toBeEval: " + toBeEval + " | $v.get(" + varId + ") == " + $v.get(varId));
+    // console.log("toBeEval: " + toBeEval + " | $v.get(" + varId + ") == " + $v.get(varId));
     let result;
     if (varId !== 0) {
         if (!eval(toBeEval)) {
-            CSVN_base.log("var unmatch.");
+            console.log("var unmatch.");
             return false;
         }
     }
 
-    // CSVN_base.logGroupEnd(this.constructor.name);
+    // console.groupEnd(this.constructor.name);
 
     return true;
 }
@@ -200,7 +200,7 @@ Game_System.prototype.conditionCheckerSwId = function () {
  * @param {number} id 
  */
 Game_System.prototype.setConditionCheckerSwId = function (id) {
-    CSVN_base.log(">>" + this.constructor.name + " sw ID: " + id);
+    console.log(">>" + this.constructor.name + " sw ID: " + id);
     this._conditionCheckerSwId = id;
 };
 
@@ -242,9 +242,9 @@ Game_System.prototype.setConditionMatched = function (
  * @returns boolean
  */
 Game_System.prototype.getConditionMatched = function () {
-    CSVN_base.log(">> " + this.constructor.name + " getConditionMatched");
-    CSVN_base.log("swId: " + this.conditionCheckerSwId());
-    CSVN_base.log("conditionMatched: " + $s.get(this.conditionCheckerSwId()));
+    console.log(">> " + this.constructor.name + " getConditionMatched");
+    console.log("swId: " + this.conditionCheckerSwId());
+    console.log("conditionMatched: " + $s.get(this.conditionCheckerSwId()));
     return $s.get(this.conditionCheckerSwId());
 };
 

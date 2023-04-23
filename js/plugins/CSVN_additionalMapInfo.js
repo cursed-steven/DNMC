@@ -236,8 +236,8 @@
     CSVN_AMI.prototype.initialize = function (mapId) {
         this._data = param.list.find(e => { return e.id === mapId });
 
-        CSVN_base.log(">>>> " + this.constructor.name + " initialize");
-        CSVN_base.log(this._data);
+        console.log(">>>> " + this.constructor.name + " initialize");
+        console.log(this._data);
     };
 
     /**
@@ -331,7 +331,7 @@
     CSVN_AMI.prototype.visited = function () {
         // flags の index 桁めが1ならtrue、0ならfalse
         const result = this.paddedFTVar().substr(this.visitedSwPosRight(), 1) === "1";
-        CSVN_base.log(">> " + this.constructor.name + " visited: " + result);
+        console.log(">> " + this.constructor.name + " visited: " + result);
 
         return result;
     };
@@ -352,8 +352,8 @@
         const currentValue = $v.get(param.ftVarId);
 
         $v.set(param.ftVarId, currentValue + Math.pow(2, pow));
-        //CSVN_base.log("FTSwitchVar(10): " + $v.get(param.ftVarId));
-        //CSVN_base.log("FTSwitchVar( 2): " + $v.get(param.ftVarId).toString(2));
+        //console.log("FTSwitchVar(10): " + $v.get(param.ftVarId));
+        //console.log("FTSwitchVar( 2): " + $v.get(param.ftVarId).toString(2));
     };
 
     /**
@@ -533,7 +533,7 @@
      * 初期化時に追加プロパティを用意する。
      */
     Game_Map.prototype.initialize = function () {
-        CSVN_base.log(">>>> " + this.constructor.name + " initialize");
+        console.log(">>>> " + this.constructor.name + " initialize");
         _Game_Map_initialize.call(this);
 
         // 追加情報の格納先
@@ -546,7 +546,7 @@
      * 合致するものを取得し、専用プロパティに保持する。
      */
     Game_Map.prototype.setup = function (mapId) {
-        CSVN_base.log(">>>> setup");
+        console.log(">>>> setup");
         _Game_Map_setup.call(this, mapId);
         this.setupAmi(mapId);
     };
@@ -563,9 +563,9 @@
      * @param {number} mapId 
      */
     Game_Map.prototype.setupAmi = function (mapId) {
-        CSVN_base.log("AMI setting up...");
+        console.log("AMI setting up...");
         this._ami = new CSVN_AMI(mapId);
-        CSVN_base.log(this._ami);
+        console.log(this._ami);
     };
 
     /**
@@ -801,8 +801,8 @@
      */
     Game_Party.prototype.onPlayerWalk = function () {
         if ($gamePlayer.regionId() === $gameMap.goOutRegion()) {
-            CSVN_base.log(">>>> " + this.constructor.name);
-            CSVN_base.log($gameMap.goOutSettings());
+            console.log(">>>> " + this.constructor.name);
+            console.log($gameMap.goOutSettings());
 
             if ($gameMap.enableEncounterGoingOut() == 0) {
                 $gameSystem.enableEncounter();

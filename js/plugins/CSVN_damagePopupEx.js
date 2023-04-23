@@ -122,13 +122,13 @@
     Game_Action.prototype.calcElementRate = function (target) {
         let result = 0;
         if (this.item().damage.elementId < 0) {
-            CSVN_base.log("rate: NORMAL");
+            console.log("rate: NORMAL");
             result = this.elementsMaxRate(target, this.subject().attackElements());
         } else {
-            CSVN_base.log("rate: ELEMENTAL");
+            console.log("rate: ELEMENTAL");
             result = target.elementRate(this.item().damage.elementId);
         }
-        CSVN_base.log(`result: ${result * 100}`);
+        console.log(`result: ${result * 100}`);
         target._calcuratedElementRate = result * 100;
 
         return result;
@@ -152,7 +152,7 @@
      * @param {Game_Battler} target 
      */
     Sprite_Damage.prototype.additionalSetup = function (target) {
-        CSVN_base.log(`rate: ${target._calcuratedElementRate}`);
+        console.log(`rate: ${target._calcuratedElementRate}`);
         if (target._calcuratedElementRate === 0) {
             // BLOCK
             this.createAdditional(param.blockText, 4);

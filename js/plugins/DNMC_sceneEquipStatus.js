@@ -818,7 +818,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         sa = specialParams;
         ctr = this.drawTraitMultiply(sa, slot, ctr, "specials");
 
-        // CSVN_base.log(this._allTraits);
+        // console.log(this._allTraits);
     };
 
     /**

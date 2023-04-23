@@ -221,14 +221,14 @@
          */
         if ($s.get(param.tohelosSwitchId)) {
 
-            CSVN_base.logGroup(">> " + this.constructor.name + " onPlayerWalk");
+            console.group(">> " + this.constructor.name + " onPlayerWalk");
             logging = true;
 
             let tohelosCount = $v.get(param.tohelosCountVarId);
             tohelosCount--;
             $v.set(param.tohelosCountVarId, tohelosCount);
 
-            CSVN_base.log("tohelosCount: " + tohelosCount);
+            console.log("tohelosCount: " + tohelosCount);
             if (tohelosCount === 0) {
                 $gameTemp.reserveCommonEvent(param.tohelosOutCEVId);
             }
@@ -239,7 +239,7 @@
          */
         if ($s.get(param.tramanaSwitchId)) {
             if (!logging) {
-                CSVN_base.logGroup(">> " + this.constructor.name + " onPlayerWalk");
+                console.group(">> " + this.constructor.name + " onPlayerWalk");
                 logging = true;
             }
 
@@ -251,7 +251,7 @@
                 tramanaCount--;
                 $v.set(param.tramanaCountVarId, tramanaCount);
 
-                CSVN_base.log("tramanaCount: " + tramanaCount);
+                console.log("tramanaCount: " + tramanaCount);
                 if (tramanaCount === 0) {
                     $gameTemp.reserveCommonEvent(param.tramanaOutCEVId);
                 }
@@ -259,13 +259,13 @@
                 /*
                  * ダメージ床に乗っていたら最大値に戻す
                  */
-                CSVN_base.log("tramanaCount: " + param.tramanaMaxCount);
+                console.log("tramanaCount: " + param.tramanaMaxCount);
                 $v.set(param.tramanaCountVarId, param.tramanaMaxCount);
             }
         }
 
         if (logging) {
-            CSVN_base.logGroupEnd(">> " + this.constructor.name + " onPlayerWalk");
+            console.groupEnd(">> " + this.constructor.name + " onPlayerWalk");
         }
     };
 

@@ -664,8 +664,8 @@ const ELEMENT_ENEMY_TYPES = {
         enemy = this.addTraitsByTypeSub(enemy, "state");
         enemy = this.addTraitsByTypeSub(enemy, "debuff");
 
-        // CSVN_base.log(">>>> " + this.constructor.name + " addTraitsByType");
-        // CSVN_base.log(enemy.traits);
+        // console.log(">>>> " + this.constructor.name + " addTraitsByType");
+        // console.log(enemy.traits);
 
         this._addedTraitsByType = true;
 
@@ -811,8 +811,8 @@ const ELEMENT_ENEMY_TYPES = {
             }
         }
 
-        // CSVN_base.log(">>>> " + this.constructor.name + " addTraitsByAttr");
-        // CSVN_base.log(enemy.traits);
+        // console.log(">>>> " + this.constructor.name + " addTraitsByAttr");
+        // console.log(enemy.traits);
 
         this._addedTraitsByAttr = true;
 
@@ -829,42 +829,42 @@ const ELEMENT_ENEMY_TYPES = {
      * @returns number
      */
     Game_Action.prototype.makeDamageValue = function (target, critical) {
-        CSVN_base.logGroup("makeDamageValue");
+        console.group("makeDamageValue");
         const item = this.item();
         const baseValue = this.evalDamageFormula(target);
-        CSVN_base.log(`formula: ${item.damage.formula}`);
-        CSVN_base.log(`baseValue: ${baseValue}`);
+        console.log(`formula: ${item.damage.formula}`);
+        console.log(`baseValue: ${baseValue}`);
         let value = baseValue * this.calcElementRate(target);
-        CSVN_base.log(`element(${item.damage.elementId}): ${value}`);
+        console.log(`element(${item.damage.elementId}): ${value}`);
         if (this.isPhysical()) {
             value *= target.pdr;
-            CSVN_base.log(`formula: ${item.damage.formula}`);
-            CSVN_base.log(`atk: ${this.subject().atk} | def: ${target.def}`);
-            CSVN_base.log(`physical: ${value}`);
+            console.log(`formula: ${item.damage.formula}`);
+            console.log(`atk: ${this.subject().atk} | def: ${target.def}`);
+            console.log(`physical: ${value}`);
         }
         if (this.isMagical()) {
             value *= target.mdr;
-            CSVN_base.log(`formula: ${item.damage.formula}`);
-            CSVN_base.log(`mat: ${this.subject().mat} | mdf: ${target.mdf}`);
-            CSVN_base.log(`magical: ${value}`);
+            console.log(`formula: ${item.damage.formula}`);
+            console.log(`mat: ${this.subject().mat} | mdf: ${target.mdf}`);
+            console.log(`magical: ${value}`);
         }
         if (baseValue < 0) {
             value *= target.rec;
-            CSVN_base.log(`formula: ${item.damage.formula}`);
-            CSVN_base.log(`mat: ${this.subject().mat}`);
-            CSVN_base.log(`recovery: ${value}`);
+            console.log(`formula: ${item.damage.formula}`);
+            console.log(`mat: ${this.subject().mat}`);
+            console.log(`recovery: ${value}`);
         }
         if (critical) {
             value = this.applyCritical(value);
-            CSVN_base.log(`critical: ${value}`);
+            console.log(`critical: ${value}`);
         }
 
         value = this.applyVariance(value, item.damage.variance);
-        CSVN_base.log(`variance: ${item.damage.variance} > ${value}`);
+        console.log(`variance: ${item.damage.variance} > ${value}`);
 
         value = this.applyGuard(value, target);
-        CSVN_base.log(`guard: ${value}`);
-        CSVN_base.logGroupEnd("makeDamageValue");
+        console.log(`guard: ${value}`);
+        console.groupEnd("makeDamageValue");
 
         value = Math.round(value);
         return value;

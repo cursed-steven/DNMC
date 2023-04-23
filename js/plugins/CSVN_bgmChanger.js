@@ -161,8 +161,8 @@
      * @returns any
      */
     Game_Map.prototype.getBGMCondition = function () {
-        CSVN_base.log(">> getBGMCondition");
-        CSVN_base.log(this._bgmCondition);
+        console.log(">> getBGMCondition");
+        console.log(this._bgmCondition);
         return this._bgmCondition;
     };
 
@@ -171,11 +171,11 @@
      * BGM/BGS変更条件を検索してセットする。
      */
     Game_Map.prototype.setBGMCondition = function () {
-        CSVN_base.log(">> setBGMCondition");
+        console.log(">> setBGMCondition");
         const condition = this.findBGMCondition();
 
         if (typeof condition === "undefined") {
-            CSVN_base.log("No condition found.");
+            console.log("No condition found.");
             this.clearBGMCondition();
             this.autoplay();
         } else {
@@ -194,7 +194,7 @@
             const regionMatch = (!e.region && e.region !== 0) || e.region === $gamePlayer.regionId();
             const switchMatch = !e.switch || $s.get(e.switchId) === e.switchValue;
             const varMatch = !e.varId || eval("$v.get(" + e.varId + ") " + e.varInequality + " " + e.varValue)
-            //CSVN_base.log(mapMatch + "|" + regionMatch + "|" + switchMatch + "|" + varMatch);
+            //console.log(mapMatch + "|" + regionMatch + "|" + switchMatch + "|" + varMatch);
 
             return mapMatch && regionMatch && switchMatch && varMatch
         });
@@ -206,7 +206,7 @@
      * 設定されていたBGM変更条件をクリアする。
      */
     Game_Map.prototype.clearBGMCondition = function () {
-        CSVN_base.log(">> " + this.constructor.name + " clearBGMCondition: BGMCondition cleared.");
+        console.log(">> " + this.constructor.name + " clearBGMCondition: BGMCondition cleared.");
         this._bgmCondition = null;
     };
 
@@ -215,12 +215,12 @@
      * BGM変更条件の設定有無による分岐を追加
      */
     Game_Map.prototype.autoplay = function () {
-        CSVN_base.log(">> " + this.constructor.name + " autoplay");
+        console.log(">> " + this.constructor.name + " autoplay");
         if (this._bgmCondition) {
-            CSVN_base.log("playing BGM/BGS by condition.");
+            console.log("playing BGM/BGS by condition.");
             this.playBGMBGSByCondition();
         } else {
-            CSVN_base.log("autoplaying(1).");
+            console.log("autoplaying(1).");
             _Game_Map_audoplay.call(this);
         }
     };
@@ -230,10 +230,10 @@
      * スイッチや変数の変更時のリフレッシュにBGM変更の判断も追加
      */
     Game_Map.prototype.refresh = function () {
-        CSVN_base.log(">>>> " + this.constructor.name + " refresh");
+        console.log(">>>> " + this.constructor.name + " refresh");
 
         this.setBGMCondition();
-        CSVN_base.log(this._bgmCondition);
+        console.log(this._bgmCondition);
         this.playBGMBGSByCondition();
 
         _Game_Map_refresh.call(this);
@@ -244,7 +244,7 @@
      * @returns boolean
      */
     Game_Map.prototype.checkBGMCondition = function () {
-        CSVN_base.log(">> " + this.constructor.name + " checking BGM condition...");
+        console.log(">> " + this.constructor.name + " checking BGM condition...");
         if (!this._bgmCondition) return false;
 
         const mapId = this._bgmCondition.mapId;
@@ -272,15 +272,15 @@
      * そうでなければ自動演奏に設定されているものをプレイ。
      */
     Game_Map.prototype.playBGMBGSByCondition = function () {
-        CSVN_base.log(">> " + this.constructor.name + " playBGMBGSByCondition");
+        console.log(">> " + this.constructor.name + " playBGMBGSByCondition");
 
         if (this.checkBGMCondition()) {
-            CSVN_base.log("playing BGM/BGS by condition.");
+            console.log("playing BGM/BGS by condition.");
             this.playBGMByCondition();
             this.playBGSByCondition();
             this.clearBGMCondition();
         } else {
-            CSVN_base.log("autoplaying(2).");
+            console.log("autoplaying(2).");
             this.clearBGMCondition();
             this.autoplay();
         }
@@ -290,7 +290,7 @@
      * BGM/BGS変更条件に設定されているBGMをプレイ。
      */
     Game_Map.prototype.playBGMByCondition = function () {
-        CSVN_base.log("BGM playing.");
+        console.log("BGM playing.");
         AudioManager.playBgm({
             name: this._bgmCondition.bgm,
             volume: this._bgmCondition.bgmVolume ? this._bgmCondition.bgmVolume : param.defaultBGMVolume,
@@ -302,7 +302,7 @@
      * BGM/BGS変更条件に設定されているBGSをプレイ。
      */
     Game_Map.prototype.playBGSByCondition = function () {
-        CSVN_base.log("BGS playing.");
+        console.log("BGS playing.");
         AudioManager.playBgs({
             name: this._bgmCondition.bgs,
             volume: this._bgmCondition.bgsVolume ? this._bgmCondition.bgsVolume : param.defaultBGSVolume,
