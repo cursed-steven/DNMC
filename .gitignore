@@ -22,6 +22,9 @@ img/titles1/*
 img/titles2/*
 js/libs/*
 js/main.js
+node_modules/*
+src-tauri/icons/*
+src-tauri/target/*
 save/*
 game.rmmzproject
 index.html

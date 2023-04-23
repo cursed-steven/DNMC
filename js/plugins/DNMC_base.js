@@ -120,18 +120,49 @@ class Trait_Effect {
     // DataManager
 
     /**
-     * $data* を上書きする
-     * @param {string} path 
-     * @param {any[]} data 
+     * 一部データ向けにはまだ $dataSystem が読まれてないタイミングがありうるので改修
+     * @param {string} saveName 
+     * @returns string
      */
-    DataManager.overWriteDataFile = function (path, data) {
-        const fs = require('fs');
-        try {
-            fs.unlinkSync(path);
-            fs.writeFileSync(path, JSON.stringify(data), "utf-8");
-        } catch (e) {
-            console.log(e);
+    StorageManager.forageKey = function (saveName) {
+        let gameId = 'dev';
+        if ($dataSystem) {
+            gameId = $dataSystem.advanced.gameId;
         }
+        return "rmmzsave." + gameId + "." + saveName;
+    };
+
+    const _DataManager_loadDataFile = DataManager.loadDataFile;
+    /**
+     * 一部データは localforage から読む
+     * @param {string} name 
+     * @param {string} src 
+     */
+    DataManager.loadDataFile = async function (name, src) {
+        console.log(`>>>> DataManager.loadDataFile: ${name}, ${src}`)
+        if (src === 'Actors.json'
+            || src === 'Weapons.json'
+            || src === 'Armors.json') {
+            const forageData = await StorageManager.loadObject(src);
+            if (forageData) {
+                console.log(`>> Data loaded from localforage: ${name}, ${src}`);
+                window[name] = JSON.parse(forageData);
+                this.onLoad(window[name]);
+            } else {
+                _DataManager_loadDataFile.call(this, name, src);
+            }
+        } else {
+            _DataManager_loadDataFile.call(this, name, src);
+        }
+    };
+
+    /**
+     * localforage にデータを書き込む
+     * @param {string} name 
+     * @param {any} object 
+     */
+    DataManager.saveDataFile = async function (name, object) {
+        return StorageManager.saveObject(name, object);
     };
 
     /**
@@ -139,8 +170,9 @@ class Trait_Effect {
      * @param {DataWeapon} weapon 
      */
     DataManager.registerWeapon = function (weapon) {
+        console.log('>> registerWeapon');
         $dataWeapons.push(weapon);
-        this.overWriteDataFile(DATA_PATH.WEAPON, $dataWeapons);
+        this.saveDataFile('Weapons', $dataWeapons);
     }
 
     /**
@@ -148,8 +180,9 @@ class Trait_Effect {
      * @param {DataArmor} armor 
      */
     DataManager.registerArmor = function (armor) {
+        console.log('>> registerArmor');
         $dataArmors.push(armor);
-        this.overWriteDataFile(DATA_PATH.ARMOR, $dataArmors);
+        this.saveDataFile('Armors', $dataArmors);
     }
 
     /**
@@ -157,41 +190,45 @@ class Trait_Effect {
      * @param {DataActor} actor 
      */
     DataManager.registerActor = function (actor) {
+        console.log('>> registerActor');
         $dataActors.push(actor);
-        this.overWriteDataFile(DATA_PATH.ACTOR, $dataActors);
+        this.saveDataFile('Actors', $dataActors);
     };
 
     /**
      * ID:1を残して武器データを全てクリアする
      */
     DataManager.resetWeapon = function () {
+        console.log('>> resetWeapon');
         const orgWeapon = $dataWeapons[1];
         $dataWeapons = [];
         $dataWeapons.push(null);
         $dataWeapons.push(orgWeapon);
-        this.overWriteDataFile(DATA_PATH.WEAPON, $dataWeapons);
+        this.saveDataFile('Weapons', $dataWeapons);
     };
 
     /**
      * ID:1を残して防具データを全てクリアする
      */
     DataManager.resetArmor = function () {
+        console.log('>> resetArmor');
         const orgArmor = $dataArmors[1];
         $dataArmors = [];
         $dataArmors.push(null);
         $dataArmors.push(orgArmor);
-        this.overWriteDataFile(DATA_PATH.ARMOR, $dataArmors);
+        this.saveDataFile('Armors', $dataArmors);
     };
 
     /**
      * ID:1を残してアクターデータを全てクリアする
      */
     DataManager.resetActor = function () {
+        console.log('>> resetActor');
         const orgActor = $dataActors[1];
         $dataActors = [];
         $dataActors.push(null);
         $dataActors.push(orgActor);
-        this.overWriteDataFile(DATA_PATH.ACTOR, $dataActors);
+        this.saveDataFile('Actors', $dataActors);
     };
 
     //-----------------------------------------------------------------------------
@@ -221,6 +258,59 @@ class Trait_Effect {
     Game_Temp.prototype.setLatestGenerated = function (items) {
         this._latestGenerated = items;
     }
+
+    //-----------------------------------------------------------------------------
+    // Game_Actor
+
+    /**
+     * actorId が null できてしまうこと自体おかしいけど一時的に workaround
+     * @param {number} actorId 
+     */
+    Game_Actor.prototype.setup = function (actorId) {
+        const actor = $dataActors[actorId];
+        this._actorId = actorId;
+        this._name = actor ? actor.name : '(tmp)';
+        this._nickname = actor.nickname;
+        this._profile = actor.profile;
+        this._classId = actor.classId;
+        this._level = actor.initialLevel;
+        this.initImages();
+        this.initExp();
+        this.initSkills();
+        this.initEquips(actor.equips);
+        this.clearParamPlus();
+        this.recoverAll();
+    };
+
+    //-----------------------------------------------------------------------------
+    // Game_Unit
+
+    /**
+     * actor が null できてしまうこと自体おかしいけど一時的に workaround
+     * @returns any[]
+     */
+    Game_Unit.prototype.aliveMembers = function () {
+        return this.members().filter(member => member && member.isAlive());
+    };
+
+    //-----------------------------------------------------------------------------
+    // Game_Party
+
+    /**
+     * エディタ側の不具合(?)で初期パーティーメンバーに未定義アクターIDが紛れ込む問題の対策
+     */
+    Game_Party.prototype.removeUndefinedActors = function () {
+        const filtered = this._actors.filter(a => a !== undefined);
+        this._actors = filtered;
+    };
+
+    /**
+     * actor が null できてしまうこと自体おかしいけど一時的に workaround
+     * @returns any[]
+     */
+    Game_Party.prototype.battleMembers = function () {
+        return this.allBattleMembers().filter(actor => actor && actor.isAppeared());
+    };
 
     //-----------------------------------------------------------------------------
     // Game_Item
@@ -279,6 +369,52 @@ class Trait_Effect {
 
     Scene_Options.prototype.maxCommands = function () {
         return 9;
+    };
+
+    //-----------------------------------------------------------------------------
+    // Window_StatusBase
+    //
+    // actor が null できてしまうこと自体おかしいけど一時的に workaround
+
+    Window_StatusBase.prototype.drawActorName = function (actor, x, y, width) {
+        width = width || 168;
+        this.changeTextColor(ColorManager.hpColor(actor));
+        this.drawText(actor ? actor.name() : '(tmp)', x, y, width);
+    };
+
+    Window_StatusBase.prototype.placeActorName = function (actor, x, y) {
+        const key = "actor%1-name".format(actor ? actor.actorId() : 'tmp');
+        const sprite = this.createInnerSprite(key, Sprite_Name);
+        sprite.setup(actor);
+        sprite.move(x, y);
+        sprite.show();
+    };
+
+    Window_StatusBase.prototype.placeStateIcon = function (actor, x, y) {
+        const key = "actor%1-stateIcon".format(actor ? actor.actorId() : 'tmp');
+        const sprite = this.createInnerSprite(key, Sprite_StateIcon);
+        sprite.setup(actor);
+        sprite.move(x, y);
+        sprite.show();
+    };
+
+    Window_StatusBase.prototype.placeGauge = function (actor, type, x, y) {
+        const key = "actor%1-gauge-%2".format(actor ? actor.actorId() : 'tmp', type);
+        const sprite = this.createInnerSprite(key, Sprite_Gauge);
+        sprite.setup(actor, type);
+        sprite.move(x, y);
+        sprite.show();
+    };
+
+    Window_StatusBase.prototype.drawActorIcons = function (actor, x, y, width) {
+        width = width || 144;
+        const iconWidth = ImageManager.iconWidth;
+        const icons = actor ? actor.allIcons().slice(0, Math.floor(width / iconWidth)) : [];
+        let iconX = x;
+        for (const icon of icons) {
+            this.drawIcon(icon, iconX, y + 2);
+            iconX += iconWidth;
+        }
     };
 
 })();

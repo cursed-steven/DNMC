@@ -149,37 +149,33 @@
  * @text 入替禁止メンバー追加
  * 
  * @arg actorId
- * @text 入れ替えを禁止するアクター
- * @type actor
+ * @text 入替を禁止するアクター
+ * @desc 式も可
+ * @type string
  * 
  * @command enableChange
  * @text 入替禁止メンバー除去
  * 
  * @arg actorId
- * @text 入れ替え禁止を解除するアクター
- * @type actor
+ * @text 入替禁止を解除するアクター
+ * @desc 式も可
+ * @type string
  * 
  * @command disableEliminate
  * @text 除籍禁止メンバー追加
  * 
  * @arg actorId
- * @text 除籍禁止アクター
- * @type actor
+ * @text 除籍を禁止するアクター
+ * @desc 式も可
+ * @type string
  * 
  * @command enableEliminate
  * @text 除籍禁止メンバー除去
  * 
  * @arg actorId
- * @text 除籍禁止解除アクター
- * @type actor
- * 
- * @command disableChangeSoon
- * @text 生成直後のアクターの入替禁止
- * @desc DNMC_randomActor専用機能
- * 
- * @command disableEliminateSoon
- * @text 生成直後のアクターの除籍禁止
- * @desc DNMC_randomActor専用機能
+ * @text 除籍禁止を解除するアクター
+ * @desc 式も可
+ * @type string
  * 
  * @command changeStart
  * @text 入替シーン開始
@@ -220,44 +216,28 @@
      * 入れ替え禁止メンバー追加
      */
     PluginManagerEx.registerCommand(script, "disableChange", args => {
-        addToCantChange(args.actorId);
+        addToCantChange(eval(args.actorId));
     });
 
     /**
      * 入れ替え禁止メンバー除去(=入れ替えできるようになる)
      */
     PluginManagerEx.registerCommand(script, "enableChange", args => {
-        removeFromCantChange(args.actorId);
+        removeFromCantChange(eval(args.actorId));
     });
 
     /**
      * 除籍禁止メンバーの追加
      */
     PluginManagerEx.registerCommand(script, "disableEliminate", args => {
-        addToCantEliminate(args.actorId);
+        addToCantEliminate(eval(args.actorId));
     });
 
     /**
      * 除籍禁止メンバーの除去(=除籍できるようになる)
      */
     PluginManagerEx.registerCommand(script, "enableEliminate", args => {
-        removeFromCantEliminate(args.actorId);
-    });
-
-    /**
-     * 生成直後のアクターを入替禁止にする
-     */
-    PluginManagerEx.registerCommand(script, "disableChangeSoon", args => {
-        if (typeof $gameTemp.getLatestGenerated == "function")
-            addToCantChange($gameTemp.getLatestGenerated()[0].id);
-    });
-
-    /**
-     * 生成直後のアクターを除籍禁止にする
-     */
-    PluginManagerEx.registerCommand(script, "disableEliminateSoon", args => {
-        if (typeof $gameTemp.getLatestGenerated == "function")
-            addToCantEliminate($gameTemp.getLatestGenerated()[0].id);
+        removeFromCantEliminate(eval(args.actorId));
     });
 
     /**
@@ -280,6 +260,7 @@
      * @returns void
      */
     function addToCantChange(actorId) {
+        if (!actorId) return;
         if (cantChange(actorId)) return;
 
         membersCantChange = $v.get(param.membersCantChangeVarId).toString().split(",");
@@ -303,6 +284,7 @@
      * @returns boolean
      */
     function cantChange(actorId) {
+        if (!actorId) return false;
         return membersCantChange.toString().split(",").includes(actorId.toString());
     }
 
@@ -312,6 +294,7 @@
      * @returns void
      */
     function addToCantEliminate(actorId) {
+        if (!actorId) return;
         if (cantEliminate(actorId)) return;
 
         membersCantEliminate = $v.get(param.membersCantEliminateVarId).toString().split(",");
@@ -335,6 +318,7 @@
      * @returns boolean
      */
     function cantEliminate(actorId) {
+        if (!actorId) return false;
         return membersCantEliminate.toString().split(",").includes(actorId.toString());
     }
 
@@ -947,7 +931,7 @@
     Scene_PartyChange.prototype.removeFromReserve = function (actorId) {
         let reserves = $v.get(param.reserveMemberVarId).toString().split(",");
         const removed = reserves.filter(r => {
-            return r !== 0 && r !== actorId.toString();
+            return actorId && r !== 0 && r !== actorId.toString();
         });
         if (removed.length === 0) {
             $v.set(param.reserveMemberVarId, 0);

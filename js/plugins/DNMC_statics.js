@@ -22,15 +22,6 @@
  */
 
 /**
- * jsonデータパス。
- */
-const DATA_PATH = {
-    WEAPON: "data/Weapons.json",
-    ARMOR: "data/Armors.json",
-    ACTOR: "data/Actors.json"
-};
-
-/**
  * ランクとそれに属する職業
  */
 
