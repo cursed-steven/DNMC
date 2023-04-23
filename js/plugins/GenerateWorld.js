@@ -815,6 +815,8 @@ https://github.com/pota-gon/GenerateWorld
 */
 (() => {
     'use strict';
+    // customize for Tauri by cursed_steven 2023/04/23
+    const { join, dirname } = window.__TAURI__.path;
 
     class PotadraXorShift {
         constructor(w, h, t, seed = 1) {
@@ -892,10 +894,11 @@ https://github.com/pota-gon/GenerateWorld
             return false;
         }
     }
-    function Potadra_getDirPath(dir) {
-        const path = require("path");
-        const base = path.dirname(process.mainModule.filename);
-        return path.join(base, dir + '/');
+    async function Potadra_getDirPath(dir) {
+        // customize for CSVN_TauriForMZ by cursed_steven 2023/04/22
+        // const path = require("path");
+        const base = await dirname(process.mainModule.filename);
+        return await join(base, dir + '/');
     }
     function Potadra_nowTime() {
         const date = new Date();
