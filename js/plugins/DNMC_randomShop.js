@@ -87,7 +87,7 @@
      * @param {boolean} recovery
      */
     function generateRandomShop(shopType, count, classId, priceRank, recovery) {
-        // CSVN_base.logGroup(">> CSVN_randomShop generateRandomShop");
+        // console.group(">> CSVN_randomShop generateRandomShop");
 
         let items = [];
         let item = null;
@@ -98,20 +98,20 @@
                 items.push(item);
             } else {
                 missCount++;
-                // CSVN_base.log("missCount: " + missCount);
+                // console.log("missCount: " + missCount);
                 if (missCount >= 3) {
                     registerNewGood(shopType, classId, priceRank);
                     missCount = 0;
                     continue;
                 }
             }
-            // CSVN_base.log("items.length: " + items.length);
+            // console.log("items.length: " + items.length);
         }
 
         items = sortItems(shopType, items);
         const goods = itemsToGoods(shopType, items);
 
-        // CSVN_base.logGroupEnd(">> CSVN_randomShop generateRandomShop");
+        // console.groupEnd(">> CSVN_randomShop generateRandomShop");
 
         SceneManager.push(Scene_Shop);
         SceneManager.prepareNextScene(goods, false);

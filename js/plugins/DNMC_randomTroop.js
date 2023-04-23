@@ -270,21 +270,21 @@
                 e.value
             );
         });
-        CSVN_base.logGroup("makeEncounterTroopId");
-        CSVN_base.log(ex);
+        console.group("makeEncounterTroopId");
+        console.log(ex);
 
         if (ex) {
             // 例外条件に合致するものがあった場合、条件のrateの確率でそれを返す
             if (Math.trueByRate(ex.rate)) {
-                CSVN_base.log("HIT!");
-                CSVN_base.logGroupEnd("makeEncounterTroopId");
+                console.log("HIT!");
+                console.groupEnd("makeEncounterTroopId");
                 return ex.troopId;
             } else {
-                CSVN_base.logGroupEnd("makeEncounterTroopId");
+                console.groupEnd("makeEncounterTroopId");
                 return 1;
             }
         } else {
-            CSVN_base.logGroupEnd("makeEncounterTroopId");
+            console.groupEnd("makeEncounterTroopId");
             return 1;
         }
 
@@ -355,7 +355,7 @@
     Game_Enemy.prototype.isVeryHighLevel = function () {
         const enemyLv = $dataEnemies[this._enemyId].exp / EXP_RATE;
         const partyLv = $gameParty.highestLevel();
-        CSVN_base.log(`enemyLv: ${enemyLv} - partyLv: ${partyLv}`);
+        console.log(`enemyLv: ${enemyLv} - partyLv: ${partyLv}`);
 
         return enemyLv - partyLv > LV_DIFF;
     };
@@ -385,7 +385,7 @@
             : $gameVariables.value(param.regionVarId);
 
         let inBiome = getEnemiesOnRegion(region);
-        CSVN_base.log(`biome: ${tmpBiomeName}`);
+        console.log(`biome: ${tmpBiomeName}`);
 
         if (inBiome.length === 0) {
             return troop;
@@ -397,7 +397,7 @@
 
         // 模擬戦の場合は人数をこちらのパーティーに合わせる
         if (tmpBiomeName.includes("training")) enemyCount = $gameParty.battleMembers().length;
-        CSVN_base.log(`enemyCount: ${enemyCount}`);
+        console.log(`enemyCount: ${enemyCount}`);
 
         while (indexes.length < enemyCount) {
             ix = Math.randomInt(inBiome.length);

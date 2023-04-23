@@ -744,20 +744,20 @@ function DNMC_randomWeapons() {
         let wtype = randomWtype(classId);
         let mat = randomMaterial(rank);
 
-        CSVN_base.logGroup(">> DNMC_randomWeapon isNGPairWtypeMat");
+        console.group(">> DNMC_randomWeapon isNGPairWtypeMat");
         let ngCount = 0;
         while (isNGPairWtypeMat(rank, wtype, mat)) {
             if (ngCount >= 10) {
-                CSVN_base.log($dataSystem.weaponTypes[wtype.id]);
-                CSVN_base.log(wtype);
-                CSVN_base.log(mat);
+                console.log($dataSystem.weaponTypes[wtype.id]);
+                console.log(wtype);
+                console.log(mat);
                 throw new Error("something went wrong, NG pair of wtype/mat.");
             }
             ngCount++;
             wtype = randomWtype(classId);
             mat = randomMaterial(rank);
         }
-        CSVN_base.logGroupEnd(">> DNMC_randomWeapon isNGPairWtypeMat");
+        console.groupEnd(">> DNMC_randomWeapon isNGPairWtypeMat");
 
         const name = nameTmpl.replace("{{matName}}", mat.name).replace("{{wtypeName}}", $dataSystem.weaponTypes[wtype.id]);
         const wtypeId = wtype.id;

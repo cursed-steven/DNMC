@@ -35,7 +35,7 @@
  * ＊console.log のラッパー
  * DevToolsManageがONの場合のみログが出る console.log の
  * ラッパーを提供します。
- * ex. CSVN_base.log(any);
+ * ex. console.log(any);
  * 
  * ＊DEBUG MODE スイッチのID
  * DevToolsManage のON/OFFに連動するスイッチを設定します。
@@ -395,7 +395,7 @@
             if (commonEvent) {
                 if (commonEvent.trigger == 0) {
                     // 並列処理・自動回復は数が多くなりそうなので回避
-                    CSVN_base.log(">>>> " + commonEvent.name + "(CEV:" + commonEvent.id + ")");
+                    console.log(">>>> " + commonEvent.name + "(CEV:" + commonEvent.id + ")");
                 }
                 this.setup(commonEvent.list);
                 return true;
@@ -414,7 +414,7 @@
         if (commonEvent) {
             if (commonEvent.trigger === 0) {
                 // 並列処理・自動回復は数が多くなりそうなので回避
-                CSVN_base.log(">>>> " + commonEvent.name + "(CEV:" + commonEvent.id + ")");
+                console.log(">>>> " + commonEvent.name + "(CEV:" + commonEvent.id + ")");
             }
             const eventId = this.isOnCurrentMap() ? this._eventId : 0;
             this.setupChild(commonEvent.list, eventId);
@@ -486,7 +486,11 @@
  * @returns boolean
  */
 function isDevToolsManageActive() {
-    return typeof Graphics._createDevToolInfo === "function";
+    if (Graphics._isTauriTest) {
+        return Graphics._isTauriTest;
+    } else {
+        return typeof Graphics._createDevToolInfo === "function";
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -497,66 +501,6 @@ function isDevToolsManageActive() {
 function CSVN_base() {
     throw new Error("This is a static class");
 }
-
-/**
- * DevToolsManageが有効な場合のみ機能する console.group のラッパー。
- * @param {string} str 
- */
-CSVN_base.logGroup = function (str) {
-    if (isDevToolsManageActive()) {
-        console.group(str);
-    }
-};
-
-/**
- * DevToolsManageが有効な場合のみ機能する console.log のラッパー。
- * @param {any} obj 
- */
-CSVN_base.log = function (obj) {
-    if (isDevToolsManageActive()) {
-        console.log(obj);
-    }
-};
-
-/**
- * DevToolsManageが有効な場合のみ機能する console.table のラッパー。
- * @param {any} obj 
- */
-CSVN_base.table = function (obj) {
-    if (isDevToolsManageActive()) {
-        console.table(obj);
-    }
-};
-
-/**
- * DevToolsManageが有効な場合のみ機能する console.warn のラッパー。
- * @param {string} str 
- */
-CSVN_base.logWarn = function (str) {
-    if (isDevToolsManageActive()) {
-        console.warn(str);
-    }
-};
-
-/**
- * DevToolsManageが有効な場合のみ機能する console.error のラッパー。
- * @param {string} str 
- */
-CSVN_base.logError = function (str) {
-    if (isDevToolsManageActive()) {
-        console.error(str);
-    }
-};
-
-/**
- * DevToolsManageが有効な場合のみ機能する console.groupEnd のラッパー。
- * @param {string} str 
- */
-CSVN_base.logGroupEnd = function (str) {
-    if (isDevToolsManageActive()) {
-        console.groupEnd(str);
-    }
-};
 
 /**
  * Donut Machine と競合しないかの確認用、trueだと競合の可能性が高い。
@@ -572,22 +516,8 @@ CSVN_base.isDNMCActive = function () {
             result = true;
         }
     } catch (e) {
-        this.log("Donut Machine not activated, do not mind.");
+        console.log("Donut Machine not activated, do not mind.");
     }
 
     return result;
-};
-
-/**
- * Donut Machine 上で動いているかどうかを確認する手段その２
- * @returns boolean
- */
-CSVN_base.isDNMCByGameInfo = function () {
-    this.log(`Title: ${$dataSystem.gameTitle}`);
-    this.log(`> matched? ${$dataSystem.gameTitle === "Donut Machine"}`);
-    this.log(`Game ID: (${typeof $dataSystem.advanced.gameId}) ${$dataSystem.advanced.gameId}`);
-    this.log(`> matched? ${$dataSystem.advanced.gameId === 45552818}`);
-
-    return $dataSystem.gameTitle === "Donut Machine"
-        && $dataSystem.advanced.gameId === 45552818;
 };
