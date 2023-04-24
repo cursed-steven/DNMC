@@ -169,30 +169,30 @@ class Trait_Effect {
      * 武器データを Weapons.json に追記する。
      * @param {DataWeapon} weapon 
      */
-    DataManager.registerWeapon = function (weapon) {
+    DataManager.registerWeapon = async function (weapon) {
         console.log('>> registerWeapon');
         $dataWeapons.push(weapon);
-        this.saveDataFile('Weapons', $dataWeapons);
+        await this.saveDataFile('Weapons', $dataWeapons);
     }
 
     /**
      * 防具データを Armors.json に追記する。
      * @param {DataArmor} armor 
      */
-    DataManager.registerArmor = function (armor) {
+    DataManager.registerArmor = async function (armor) {
         console.log('>> registerArmor');
         $dataArmors.push(armor);
-        this.saveDataFile('Armors', $dataArmors);
+        await this.saveDataFile('Armors', $dataArmors);
     }
 
     /**
      * アクターデータを Actors.json に追記する。
      * @param {DataActor} actor 
      */
-    DataManager.registerActor = function (actor) {
+    DataManager.registerActor = async function (actor) {
         console.log('>> registerActor');
         $dataActors.push(actor);
-        this.saveDataFile('Actors', $dataActors);
+        await this.saveDataFile('Actors', $dataActors);
     };
 
     /**

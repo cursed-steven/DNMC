@@ -450,6 +450,7 @@ class DataActor {
         const sum = this.members().reduce((v, e) => {
             v += e.level
         }, 0);
-        return Math.floor(sum / this.size());
+        console.log(`Game_Party::averageLevel: ${sum} / ${this.size()}`);
+        return this.size() > 0 ? Math.floor(sum / this.size()) : 1;
     };
 })();
