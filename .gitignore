@@ -16,7 +16,10 @@ project/img/sv_enemies/*
 project/img/system/*
 project/img/titles1/*
 project/img/titles2/*
-project/js/libs/*
+project/js/libs/effekseer.wasm
+project/js/libs/localforage.min.js
+project/js/libs/pako.min.js
+project/js/libs/pixi.js
 project/js/main.js
 project/save/*
 project/game.rmmzproject
