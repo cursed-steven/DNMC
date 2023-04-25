@@ -2,27 +2,24 @@
     "build": {
         "beforeBuildCommand": "",
         "beforeDevCommand": "",
-        "devPath": "../",
-        "distDir": "../",
+        "devPath": "../project",
+        "distDir": "../project",
         "withGlobalTauri": true
     },
     "package": {
-        "productName": "rmmz-game",
+        "productName": "DonutMachineMZ",
         "version": "0.1.0"
     },
     "tauri": {
         "allowlist": {
-            "window": {
-                "all": true
-            },
             "path": {
                 "all": true
             }
         },
         "bundle": {
             "active": true,
-            "category": "DeveloperTool",
-            "copyright": "",
+            "category": "Games",
+            "copyright": "Copyright (C) Gotcha Gotcha Games Inc. / YOJI OJIMA 2020 / cursed_steven 2023",
             "deb": {
                 "depends": []
             },
@@ -34,14 +31,15 @@
                 "icons/icon.icns",
                 "icons/icon.ico"
             ],
-            "identifier": "com.tauri.dev",
+            "identifier": "com.donut-machine.dev",
             "longDescription": "",
             "macOS": {
                 "entitlements": null,
                 "exceptionDomain": "",
                 "frameworks": [],
                 "providerShortName": null,
-                "signingIdentity": null
+                "signingIdentity": null,
+                "minimumSystemVersion": "10.13"
             },
             "resources": [],
             "shortDescription": "",
@@ -61,7 +59,7 @@
         "windows": [
             {
                 "fullscreen": false,
-                "height": 720,
+                "height": 744,
                 "resizable": false,
                 "title": "Donut Machine",
                 "width": 1280
