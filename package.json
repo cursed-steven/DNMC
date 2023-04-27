@@ -1,0 +1,16 @@
+{
+    "name": "donutmachine-mz",
+    "version": "1.0.0",
+    "description": "Donut Machine powered by electron",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "test": "electron . test",
+        "debug": "electron . debug"
+    },
+    "author": "cursed_steven",
+    "devDependencies": {
+        "electron": "^24.1.3",
+        "electron-builder": "^24.3.0"
+    }
+}

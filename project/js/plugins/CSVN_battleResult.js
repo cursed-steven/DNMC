@@ -540,7 +540,7 @@
         } else {
             const all = BattleManager._rewards.items;
             console.log("> dropItems: ");
-            CSVN_base.table(all);
+            console.table(all);
             if (this._data.length > this.maxItems()) {
                 for (let i = 0; i < this.maxItems() - 1; i++) {
                     this._data.push(all[i]);

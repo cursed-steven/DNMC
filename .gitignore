@@ -1,3 +1,4 @@
+node_modules/*
 project/audio/*
 project/css/game.css
 project/data/Map*

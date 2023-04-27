@@ -32,11 +32,6 @@
  * DevToolsManageをONにすると、プラグインパラメータで指定したスイッチがONの
  * 状態で起動します。
  * 
- * ＊console.log のラッパー
- * DevToolsManageがONの場合のみログが出る console.log の
- * ラッパーを提供します。
- * ex. console.log(any);
- * 
  * ＊DEBUG MODE スイッチのID
  * DevToolsManage のON/OFFに連動するスイッチを設定します。
  * 
