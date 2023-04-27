@@ -6,7 +6,8 @@
     "scripts": {
         "start": "electron .",
         "test": "electron . test",
-        "debug": "electron . debug"
+        "debug": "electron . debug",
+        "deploy": "node build.js"
     },
     "author": "cursed_steven",
     "devDependencies": {
