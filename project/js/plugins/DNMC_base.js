@@ -139,7 +139,7 @@ class Trait_Effect {
      * @param {string} src 
      */
     DataManager.loadDataFile = async function (name, src) {
-        console.log(`>>>> DataManager.loadDataFile: ${name}, ${src}`)
+        // console.log(`>>>> DataManager.loadDataFile: ${name}, ${src}`);
         if (src === 'Actors.json'
             || src === 'Weapons.json'
             || src === 'Armors.json') {

@@ -1,7 +1,7 @@
 {
     "name": "donutmachine-mz",
     "version": "1.0.0",
-    "description": "Donut Machine powered by electron",
+    "description": "Donut Machine MZ powered by Electron",
     "main": "main.js",
     "scripts": {
         "start": "electron .",
