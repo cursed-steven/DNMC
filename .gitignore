@@ -25,6 +25,4 @@ project/js/main.js
 project/save/*
 project/game.rmmzproject
 project/index.html
-src-tauri/icons/*
-src-tauri/target/*
 dist/*
