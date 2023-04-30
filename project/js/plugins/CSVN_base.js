@@ -465,9 +465,9 @@
         }
 
         /*
-         * DevToolsManageのON/OFFと指定スイッチのON/OFFを連動させる。
+         * 起動時のdebugオプションのON/OFFと指定スイッチのON/OFFを連動させる。
          */
-        if (isDevToolsManageActive()) {
+        if (Utils.isOptionValid('debug')) {
             $gameSwitches.setValue(param.debugModeSwId, true);
         } else {
             $gameSwitches.setValue(param.debugModeSwId, false);
@@ -475,18 +475,6 @@
     };
 
 })();
-
-/**
- * Util function for whether DevToolsMange active or not.
- * @returns boolean
- */
-function isDevToolsManageActive() {
-    if (Graphics._isTauriTest) {
-        return Graphics._isTauriTest;
-    } else {
-        return typeof Graphics._createDevToolInfo === "function";
-    }
-}
 
 //-------------------------------------------------------------------------
 // CSVN_base
