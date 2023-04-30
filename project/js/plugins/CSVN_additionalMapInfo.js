@@ -366,7 +366,7 @@
         const countListCanTravelTo = this.listCanTravelTo().length;
 
         // 10進数で持っているので2進数に変換
-        const parsedInt2 = $v.get(param.ftVarId).toString(2);
+        const parsedInt2 = $gameVariables.value(param.ftVarId).toString(2);
 
         // 全数まで左を0埋め
         // ※1の位がPPの1項め、2の位がPPの2項め、4の位がPPの3項め...
