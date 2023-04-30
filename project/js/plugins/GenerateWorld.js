@@ -1366,7 +1366,9 @@ https://github.com/pota-gon/GenerateWorld
     const params = PluginManager.parameters(plugin_name);
 
     // 各パラメータ用定数
-    const RetentionSaveData = Potadra_convertBool(params.RetentionSaveData) && StorageManager.isLocalMode();
+    // cursed_steven custom (2023/05/01)
+    // const RetentionSaveData = Potadra_convertBool(params.RetentionSaveData) && StorageManager.isLocalMode();
+    const RetentionSaveData = Potadra_convertBool(params.RetentionSaveData);
     const SeedVariable = Number(params.SeedVariable) || 0;
     const TileRegion = Number(params.TileRegion) || 1;
     const RegenerateCommand = String(params.RegenerateCommand);
