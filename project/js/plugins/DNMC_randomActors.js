@@ -37,11 +37,6 @@
  * @desc CSVN_xuidasTavernと必ず合わせること
  * @type variable
  * 
- * @param latestGeneratedActorId
- * @text 直近の生成アクター
- * @desc 直近に生成されたアクターのIDを格納する先の変数
- * @type variable
- * 
  * @command generate
  * @text アクター生成
  * 
@@ -66,6 +61,27 @@
  * @type number
  * @max 3
  * @min 0
+ * 
+ * @command joinLatest
+ * @text 生成したアクターを加入させる
+ * 
+ * @arg index
+ * @text 直前生成分のインデックス
+ * @type number
+ * 
+ * @command reserveLatest
+ * @text 生成したアクターを控えに追加する
+ * 
+ * @arg index
+ * @text 直前生成分のインデックス
+ * @type number
+ * 
+ * @command setIdToVarSoon
+ * @text 生成直後のアクターIDを指定変数に格納
+ * 
+ * @arg targetVarId
+ * @text 格納先変数
+ * @type variable
  * 
  * @command reset
  * @text リセット
@@ -228,14 +244,42 @@ class DataActor {
     const param = PluginManagerEx.createParameter(script);
 
     /**
-     * ランダムアクター生成と加入
+     * ランダムアクター生成
      */
-    PluginManagerEx.registerCommand(script, "generate", async args => {
-        const actor = await randomActor(args.classId, args.sex, args.rank);
+    PluginManagerEx.registerCommand(script, "generate", args => {
+        const actor = randomActor(args.classId, args.sex, args.rank);
         DataManager.registerActor(actor);
         registerActorId(actor.id);
-        $gameParty.addActor(actor.id);
-        $v.set(param.latestGeneratedActorId, actor.id);
+        $gameTemp.setLatestGenerated([actor]);
+    });
+
+    /**
+     * 直近で生成したアクターを加入させる。
+     */
+    PluginManagerEx.registerCommand(script, "joinLatest", args => {
+        const actorId = $gameTemp.getLatestGenerated()[args.index].id
+        $gameParty.addActor(actorId);
+    });
+
+    /**
+     * 直近で生成したアクターを控えメンバーに入れる
+     */
+    PluginManagerEx.registerCommand(script, "reserveLatest", args => {
+        const actorId = $gameTemp.getLatestGenerated()[args.index].id
+        let reserves = $v.get(param.reserveMemberVarId).toString().split(",");
+        reserves.push(actorId);
+        // 0は除外しておく
+        reserves = reserves.filter(r => {
+            return parseInt(r) !== 0;
+        });
+        $v.set(param.reserveMemberVarId, reserves.join(","));
+    });
+
+    /**
+     * 直近で生成したアクターのIDを指定変数に入れる
+     */
+    PluginManagerEx.registerCommand(script, "setIdToVarSoon", args => {
+        $v.set(args.targetVarId, $gameTemp.getLatestGenerated()[0].id);
     });
 
     /**
@@ -316,29 +360,26 @@ class DataActor {
      * @param {number} rank 
      * @returns DataActor
      */
-    async function randomActor(classId, sex, rank) {
+    function randomActor(classId, sex, rank) {
         console.group(">> DNMC_randomActors randomActor");
 
-
-        const id = await getNewId();
+        const id = getNewId();
         console.log("getNewId----");
         const bcf = randomClass(classId, sex);
         console.log("randomClass----");
-
-        $gameParty.removeUndefinedActors();
-        const initialLevel = await $gameParty.averageLevel();
+        const initialLevel = $gameParty.averageLevel();
         console.log("averageLevel----");
-        const name = await randomName(bcf.sex);
+        const name = randomName(bcf.sex);
         console.log("randomName----");
-        const weapon = await DNMC_randomWeapons.randomWeapon(rank, bcf.classId);
+        const weapon = DNMC_randomWeapons.randomWeapon(rank, bcf.classId);
         console.log("randomWeapon----");
-        const shield = await DNMC_randomArmors.randomArmor(rank, bcf.classId, 2);
+        const shield = DNMC_randomArmors.randomArmor(rank, bcf.classId, 2);
         console.log("randomArmor/shield----");
-        const head = await DNMC_randomArmors.randomArmor(rank, bcf.classId, 3);
+        const head = DNMC_randomArmors.randomArmor(rank, bcf.classId, 3);
         console.log("randomArmor/head----");
-        const armor = await DNMC_randomArmors.randomArmor(rank, bcf.classId, 4);
+        const armor = DNMC_randomArmors.randomArmor(rank, bcf.classId, 4);
         console.log("randomArmor/body----");
-        const acc = await DNMC_randomArmors.randomArmor(rank, bcf.classId, 5);
+        const acc = DNMC_randomArmors.randomArmor(rank, bcf.classId, 5);
         console.log("randomArmor/accesory----");
         const weaponId = weapon ? weapon.id : 0;
         const shieldId = shield ? shield.id : 0;
@@ -360,7 +401,6 @@ class DataActor {
         actor.initialLevel = initialLevel;
         actor.equips = equips;
         actor.name = name;
-        console.log(actor);
 
         return actor;
     }
@@ -447,10 +487,7 @@ class DataActor {
      * @returns number
      */
     Game_Party.prototype.averageLevel = function () {
-        const sum = this.members().reduce((v, e) => {
-            v += e.level
-        }, 0);
-        console.log(`Game_Party::averageLevel: ${sum} / ${this.size()}`);
-        return this.size() > 0 ? Math.floor(sum / this.size()) : 1;
+        const sum = this.members().reduce((v, e) => v += e.level, 0);
+        return Math.floor(sum / this.size());
     };
 })();
