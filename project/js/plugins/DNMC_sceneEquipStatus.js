@@ -303,6 +303,16 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         this._buttonGuide.setActiveWindow("Window_EquipItem");
     };
 
+    const _Scene_EquipStatus_onSlotCancel = Scene_Equip.prototype.onSlotCancel;
+    /**
+     * スロットキャンセル時の処理。
+     */
+    Scene_EquipStatus.prototype.onSlotCancel = function () {
+        _Scene_EquipStatus_onSlotCancel.call(this);
+        this._statusWindow.setTempActor(null);
+        this._buttonGuide.setActiveWindow("Window_EquipCommand");
+    };
+
     /**
      * 装備品選択時の処理。
      */
@@ -360,7 +370,6 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
     Scene_EquipStatus.prototype.commandEquip = Scene_Equip.prototype.commandEquip;
     Scene_EquipStatus.prototype.commandOptimize = Scene_Equip.prototype.commandOptimize;
     Scene_EquipStatus.prototype.commandClear = Scene_Equip.prototype.commandClear;
-    Scene_EquipStatus.prototype.onSlotCancel = Scene_Equip.prototype.onSlotCancel;
     Scene_EquipStatus.prototype.executeEquipChange = Scene_Equip.prototype.executeEquipChange;
     Scene_EquipStatus.prototype.onItemCancel = Scene_Equip.prototype.onItemCancel;
 
