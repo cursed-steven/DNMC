@@ -375,7 +375,7 @@
         }
 
         // (主にテスト用)出現数
-        const allCount = 6;
+        const allCount = 5;
 
         // ひとつ前に選出したエネミーのX座標
         this._prevX = 0;
