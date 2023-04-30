@@ -117,7 +117,7 @@ class Trait_Effect {
     };
 
     //-----------------------------------------------------------------------------
-    // DataManager
+    // StorageManager
 
     /**
      * 一部データ向けにはまだ $dataSystem が読まれてないタイミングがありうるので改修
@@ -131,6 +131,71 @@ class Trait_Effect {
         }
         return "rmmzsave." + gameId + "." + saveName;
     };
+
+    /**
+     * デバッグ用のセーブデータキーを返す
+     * @param {string} saveName 
+     * @returns string
+     */
+    StorageManager.forageKeyDev = function (saveName) {
+        if (saveName === 'Actors.json'
+            || saveName === 'Weapons.json'
+            || saveName === 'Armors.json') {
+            return "rmmzsave.dev." + saveName.split('.')[0];
+        } else {
+            return this.forageKey(saveName);
+        }
+    };
+
+    const _StorageManager_loadFromForage = StorageManager.loadFromForage;
+    /**
+     * デバッグ中はデバッグ用データをロードする
+     * @param {string} saveName 
+     * @returns binary?
+     */
+    StorageManager.loadFromForage = function (saveName) {
+        if (Utils.isOptionValid('debug')) {
+            return this.loadFromForageDev(saveName);
+        } else {
+            return _StorageManager_loadFromForage.call(this, saveName);
+        }
+    };
+
+    /**
+     * デバッグ用のセーブデータをロードする
+     * @param {string} saveName 
+     * @returns binary?
+     */
+    StorageManager.loadFromForageDev = function (saveName) {
+        const key = this.forageKeyDev(saveName);
+        return localforage.getItem(key);
+    };
+
+    const _StorageManager_saveToForage = StorageManager.saveToForage;
+    /**
+     * デバッグ中はデバッグ用データにもセーブする
+     * @param {string} saveName 
+     * @param {binary?} zip 
+     * @returns number
+     */
+    StorageManager.saveToForage = function (saveName, zip) {
+        let result = _StorageManager_saveToForage.call(this, saveName, zip);
+
+        if (Utils.isOptionValid('debug')) {
+            const testKey = this.forageTestKey();
+            const devKey = this.forageKeyDev(saveName);
+            setTimeout(() => localforage.removeItem(testKey));
+            result = localforage
+                .setItem(testKey, zip)
+                .then(() => localforage.setItem(devKey, zip))
+                .then(() => this.updateForageKeys());
+        }
+
+        return result;
+    };
+
+    //-----------------------------------------------------------------------------
+    // DataManager
 
     const _DataManager_loadDataFile = DataManager.loadDataFile;
     /**
@@ -146,12 +211,13 @@ class Trait_Effect {
             const forageData = await StorageManager.loadObject(src);
             if (forageData) {
                 console.log(`>> Data loaded from localforage: ${name}, ${src}`);
-                window[name] = JSON.parse(forageData);
+                window[name] = forageData;
                 this.onLoad(window[name]);
             } else {
-                _DataManager_loadDataFile.call(this, name, src);
+                throw new Error(`forageData empty: ${name}, ${src}`);
             }
         } else {
+            console.log(`>> Data loaded from local filesystem: ${name}, ${src}`);
             _DataManager_loadDataFile.call(this, name, src);
         }
     };
