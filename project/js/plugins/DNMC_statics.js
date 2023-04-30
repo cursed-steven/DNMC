@@ -3250,7 +3250,7 @@ const SHIELD_MATERIALS = [
                     // reduce-encounter
                     [8],
                     // disable-encounter
-                    [3],
+                    [0],
                     // disable-ambush
                     [8],
                     // double-preemptive
@@ -3399,7 +3399,7 @@ const SHIELD_MATERIALS = [
                     // reduce-encounter
                     [10],
                     // disable-encounter
-                    [5],
+                    [0],
                     // disable-ambush
                     [5],
                     // double-preemptive
@@ -6128,7 +6128,7 @@ const HEAD_BODY_MATERIALS = [
                     // reduce-encounter
                     [15],
                     // disable-encounter
-                    [5],
+                    [0],
                     // disable-ambush
                     [15],
                     // double-preemptive
@@ -6278,7 +6278,7 @@ const HEAD_BODY_MATERIALS = [
                     // reduce-encounter
                     [10],
                     // disable-encounter
-                    [5],
+                    [0],
                     // disable-ambush
                     [20],
                     // double-preemptive
@@ -9124,7 +9124,7 @@ const ACCESORY_MATERIALS = [
                     // reduce-encounter
                     [15],
                     // disable-encounter
-                    [5],
+                    [0],
                     // disable-ambush
                     [15],
                     // double-preemptive
@@ -9287,7 +9287,7 @@ const ACCESORY_MATERIALS = [
                     // reduce-encounter
                     [20],
                     // disable-encounter
-                    [10],
+                    [0],
                     // disable-ambush
                     [20],
                     // double-preemptive
