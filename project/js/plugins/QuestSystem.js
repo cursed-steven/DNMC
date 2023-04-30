@@ -2678,6 +2678,7 @@ var QuestSystem;
             const commandWindow = new Window_MenuCommand(rect);
             this.addWindow(commandWindow);
             this._commandWindow = commandWindow;
+            this._commandWindow.forceSelect(5);
             this._commandWindow.deactivate();
         }
         mainAreaHeight() {
