@@ -149,4 +149,12 @@
             $v.set(param.varId, 0);
         }
     };
+
+    /**
+     * つぶしておく
+     */
+    Scene_ItemBase.prototype.checkCommonEvent = function () {
+        // 
+    };
+
 })();
