@@ -76,8 +76,8 @@
                 }
             });
         }
-        console.log(">>>> " + this.constructor.name + " parseBeforeActorsData");
-        console.log($gameTemp._actorsBeforeBattle);
+        // console.log(">>>>  parseBeforeActorsData");
+        // console.log($gameTemp._actorsBeforeBattle);
     };
 
     const _Scene_Battle_createDisplayObjects = Scene_Battle.prototype.createDisplayObjects;
@@ -346,7 +346,6 @@
      * @param number
      */
     Window_LvUP.prototype.drawItem = function (index) {
-        this.contents.clear();
         const data = this._data[index];
         const actor = $gameActors.actor(data.actorId);
         const rect = this.itemRect(index);
@@ -475,6 +474,7 @@
      * @returns boolean
      */
     Window_LvUP.prototype.isLvUP = function (ba) {
+        console.log(`>> Window_LvUP::isLvUP: ${ba.before.lv} < ${ba.after.lv}`);
         return ba && ba.before.lv < ba.after.lv;
     }
 
