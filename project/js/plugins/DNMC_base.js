@@ -125,9 +125,15 @@ class Trait_Effect {
      * @returns string
      */
     StorageManager.forageKey = function (saveName) {
-        let gameId = 'dev';
-        if ($dataSystem) {
-            gameId = $dataSystem.advanced.gameId;
+        let gameId = '';
+        if (Utils.isOptionValid('debug')) {
+            gameId = 'dev';
+        } else {
+            if ($dataSystem) {
+                gameId = $dataSystem.advanced.gameId;
+            } else {
+                gameId = 'dev';
+            }
         }
         return "rmmzsave." + gameId + "." + saveName;
     };
@@ -214,7 +220,7 @@ class Trait_Effect {
                 window[name] = forageData;
                 this.onLoad(window[name]);
             } else {
-                throw new Error(`forageData empty: ${name}, ${src}`);
+                _DataManager_loadDataFile.call(this, name, src);
             }
         } else {
             console.log(`>> Data loaded from local filesystem: ${name}, ${src}`);
