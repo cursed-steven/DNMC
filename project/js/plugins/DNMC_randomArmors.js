@@ -249,18 +249,16 @@ function DNMC_randomArmors() {
                     trait.value = value / 100;
                 } else if (i === 20) {
                     // 攻撃追加回数
-                    trait.code = Game_BattlerBase.TRAIT_ATTACK_TIMES;
-                    trait.dataId = 0;
-                    trait.value = 1;
+                    // trait.code = Game_BattlerBase.TRAIT_ATTACK_TIMES;
+                    // trait.dataId = 0;
+                    // trait.value = 1;
+                    continue;
                 } else if (i === 21) {
-                    // 攻撃追加回数
-                    trait.code = Game_BattlerBase.TRAIT_ATTACK_TIMES;
-                    trait.dataId = 0;
-                    trait.value = 1;
                     // 行動追加率
                     // trait.code = Game_BattlerBase.TRAIT_ACTION_PLUS;
                     // trait.dataId = 0;
                     // trait.value = 1;
+                    continue;
                 } else if (22 <= i && i < 44) {
                     // 属性有効度
                     trait.code = Game_BattlerBase.TRAIT_ELEMENT_RATE;
@@ -282,7 +280,7 @@ function DNMC_randomArmors() {
                     trait.dataId = traitsParamDataIdTable(slot, i);
                     if (trait.dataId === STATE.DEAD) {
                         // 戦闘不能無効はナシ
-                        trait = null;
+                        continue;
                     }
                 } else if (78 <= i && i < 84) {
                     // パーティー能力
