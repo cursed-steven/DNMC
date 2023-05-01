@@ -623,25 +623,57 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
     };
 
     Window_ShopStatus.prototype.newEquipValue = function (actor, paramId, newItem, oldItem) {
-        // cursed_steven custom(2023/01/24)
+        // cursed_steven custom(2023/05/01)
         // return actor.param(paramId) + newItem.params[paramId] - (oldItem ? oldItem.params[paramId] : 0);
 
-        const baseValue = actor.paramBase(paramId);
-        // console.log("> baseValue: " + TextManager.param(paramId) + " " + baseValue);
+        // console.group(`>>>> ${TextManager.param(paramId)}`);
+        // console.group(`>> currentValue`);
+        // console.log(`base: ${actor.paramBase(paramId)}`);
+        // console.log(`GameBattler::paramPlus: ${Game_Battler.prototype.paramPlus.call(actor, paramId)}`);
+        // console.log(`plus: ${actor.paramPlus(paramId)}`);
+        // console.log(`basePlus: ${actor.paramBasePlus(paramId)}`);
+        // console.log(`rate: ${actor.paramRate(paramId)}`);
+        // console.groupEnd(`>> currentValue`);
+        // console.log(newItem);
 
         // console.group("value from newItem");
-        const newItemValue = newItem.params[paramId];
-        const newItemTraitsValue = newItem.traits.reduce((nitv, t) => {
-            if (t && t.code === Game_BattlerBase.TRAIT_PARAM
-                && t.dataId === paramId) {
-                return nitv * t.value;
+        let targetItemParam = 0;
+        let newItemTraitsRate = 1;
+        let targetItem = {};
+        for (const equip of actor.equips()) {
+            // console.group($dataSystem.equipTypes[equip.etypeId]);
+            if (equip.etypeId === newItem.etypeId) {
+                // 交換になる装備について
+                targetItem = newItem;
             } else {
-                return nitv;
+                // いま装備しているものについて
+                targetItem = equip;
             }
-        }, 1);
-        const newValue = Math.floor((baseValue + newItemValue) * newItemTraitsValue);
-        // console.log("> newValue: " + newValue);
+            // console.log(targetItem);
+            targetItemParam += targetItem.params[paramId];
+            // console.log(`targetItemParam, w/o trait: ${targetItemParam}`);
+            const targetItemTraitsRate = targetItem.traits.reduce((nitv, t) => {
+                if (t && t.code === Game_BattlerBase.TRAIT_PARAM
+                    && t.dataId === paramId) {
+                    return nitv * t.value;
+                } else {
+                    return nitv;
+                }
+            }, 1);
+            // console.log(`targetItemTraitsRate: ${targetItemTraitsRate}`);
+            newItemTraitsRate *= targetItemTraitsRate;
+
+            // console.groupEnd($dataSystem.equipTypes[equip.etypeId]);
+        }
         // console.groupEnd("value from newItem");
+
+        // console.log(`base: ${actor.paramBase(paramId)}`);
+        // console.log(`newItemParam: ${targetItemParam}`);
+        // console.log(`rate: ${newItemTraitsRate}`);
+        const newValue = Math.round((actor.paramBase(paramId) + targetItemParam) * newItemTraitsRate);
+
+        // console.log(`> newValue: ${newValue}`);
+        // console.groupEnd(`>>>> ${TextManager.param(paramId)}`);
 
         return newValue;
     };
@@ -649,15 +681,15 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
     // 全てのパラメータについて差分を取得
     Window_ShopStatus.prototype.paramsDiff = function (actor, newItem, oldItem) {
         // cursed_steven custom(2023/01/24)
-        const paramIds = [];
-        for (let i = 0; i < 8; i++) {
-            paramIds.push(i);
-        }
-        return paramIds.reduce((total, paramId) => {
+        const paramIds = [0, 1, 2, 3, 4, 5, 6, 7];
+        let diffs = 0;
+        diffs += paramIds.reduce((total, paramId) => {
             const newValue = this.newEquipValue(actor, paramId, newItem, oldItem);
             const diffValue = newValue - actor.param(paramId);
             return total + diffValue;
         }, 0);
+
+        return diffs;
     };
 
     Window_ShopStatus.prototype.drawNewParam = function (x, y, paramId) {

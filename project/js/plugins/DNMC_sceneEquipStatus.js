@@ -1234,4 +1234,21 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         return Math.floor((this.width - this.itemPadding() * 5) / 6);
     };
 
+    //-------------------------------------------------------------------------
+    // Game_Actor
+
+    /**
+     * 装備品の通常能力値traitが2回読まれる問題に対処するworkaround。コアと同内容の再定義。
+     * @param {number} paramId 
+     * @returns number
+     */
+    Game_Actor.prototype.paramPlus = function (paramId) {
+        let value = Game_Battler.prototype.paramPlus.call(this, paramId);
+        for (const item of this.equips()) {
+            if (item) {
+                value += item.params[paramId];
+            }
+        }
+        return value;
+    };
 })();
