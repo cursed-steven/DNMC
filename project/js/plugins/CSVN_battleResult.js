@@ -305,7 +305,7 @@
         let ba0 = null;
         for (let i = 0; i < $gameTemp._actorsAfterBattle.length; i++) {
             actor = this.actor(i);
-            ba = $gameTemp._actorsAfterBattle.filter(a => a.actorId === actor._actorId);
+            ba = $gameTemp._actorsAfterBattle.filter(a => a && a.actorId === actor._actorId);
             ba0 = ba[0] ? ba[0] : null;
             if (actor && ba0 && this.isLvUP(ba0)) {
                 this._data.push($gameTemp._actorsAfterBattle[i]);
