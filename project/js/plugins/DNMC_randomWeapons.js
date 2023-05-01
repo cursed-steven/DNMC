@@ -38,6 +38,16 @@
  * @text 職業ID
  * @type class
  * 
+ * @arg wtypeId
+ * @text 武器タイプ
+ * @desc 職業と合わないものを指定した場合内部で再度選出し直し。
+ * @type number
+ * 
+ * @arg matId
+ * @text 材質
+ * @desc ランク0:1-4, ランク1:5-7, ランク2:8-11, ランク3:12-19
+ * @type number
+ * 
  * @command gainLatest
  * @text 生成した武器を取得
  * 
@@ -66,7 +76,7 @@ function DNMC_randomWeapons() {
      * ランダム武器生成。
      */
     PluginManagerEx.registerCommand(script, "generate", args => {
-        const weapon = randomWeapon(args.rank, args.classId);
+        const weapon = randomWeapon(args.rank, args.classId, args.wtypeId, args.matId);
         DataManager.registerWeapon(weapon);
         registerWeaponId(weapon.id);
         $gameTemp.setLatestGenerated([weapon]);
@@ -733,14 +743,27 @@ function DNMC_randomWeapons() {
      * 指定したランクでランダムな武器を生成して返す。
      * @param {number} rank 
      * @param {number} classId 
+     * @param {number} wtypeId 
+     * @param {number} matId 
      * @returns DataWeapon
      */
-    function randomWeapon(rank, classId) {
+    function randomWeapon(rank, classId, wtypeId, matId) {
         const id = getNewId();
         const nameTmpl = "{{matName}}の{{wtypeName}}";
         let descItems = [];
-        let wtype = randomWtype(classId);
-        let mat = randomMaterial(rank);
+        let wtype = {};
+        let mat = {};
+        if (!wtypeId) {
+            wtype = randomWtype(classId);
+        } else {
+            wtype = WEAPON_TYPE.find(w => w && w.id === wtypeId);
+        }
+        if (!matId) {
+            mat = randomMaterial(rank);
+        } else {
+            const rankMats = WEAPON_MATERIALS.find(w => w.rank === rank);
+            mat = rankMats.materials.find(rm => rm && rm.id === matId);
+        }
 
         console.group(">> DNMC_randomWeapon isNGPairWtypeMat");
         let ngCount = 0;
@@ -758,7 +781,7 @@ function DNMC_randomWeapons() {
         console.groupEnd(">> DNMC_randomWeapon isNGPairWtypeMat");
 
         const name = nameTmpl.replace("{{matName}}", mat.name).replace("{{wtypeName}}", $dataSystem.weaponTypes[wtype.id]);
-        const wtypeId = wtype.id;
+        if (!wtypeId) wtypeId = wtype.id;
         const iconIndex = wtype.iconIndex[rank];
         const animationId = wtype.animationId[mat.id - 1];
         const params = randomParams(wtype, mat.id);
