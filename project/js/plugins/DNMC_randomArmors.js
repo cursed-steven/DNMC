@@ -286,6 +286,10 @@ function DNMC_randomArmors() {
                     // パーティー能力
                     trait.code = Game_BattlerBase.TRAIT_PARTY_ABILITY;
                     trait.dataId = i - 78;
+                    if (trait.dataId === 1 || trait.dataId === 4) {
+                        // エンカ無効と獲得金額2倍はナシ
+                        continue;
+                    }
                 } else if (84 <= i) {
                     // 特殊能力値
                     trait.code = Game_BattlerBase.TRAIT_SPARAM;
