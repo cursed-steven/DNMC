@@ -289,6 +289,7 @@
      * 描画更新
      */
     Window_LvUP.prototype.refresh = function () {
+        this.contents.clear();
         this.makeItemList();
         for (let i = 0; i < this._data.length; i++) {
             this.drawItem(i);
@@ -305,7 +306,7 @@
         let ba0 = null;
         for (let i = 0; i < $gameTemp._actorsAfterBattle.length; i++) {
             actor = this.actor(i);
-            ba = $gameTemp._actorsAfterBattle.filter(a => a && a.actorId === actor._actorId);
+            ba = $gameTemp._actorsAfterBattle.filter(a => a && actor && a.actorId === actor._actorId);
             ba0 = ba[0] ? ba[0] : null;
             if (actor && ba0 && this.isLvUP(ba0)) {
                 this._data.push($gameTemp._actorsAfterBattle[i]);
@@ -474,7 +475,7 @@
      * @returns boolean
      */
     Window_LvUP.prototype.isLvUP = function (ba) {
-        console.log(`>> Window_LvUP::isLvUP: ${ba.before.lv} < ${ba.after.lv}`);
+        // console.log(`>> Window_LvUP::isLvUP: ${ba.before.lv} < ${ba.after.lv}`);
         return ba && ba.before.lv < ba.after.lv;
     }
 
