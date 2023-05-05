@@ -452,7 +452,8 @@ class Trait_Effect {
      */
     Scene_Load.prototype.onLoadSuccess = function () {
         _Scene_Load_onLoadSuccess.call(this);
-        $gameTemp.reserveCommonEvent(236);
+        console.log(`mapId: ${$gameMap.mapId()}`);
+        if ($gameMap.mapId() === 2) $gameTemp.reserveCommonEvent(236);
     };
 
     //-----------------------------------------------------------------------------
