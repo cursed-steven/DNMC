@@ -451,6 +451,15 @@
         return new Rectangle(wx, wy, ww, wh);
     };
 
+    const _Scene_Battle_startPartyCommandSelection = Scene_Battle.prototype.startPartyCommandSelection;
+    /**
+     * パーティーコマンド表示中はアクターコマンドウィンドウは非活性に
+     */
+    Scene_Battle.prototype.startPartyCommandSelection = function () {
+        _Scene_Battle_startPartyCommandSelection.call(this);
+        this._actorCommandWindow.deactivate();
+    };
+
     //-------------------------------------------------------------------------
     // Window_Selectable
 
