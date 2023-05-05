@@ -658,7 +658,7 @@ const ELEMENT_ENEMY_TYPES = {
      * @returns Game_Enemy
      */
     Game_Enemy.prototype.addTraitsByType = function (enemy) {
-        if (this._addedTraitsByType) return enemy;
+        if (enemy._addedTraitsByType) return enemy;
 
         enemy = this.addTraitsByTypeSub(enemy, "element");
         enemy = this.addTraitsByTypeSub(enemy, "state");
@@ -667,7 +667,7 @@ const ELEMENT_ENEMY_TYPES = {
         // console.log(">>>> " + this.constructor.name + " addTraitsByType");
         // console.log(enemy.traits);
 
-        this._addedTraitsByType = true;
+        enemy._addedTraitsByType = true;
 
         return enemy;
     };
@@ -775,7 +775,7 @@ const ELEMENT_ENEMY_TYPES = {
      * @returns Game_Enemy
      */
     Game_Enemy.prototype.addTraitsByAttr = function (enemy) {
-        if (this._addedTraitsByAttr) return enemy;
+        if (enemy._addedTraitsByAttr) return enemy;
 
         const type = ELEMENT_ENEMY_TYPES[enemy.meta.attr];
         let res = {};
@@ -814,7 +814,7 @@ const ELEMENT_ENEMY_TYPES = {
         // console.log(">>>> " + this.constructor.name + " addTraitsByAttr");
         // console.log(enemy.traits);
 
-        this._addedTraitsByAttr = true;
+        enemy._addedTraitsByAttr = true;
 
         return enemy;
     };
@@ -869,6 +869,5 @@ const ELEMENT_ENEMY_TYPES = {
         value = Math.round(value);
         return value;
     };
-
 
 })();
