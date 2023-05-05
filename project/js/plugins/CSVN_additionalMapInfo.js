@@ -236,7 +236,7 @@
     CSVN_AMI.prototype.initialize = function (mapId) {
         this._data = param.list.find(e => { return e.id === mapId });
 
-        console.log(">>>> " + this.constructor.name + " initialize");
+        console.log(`>>>> CSVN_AMI initialize (mapId: ${mapId})`);
         console.log(this._data);
     };
 
@@ -277,7 +277,7 @@
     };
 
     /**
-     * マップから出るときのに実行するコモンイベントIDを返す
+     * マップから出るときに実行するコモンイベントIDを返す
      * @returns number
      */
     CSVN_AMI.prototype.goOutCommonEvent = function () {
