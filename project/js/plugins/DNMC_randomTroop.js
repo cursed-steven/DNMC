@@ -211,7 +211,7 @@
         const bswh = Window_Selectable.prototype.fittingHeight(4);
         const randY = Math.min(bswh, Math.randomInt(BOX_HEIGHT - bswh - enemyHeight(dEnemy))) + enemyHeight(dEnemy);
         // 補正
-        return randY + 180;
+        return randY + 240;
     }
 
     //-----------------------------------------------------------------------------
