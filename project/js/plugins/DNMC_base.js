@@ -444,6 +444,18 @@ class Trait_Effect {
     };
 
     //-----------------------------------------------------------------------------
+    // Scene_Load
+
+    const _Scene_Load_onLoadSuccess = Scene_Load.prototype.onLoadSuccess;
+    /**
+     * ゲームをロードしたとき、セーブしたときの位置に砂漠の塔を移動させる
+     */
+    Scene_Load.prototype.onLoadSuccess = function () {
+        _Scene_Load_onLoadSuccess.call(this);
+        $gameTemp.reserveCommonEvent(236);
+    };
+
+    //-----------------------------------------------------------------------------
     // Window_StatusBase
     //
     // actor が null できてしまうこと自体おかしいけど一時的に workaround
