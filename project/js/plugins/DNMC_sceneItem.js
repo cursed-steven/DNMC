@@ -20,6 +20,10 @@
  * @orderAfter DNMC_sceneMenu
  * 
  * @help DNMC_sceneItem.js
+ * 
+ * @param withImmediateMove
+ * @text マップ/移動アイテムのCEV
+ * @type common_event[]
  */
 
 (() => {
@@ -112,6 +116,25 @@
         this._buttonGuide.setActiveWindow("Window_ItemList");
     };
 
+    const _Scene_Item_onItemOk = Scene_Item.prototype.onItemOk;
+    /**
+     * 移動やマップ上の効果を伴うアイテムを使用した場合はすぐにScene_Mapに移行してCEV実行
+     */
+    Scene_Item.prototype.onItemOk = function () {
+        const isMoveImmediate = this.item().effects.find(e => {
+            return e.code === Game_Action.EFFECT_COMMON_EVENT
+                && param.withImmediateMove.includes(e.dataId);
+        });
+
+        if (isMoveImmediate) {
+            console.log(`> isMoveImmediate itemId: ${this.item().id}`);
+            $gameTemp.reserveCommonEvent(isMoveImmediate.dataId);
+            SceneManager.goto(Scene_Map);
+        } else {
+            _Scene_Item_onItemOk.call(this);
+        }
+    };
+
     const _Scene_Item_onItemCancel = Scene_Item.prototype.onItemCancel;
     /**
      * カテゴリ選択に戻るときにアクティヴウィンドウ名の更新を追加
@@ -134,6 +157,8 @@
         this._questHUD.show();
         this._questHUD.refresh();
     };
+
+
 
     //-----------------------------------------------------------------------------
     // Window_ItemCategory
