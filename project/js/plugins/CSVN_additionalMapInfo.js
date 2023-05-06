@@ -67,6 +67,13 @@
  * @desc ファストトラベルのメニューとかで使うマップの説明
  * @type multiline_string
  * 
+ * @param isEncounterEnabled
+ * @text エンカ許可する
+ * @type boolean
+ * @default false
+ * @on 許可する
+ * @off 禁止する
+ * 
  * @param goOutMapId
  * @text 出た先のマップID
  * @type number
@@ -100,18 +107,6 @@
  * @parent goOutRegion
  * @text 外に出るときに実行するコモンイベント
  * @type common_event
- * 
- * @param enableEncounterGoingOut
- * @parent goOutRegion
- * @text 外に出るときにエンカ許可する
- * @type select
- * @default 0
- * @option 許可する
- * @value 0
- * @option 禁止する
- * @value 1
- * @option 変更しない
- * @value 2
  * 
  * @param innFee
  * @text 宿賃
@@ -249,6 +244,14 @@
     };
 
     /**
+     * エンカ有無を返す
+     * @returns boolean
+     */
+    CSVN_AMI.prototype.isEncounterEnabled = function () {
+        return this._data.isEncounterEnabled;
+    };
+
+    /**
      * マップから出る先の情報を返す
      * @returns any
      */
@@ -282,14 +285,6 @@
      */
     CSVN_AMI.prototype.goOutCommonEvent = function () {
         return this._data.goOutCommonEvent;
-    };
-
-    /**
-     * マップから出るときにエンカ許可するかを返す
-     * @returns number
-     */
-    CSVN_AMI.prototype.enableEncounterGoingOut = function () {
-        return this._data.enableEncounterGoingOut;
     };
 
     /**
@@ -549,6 +544,7 @@
         console.log(">>>> setup");
         _Game_Map_setup.call(this, mapId);
         this.setupAmi(mapId);
+        this.setEncounter();
     };
 
     /**
@@ -566,6 +562,19 @@
         console.log("AMI setting up...");
         this._ami = new CSVN_AMI(mapId);
         console.log(this._ami);
+    };
+
+    /**
+     * 追加情報にしたがってエンカをON/OFFする
+     */
+    Game_Map.prototype.setEncounter = function () {
+        if (this._ami.isEncounterEnabled()) {
+            console.log(`>> ENCOUNTER ENABLED`);
+            $gameSystem.enableEncounter();
+        } else {
+            console.log(`>> ENCOUNTER DISABLED`);
+            $gameSystem.disableEncounter();
+        }
     };
 
     /**
@@ -611,15 +620,6 @@
     Game_Map.prototype.goOutCommonEvent = function () {
         this.setupAmiIfNeeded();
         return this._ami.goOutCommonEvent();
-    };
-
-    /**
-     * マップから出るときにエンカ許可するかどうかを返す
-     * @returns number
-     */
-    Game_Map.prototype.enableEncounterGoingOut = function () {
-        this.setupAmiIfNeeded();
-        return this._ami.enableEncounterGoingOut();
     };
 
     /**
@@ -803,12 +803,6 @@
         if ($gamePlayer.regionId() === $gameMap.goOutRegion()) {
             console.log(">>>> " + this.constructor.name);
             console.log($gameMap.goOutSettings());
-
-            if ($gameMap.enableEncounterGoingOut() == 0) {
-                $gameSystem.enableEncounter();
-            } else if ($gameMap.enableEncounterGoingOut() == 1) {
-                $gameSystem.disableEncounter();
-            }
 
             $gamePlayer.reserveTransfer(
                 $gameMap.goOutSettings().mapId,
