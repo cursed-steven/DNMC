@@ -117,6 +117,16 @@ class Trait_Effect {
     };
 
     //-----------------------------------------------------------------------------
+    // Bitmap
+
+    const _Bitmap_initialize = Bitmap.prototype.initialize;
+    Bitmap.prototype.initialize = function (width, height) {
+        _Bitmap_initialize.call(this, width, height);
+        this.outlineColor = "rgba(0, 0, 0, 1)";
+        this.outlineWidth = 6;
+    };
+
+    //-----------------------------------------------------------------------------
     // StorageManager
 
     /**

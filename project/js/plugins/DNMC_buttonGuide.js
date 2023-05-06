@@ -365,11 +365,11 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
         let width = 0;
         if (pad === "KEYBOARD") {
             const keyWidth = this.fontSize / 2 * (this.keyName(role).length + 3);
-            this.drawText("[" + this.keyName(role) + "]", x, y, keyWidth);
+            this.drawText(" [" + this.keyName(role) + "]", x, y, keyWidth);
             width += keyWidth;
         } else {
             const btnWidth = this.fontSize / 2 * (this.gamePadBtn(role).length + 3);
-            this.drawText("[" + this.gamePadBtn(role) + "]", x, y, btnWidth);
+            this.drawText(" [" + this.gamePadBtn(role) + "]", x, y, btnWidth);
             width += btnWidth;
         }
         this.drawText(desc, x + width, y, this.width - width);
