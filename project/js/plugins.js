@@ -69,6 +69,7 @@ var $plugins =
 {"name":"CSVN_encounterEx","status":true,"description":"敵グループに出現条件をつける／歩数を変更する","parameters":{"encounterConditions":"[]","stepConditions":"[]"}},
 {"name":"CSVN_preventWeakEnemies2","status":true,"description":"弱い敵の出現を防ぐ。","parameters":{"switchId":"83","rate":"10","lvDiff":"7"}},
 {"name":"CSVN_fastTravel2","status":true,"description":"ファストトラベルスキル／アイテム","parameters":{"executeCevId":"[\"168\",\"169\"]","cancelCevId":"[\"170\",\"171\"]","travelMapId":"66","travelX":"67","travelY":"68","boatMapId":"69","boatX":"70","boatY":"71","shipMapId":"72","shipX":"73","shipY":"74","getOffShipDir":"75","airshipMapId":"76","airshipX":"77","airshipY":"78"}},
+{"name":"DNMC_fastTravel2","status":true,"description":"CSVN_fastTravel2 のカスタマイズ部分です。","parameters":{}},
 {"name":"CSVN_selfSwitchCtrl","status":true,"description":"セルフスイッチを動的に制御する","parameters":{}},
 {"name":"EventEffects","status":true,"description":"[Ver 1.1.3]イベントやプレイヤーに様々な効果をセットします","parameters":{}},
 {"name":"Foreground","status":true,"description":"マップに合わせてスクロールする近景の設定(Ver1.1)","parameters":{}},

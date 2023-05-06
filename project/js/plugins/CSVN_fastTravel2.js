@@ -104,6 +104,42 @@
  * @text 行先選択開始(スキル)
  */
 
+//-----------------------------------------------------------------------------
+// Scene_FastTravelSkill
+//
+// The scene class of the fast travel screen.
+
+function Scene_FastTravelSkill() {
+    this.initialize(...arguments);
+}
+
+Scene_FastTravelSkill.prototype = Object.create(Scene_ItemBase.prototype);
+Scene_FastTravelSkill.prototype.constructor = Scene_FastTravelSkill;
+
+//-----------------------------------------------------------------------------
+// Scene_FastTravelItem
+//
+// The scene class of the fast travel screen.
+
+function Scene_FastTravelItem() {
+    this.initialize(...arguments);
+}
+
+Scene_FastTravelItem.prototype = Object.create(Scene_FastTravelSkill.prototype);
+Scene_FastTravelItem.prototype.constructor = Scene_FastTravelItem;
+
+//-----------------------------------------------------------------------------
+// Window_Destinations
+//
+// The window for selecting an item on the fast travel screen.
+
+function Window_Destinations() {
+    this.initialize(...arguments);
+}
+
+Window_Destinations.prototype = Object.create(Window_Selectable.prototype);
+Window_Destinations.prototype.constructor = Window_Destinations;
+
 (() => {
 
     'use strict';
@@ -122,15 +158,6 @@
 
     //-----------------------------------------------------------------------------
     // Scene_FastTravelSkill
-    //
-    // The scene class of the fast travel screen.
-
-    function Scene_FastTravelSkill() {
-        this.initialize(...arguments);
-    }
-
-    Scene_FastTravelSkill.prototype = Object.create(Scene_ItemBase.prototype);
-    Scene_FastTravelSkill.prototype.constructor = Scene_FastTravelSkill;
 
     /**
      * 初期化
@@ -226,15 +253,6 @@
 
     //-----------------------------------------------------------------------------
     // Scene_FastTravelItem
-    //
-    // The scene class of the fast travel screen.
-
-    function Scene_FastTravelItem() {
-        this.initialize(...arguments);
-    }
-
-    Scene_FastTravelItem.prototype = Object.create(Scene_FastTravelSkill.prototype);
-    Scene_FastTravelItem.prototype.constructor = Scene_FastTravelItem;
 
     Scene_FastTravelItem.prototype.initialize = function () {
         Scene_FastTravelSkill.prototype.initialize.call(this);
@@ -260,15 +278,6 @@
 
     //-----------------------------------------------------------------------------
     // Window_Destinations
-    //
-    // The window for selecting an item on the fast travel screen.
-
-    function Window_Destinations() {
-        this.initialize(...arguments);
-    }
-
-    Window_Destinations.prototype = Object.create(Window_Selectable.prototype);
-    Window_Destinations.prototype.constructor = Window_Destinations;
 
     /**
      * 初期化
