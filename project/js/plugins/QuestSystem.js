@@ -1310,14 +1310,14 @@ QuestSystemAlias.QuestUtils.changeRewards(variableId, rawardDatas)
 
 @param GoldIcon
 @text ゴールドのアイコン
-@type number
+@type icon
 @default 314
 @desc
 報酬欄に表示するゴールドのアイコンを設定します。
 
 @param ExpIcon
 @text 経験値のアイコン
-@type number
+@type icon
 @default 89
 @desc
 報酬欄に表示する経験値のアイコンを設定します。
@@ -1351,7 +1351,7 @@ QuestSystemAlias.QuestUtils.changeRewards(variableId, rawardDatas)
 
 @param IconIndex
 @text タイトルアイコン
-@type number
+@type icon
 @desc
 クエストのタイトルに表示するアイコンを指定します。
 
@@ -1488,7 +1488,7 @@ QuestSystemAlias.QuestUtils.changeRewards(variableId, rawardDatas)
 
 @param IconIndex
 @text アイコン
-@type number
+@type icon
 @desc
 報酬のタイプが任意の場合に表示するアイコンを指定します。
 */
@@ -1902,63 +1902,63 @@ QuestSystemAlias.QuestUtils.changeRewards(variableId, rawardDatas)
 /*~struct~CommandIcon:ja
 @param AllCommandIcon
 @text 全クエスト表示コマンドアイコン
-@type number
+@type icon
 @default 0
 @desc
 全クエスト表示のコマンドのアイコンを指定します。
 
 @param QuestOrderCommandIcon
 @text クエスト受託コマンドアイコン
-@type number
+@type icon
 @default 0
 @desc
 クエスト受託のコマンドのアイコンを指定します。
 
 @param OrderingQuestCommandIcon
 @text 進行中クエストコマンドアイコン
-@type number
+@type icon
 @default 0
 @desc
 進行中クエストのコマンドのアイコンを指定します。
 
 @param QuestCancelCommandIcon
 @text クエストキャンセルコマンドアイコン
-@type number
+@type icon
 @default 0
 @desc
 クエストキャンセルのコマンドのアイコンを指定します。
 
 @param QuestReportCommandIcon
 @text クエスト報告コマンドアイコン
-@type number
+@type icon
 @default 0
 @desc
 クエスト報告のコマンドのアイコンを指定します。
 
 @param ReportedQuestCommandIcon
 @text 報告済クエスト確認コマンドアイコン
-@type number
+@type icon
 @default 0
 @desc
 報告済クエストのコマンドのアイコンを指定します。
 
 @param FailedQuestCommandIcon
 @text 失敗クエスト確認コマンドアイコン
-@type number
+@type icon
 @default 0
 @desc
 失敗クエストのコマンドのアイコンを指定します。
 
 @param ExpiredQuestCommandIcon
 @text 期限切れクエスト確認コマンドアイコン
-@type number
+@type icon
 @default 0
 @desc
 期限切れクエストのコマンドのアイコンを指定します。
 
 @param HiddenQuestCommandIcon
 @text 隠しクエスト確認コマンドアイコン
-@type number
+@type icon
 @default 0
 @desc
 隠しクエストのコマンドのアイコンを指定します。
