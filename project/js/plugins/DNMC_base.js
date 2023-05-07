@@ -120,6 +120,11 @@ class Trait_Effect {
     // Bitmap
 
     const _Bitmap_initialize = Bitmap.prototype.initialize;
+    /**
+     * フォント描画の調整
+     * @param {number} width 
+     * @param {number} height 
+     */
     Bitmap.prototype.initialize = function (width, height) {
         _Bitmap_initialize.call(this, width, height);
         this.outlineColor = "rgba(0, 0, 0, 1)";
