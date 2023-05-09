@@ -1,23 +1,33 @@
 /*:
 @plugindesc
-ワールド自動生成 Ver0.5.2(2022/12/18)
+ワールド自動生成 Ver0.5.5(2023/5/9)
 
 @url https://raw.githubusercontent.com/pota-gon/RPGMakerMZ/main/plugins/Map/GenerateWorld.js
+@orderAfter wasdKeyMZ
 @orderAfter GridScrollMap
 @target MZ
 @author ポテトードラゴン
 
 ・アップデート情報
-* Ver0.5.2
-- ヘルプを枠内に表示するように修正
+* Ver0.5.5
+- 乗り物の座標を指定したときに、0,0座標に近い座標に移動してしまうバグ修正
+- ロンチプラグインの wasdKeyMZ.js と競合するため、順番をエラー表示するように修正
+- コマンドキーを変更出来なかったバグ修正
+- コマンドキーのワールド再生成キーのデフォルトを M => R に変更
+- コマンドキーのパラメータをコンボボックスに変更し、キーを選択できるように変更
+- コンソールログの出力方法を修正
+* Ver0.5.4
+- 巨大なマップ等でバイオームの判定が遅くなっていた問題を修正
+- デバッグ文をテストプレイ時のみコンソールに出力するように修正
+* Ver0.5.3: ヘルプ修正
+- 進捗ノート削除による対応予定のリンクを削除
+- 概要の一部を使い方に移動
+- 使い方のヘルプを一部修正
+* Ver0.5.2: ヘルプを枠内に表示するように修正
+* Ver0.5.1: イベントが表示されている場所には乗り物を呼び出さないように修正
+* Ver0.5.0: 開発版を先行公開
 
-* Ver0.5.1
-- イベントが表示されている場所には乗り物を呼び出さないように修正
-
-* Ver0.5.0
-- 開発版を先行公開
-
-Copyright (c) 2022 ポテトードラゴン
+Copyright (c) 2023 ポテトードラゴン
 Released under the MIT License.
 https://opensource.org/licenses/mit-license.php
 
@@ -25,16 +35,14 @@ https://opensource.org/licenses/mit-license.php
 ## 概要
 ワールドを自動生成します。
 
-開発版のため未実装の機能が複数あります。今後のアップデートで対応します。  
-対応予定の機能は進捗ノートからご確認ください。  
-https://shinchoku.net/notes/73264
+## 使い方
+使い方については最低限の使い方のみ記載しています。
 
-使い方については最低限の使い方のみ記載しています。  
-まだサンプルプロジェクトとしては不十分ですが、  
-下記サンプルプロジェクトも参考になると思います。  
+その他の使用方法については、  
+下記サンプルプロジェクトを参考にしてください。  
 https://github.com/pota-gon/GenerateWorld
 
-## 使い方
+※ 開発版のため未実装の機能が複数あります。今後のアップデートで対応します。
 
 ### 1. マップ設定
 1. タイルセットを『フィールド1』にします。  
@@ -201,17 +209,181 @@ https://github.com/pota-gon/GenerateWorld
 
     @param RegenerateKey
     @parent CommandKey
-    @type string
+    @type combo
     @text ワールド再生成
     @desc ワールド再生成のキー
-    @default M
+    @default R
+    @option A
+    @option B
+    @option C
+    @option D
+    @option E
+    @option F
+    @option G
+    @option H
+    @option I
+    @option J
+    @option K
+    @option L
+    @option M
+    @option N
+    @option O
+    @option P
+    @option Q
+    @option R
+    @option S
+    @option T
+    @option U
+    @option V
+    @option W
+    @option X
+    @option Y
+    @option Z
+    @option 0
+    @option 1
+    @option 2
+    @option 3
+    @option 4
+    @option 5
+    @option 6
+    @option 7
+    @option 8
+    @option 9
+    @option T0
+    @option T1
+    @option T2
+    @option T3
+    @option T4
+    @option T5
+    @option T6
+    @option T7
+    @option T8
+    @option T9
+    @option T*
+    @option T+
+    @option T-
+    @option T.
+    @option T/
+    @option :
+    @option ;
+    @option ,
+    @option -
+    @option .
+    @option /
+    @option @
+    @option [
+    @option \|
+    @option ]
+    @option ^
+    @option \_
+    @option F1
+    @option F2
+    @option F3
+    @option F4
+    @option F5
+    @option F6
+    @option F7
+    @option F8
+    @option F9
+    @option F10
+    @option F11
+    @option F12
+    @option BackSpace
+    @option Pause
+    @option 変換
+    @option 無変換
+    @option End
+    @option Home
+    @option Delete
 
     @param ExportJsonKey
     @parent CommandKey
-    @type string
+    @type combo
     @text マップJSON出力(イベントあり)
     @desc マップJSON出力のキー
     @default E
+    @option A
+    @option B
+    @option C
+    @option D
+    @option E
+    @option F
+    @option G
+    @option H
+    @option I
+    @option J
+    @option K
+    @option L
+    @option M
+    @option N
+    @option O
+    @option P
+    @option Q
+    @option R
+    @option S
+    @option T
+    @option U
+    @option V
+    @option W
+    @option X
+    @option Y
+    @option Z
+    @option 0
+    @option 1
+    @option 2
+    @option 3
+    @option 4
+    @option 5
+    @option 6
+    @option 7
+    @option 8
+    @option 9
+    @option T0
+    @option T1
+    @option T2
+    @option T3
+    @option T4
+    @option T5
+    @option T6
+    @option T7
+    @option T8
+    @option T9
+    @option T*
+    @option T+
+    @option T-
+    @option T.
+    @option T/
+    @option :
+    @option ;
+    @option ,
+    @option -
+    @option .
+    @option /
+    @option @
+    @option [
+    @option \|
+    @option ]
+    @option ^
+    @option \_
+    @option F1
+    @option F2
+    @option F3
+    @option F4
+    @option F5
+    @option F6
+    @option F7
+    @option F8
+    @option F9
+    @option F10
+    @option F11
+    @option F12
+    @option BackSpace
+    @option Pause
+    @option 変換
+    @option 無変換
+    @option End
+    @option Home
+    @option Delete
 
     @param OutputJsonKey
     @parent CommandKey
@@ -220,6 +392,88 @@ https://github.com/pota-gon/GenerateWorld
     @desc マップJSON出力のキー
     同一マップに出力する場合は、イベントも出力します
     @default O
+    @option A
+    @option B
+    @option C
+    @option D
+    @option E
+    @option F
+    @option G
+    @option H
+    @option I
+    @option J
+    @option K
+    @option L
+    @option M
+    @option N
+    @option O
+    @option P
+    @option Q
+    @option R
+    @option S
+    @option T
+    @option U
+    @option V
+    @option W
+    @option X
+    @option Y
+    @option Z
+    @option 0
+    @option 1
+    @option 2
+    @option 3
+    @option 4
+    @option 5
+    @option 6
+    @option 7
+    @option 8
+    @option 9
+    @option T0
+    @option T1
+    @option T2
+    @option T3
+    @option T4
+    @option T5
+    @option T6
+    @option T7
+    @option T8
+    @option T9
+    @option T*
+    @option T+
+    @option T-
+    @option T.
+    @option T/
+    @option :
+    @option ;
+    @option ,
+    @option -
+    @option .
+    @option /
+    @option @
+    @option [
+    @option \|
+    @option ]
+    @option ^
+    @option \_
+    @option F1
+    @option F2
+    @option F3
+    @option F4
+    @option F5
+    @option F6
+    @option F7
+    @option F8
+    @option F9
+    @option F10
+    @option F11
+    @option F12
+    @option BackSpace
+    @option Pause
+    @option 変換
+    @option 無変換
+    @option End
+    @option Home
+    @option Delete
 
     @param PlayTestKey
     @parent CommandKey
@@ -877,12 +1131,14 @@ https://github.com/pota-gon/GenerateWorld
     }
     function Potadra_numberArray(data) {
         const arr = [];
-        for (const value of JSON.parse(data)) {
-            arr.push(Number(value));
+        if (data) {
+            for (const value of JSON.parse(data)) {
+                arr.push(Number(value));
+            }
         }
         return arr;
     }
-    function Potadra_isTest(play_test) {
+    function Potadra_isTest(play_test = true) {
         return !play_test || Utils.isOptionValid("test");
     }
     function Potadra_checkSwitch(switch_no, bool = true) {
@@ -893,15 +1149,83 @@ https://github.com/pota-gon/GenerateWorld
         }
     }
     function Potadra_getDirPath(dir) {
-        const path = require("path");
-        const base = path.dirname(process.mainModule.filename);
-        return path.join(base, dir + '/');
+        if (StorageManager.isLocalMode()) {
+            const path = require("path");
+            const base = path.dirname(process.mainModule.filename);
+            return path.join(base, dir + '/');
+        } else {
+            return dir + '/';
+        }
     }
     function Potadra_nowTime() {
         const date = new Date();
         const day = date.getFullYear() + '_' + (date.getMonth() + 1).padZero(2) + '_' + date.getDate().padZero(2);
         const time = date.getHours().padZero(2) + '_' + date.getMinutes().padZero(2) + '_' + date.getSeconds().padZero(2);
         return day + '_' + time;
+    }
+    function Potadra_keyCode(key) {
+        const key_mapper = {
+            'Tab': 9, 'Enter': 13, 'Shift': 16, 'Ctrl': 17, 'Alt': 18, 'Esc': 27, 'Space': 32,
+            'PageUp': 33, 'PageDown': 34, 'Left': 37, 'Up': 38, 'Right': 39, 'Down': 40, 'Insert': 45,
+            'A': 65, 'a': 65,
+            'B': 66, 'b': 66,
+            'C': 67, 'c': 67,
+            'D': 68, 'd': 68,
+            'E': 69, 'e': 69,
+            'F': 70, 'f': 70,
+            'G': 71, 'g': 71,
+            'H': 72, 'h': 72,
+            'I': 73, 'i': 73,
+            'J': 74, 'j': 74,
+            'K': 75, 'k': 75,
+            'L': 76, 'l': 76,
+            'M': 77, 'm': 77,
+            'N': 78, 'n': 78,
+            'O': 79, 'o': 79,
+            'P': 80, 'p': 80,
+            'Q': 81, 'q': 81,
+            'R': 82, 'r': 82,
+            'S': 83, 's': 83,
+            'T': 84, 't': 84,
+            'U': 85, 'u': 85,
+            'V': 86, 'v': 86,
+            'W': 87, 'w': 87,
+            'X': 88, 'x': 88,
+            'Y': 89, 'y': 89,
+            'Z': 90, 'z': 90,
+            '0': 48, 'T0': 96,
+            '1': 49, 'T1': 97,
+            '2': 50, 'T2': 98,
+            '3': 51, 'T3': 99,
+            '4': 52, 'T4': 100,
+            '5': 53, 'T5': 101,
+            '6': 54, 'T6': 102,
+            '7': 55, 'T7': 103,
+            '8': 56, 'T8': 104,
+            '9': 57, 'T9': 105,
+            'T*': 106, 'T+': 107, 'T-': 109, 'T.': 110, 'T/': 111,
+            ':': 186, ';': 187, ',': 188, '-': 189,
+            '.': 190, '/': 191, '@': 192, '[': 192,
+            '\|': 220, ']': 221, '^': 222, '\_': 226,
+            'F1': 112, 'f1': 112,
+            'F2': 113, 'f2': 113,
+            'F3': 114, 'f3': 114,
+            'F4': 115, 'f4': 115,
+            'F5': 116, 'f5': 116,
+            'F6': 117, 'f6': 117,
+            'F7': 118, 'f7': 118,
+            'F8': 119, 'f8': 119,
+            'F9': 120, 'f9': 120,
+            'F10': 121, 'f10': 121,
+            'F11': 122, 'f11': 122,
+            'F12': 123, 'f12': 123,
+            'BackSpace': 8, 'Pause': 19, '変換': 28, '無変換': 29, 'End': 35, 'Home': 36, 'Delete': 46,
+            'NumLock': 144, 'ScrollLock': 145, 'CapsLock': 240, 'ひらがな': 242, '半角/全角': 244,
+        };
+        const key_code = key_mapper[key];
+        const result = Object.keys(Input.keyMapper).find(code => Number(code) === key_code);
+        if (result) return false;
+        return key_code;
     }
     function PotadraAutoTile_FLOOR_AUTOTILE_TABLE() {
         return {
@@ -1063,58 +1387,7 @@ https://github.com/pota-gon/GenerateWorld
         }
         return 33;
     }
-    function PotadraBiome_BIOME() {
-        return {
-            2048: { 'top_tile': [[2048, 0, 1, 0]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 海
-            2096: { 'top_tile': [[2048, 0, 1, 0]], 'bottom_tile': [[2048, 0, -1, 0], [2096, 0, -1, 1]] }, // 深い海
-            2144: { 'top_tile': [[2048, 0, 1, 0]], 'bottom_tile': [[2048, 0, -1, 0], [2144, 0, -1, 1]] }, // 岩礁
-            2192: { 'top_tile': [[2048, 0, 1, 0]], 'bottom_tile': [[2048, 0, -1, 0], [2192, 0, -1, 1]] }, // 氷山
-            2240: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.5, 1, 1]], 'bottom_tile': [[2240, 0, -1, 0]] }, // 毒の沼
-            2288: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.2, 1, 1]], 'bottom_tile': [[2240, 0, -1, 0]] }, // 枯れ木
-            2336: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.5, 1, 1]], 'bottom_tile': [[2336, 0, -1, 0]] }, // 溶岩
-            2384: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.2, 1, 1]], 'bottom_tile': [[2336, 0, -1, 0]] }, // 溶岩の泡
-            2432: { 'top_tile': [[2816, 0, 1, 0], [3008, 0.2, 0.35, 1], [3104, 0.35, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[2432, 0, -1, 0]] }, // 池
-            2480: { 'top_tile': [[2816, 0, 1, 0], [3008, 0.2, 0.3, 1], [3104, 0.3, 0.45, 1], [3872, 0.45, 1, 1]], 'bottom_tile': [[2432, 0, -1, 0]] }, // 岩
-            2528: { 'top_tile': [[3968, 0, 1, 0], [4160, 0.2, 1, 1]], 'bottom_tile': [[2528, 0, -1, 0]] }, // 凍った海
-            2576: { 'top_tile': [[2048, 0, 1, 0]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 渦
-            2624: { 'top_tile': [[2816, 0, 1, 0], [3008, 0.25, 0.35, 1], [3104, 0.35, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[2624, 0, -1, 0]] }, // 大地の境界
-            2672: { 'top_tile': [[2816, 0, 1, 0], [3008, 0.25, 0.35, 1], [3104, 0.35, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[2624, 0, -1, 0]] }, // 下界に落ちる滝
-            2720: { 'top_tile': [[4064, 0, 1, 0], [4112, 0.5, 1, 1]], 'bottom_tile': [[2720, 0, -1, 0]] }, // 雲（大地の境界）
-            2768: { 'top_tile': [[4064, 0, 1, 0], [4112, 0.5, 1, 1]], 'bottom_tile': [[2720, 0, -1, 0]] }, // 雲
-            2816: { 'top_tile': [[2816, 0, 1, 0], [3008, 0.25, 0.35, 1], [3104, 0.35, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[2816, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 平原
-            2864: { 'top_tile': [[2816, 0, 1, 0], [2864, 0.35, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 草原A（濃）
-            2912: { 'top_tile': [[2912, 0, 1, 0], [3056, 0.25, 0.35, 1], [3104, 0.35, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 草原B
-            2960: { 'top_tile': [[2912, 0, 1, 0], [2960, 0.35, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 草原B（濃）
-            3008: { 'top_tile': [[2816, 0, 1, 0], [3008, 0, 1, 1]], 'bottom_tile': [[2816, 0, -1, 0]] }, // 森
-            3056: { 'top_tile': [[2816, 0, 1, 0], [3056, 0, 1, 1]], 'bottom_tile': [[2816, 0, -1, 0]] }, // 森（針葉樹）
-            3104: { 'top_tile': [[2816, 0, 1, 0], [3104, 0, 1, 1]], 'bottom_tile': [[2816, 0, -1, 0]] }, // 山（草）
-            3152: { 'top_tile': [[3296, 0, 1, 0], [3152, 0, 1, 1]], 'bottom_tile': [[3296, 0, -1, 0]] }, // 山（土）
-            3200: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.3, 0.5, 1], [3488, 0.5, 1, 1]], 'bottom_tile': [[3200, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 荒れ地A
-            3248: { 'top_tile': [[3200, 0, 1, 0], [3248, 0.35, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 荒れ地B
-            3296: { 'top_tile': [[3296, 0, 1, 0], [3392, 0.3, 0.5, 1], [3152, 0.5, 1, 1]], 'bottom_tile': [[3296, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 土肌A
-            3344: { 'top_tile': [[3296, 0, 1, 0], [3248, 0.35, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 土肌B
-            3392: { 'top_tile': [[3200, 0, 1, 0], [3392, 0, 1, 1]], 'bottom_tile': [[3200, 0, -1, 0]] }, // 森（枯れ木）
-            3440: { 'top_tile': [[2816, 0, 1, 0], [3440, 0, 1, 1]], 'bottom_tile': [[2816, 0, -1, 0]] }, // 道（土）
-            3488: { 'top_tile': [[3200, 0, 1, 0], [3488, 0, 1, 1]], 'bottom_tile': [[3200, 0, -1, 0]] }, // 丘（土）
-            3536: { 'top_tile': [[3200, 0, 1, 0], [3536, 0, 1, 1]], 'bottom_tile': [[3200, 0, -1, 0]] }, // 山（砂岩）
-            3584: { 'top_tile': [[3584, 0, 1, 0], [3776, 0.15, 0.25, 1], [3536, 0.4, 1, 1]], 'bottom_tile': [[3584, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 砂漠
-            3632: { 'top_tile': [[3584, 0, 1, 0], [3632, 0.35, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 砂漠B
-            3680: { 'top_tile': [[3680, 0, 1, 0], [3392, 0.3, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[3680, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 岩地A
-            3728: { 'top_tile': [[3680, 0, 1, 0], [3728, 0.3, 1, 1], [3920, 0.5, 1, 1]], 'bottom_tile': [[3680, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 岩地B（溶岩）
-            3776: { 'top_tile': [[3584, 0, 1, 0], [3776, 0, 1, 1]], 'bottom_tile': [[3584, 0, -1, 0]] }, // 森（ヤシの木）
-            3824: { 'top_tile': [[2816, 0, 1, 0], [3824, 0, 1, 1]], 'bottom_tile': [[2816, 0, -1, 0]] }, // 道（舗装）
-            3872: { 'top_tile': [[3680, 0, 1, 0], [3872, 0, 1, 1]], 'bottom_tile': [[3680, 0, -1, 0]] }, // 山（岩）
-            3920: { 'top_tile': [[3680, 0, 1, 0], [3920, 0, 1, 1]], 'bottom_tile': [[3680, 0, -1, 0], [3728, -0.25, -1, 1]] }, // 山（溶岩）
-            3968: { 'top_tile': [[3968, 0, 1, 0], [4160, 0.3, 0.5, 1], [4016, 0.5, 1, 1]], 'bottom_tile': [[3968, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 雪原
-            4016: { 'top_tile': [[3968, 0, 1, 0], [4016, 0, 1, 1]], 'bottom_tile': [[3968, 0, -1, 0]] }, // 山（雪）
-            4064: { 'top_tile': [[4064, 0, 1, 0], [4112, 0.5, 1, 1]], 'bottom_tile': [[2720, 0, -1, 0]] }, // 雲
-            4112: { 'top_tile': [[4064, 0, 1, 0], [4112, 0.5, 1, 1]], 'bottom_tile': [[2720, 0, -1, 0]] }, // 大きな雲
-            4160: { 'top_tile': [[3968, 0, 1, 0], [4160, 0, 1, 1]], 'bottom_tile': [[3968, 0, -1, 0]] }, // 森（雪）
-            4208: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.3, 0.5, 1], [3488, 0.5, 1, 1]], 'bottom_tile': [[3200, 0, -1, 0], [4208, 0, -1, 1]] }, // 穴
-            4256: { 'top_tile': [[3200, 0, 1, 0], [4256, 0, 1, 1]], 'bottom_tile': [[3200, 0, -1, 0]] }, // 丘（砂岩）
-            4304: { 'top_tile': [[3968, 0, 1, 0], [4304, 0, 1, 1]], 'bottom_tile': [[3968, 0, -1, 0]] } // 丘（雪）
-        };
-    }
+
 
 
     function PotadraDirection_UNDER() { return 2; }
@@ -1297,8 +1570,8 @@ https://github.com/pota-gon/GenerateWorld
     function PotadraSpawn_setPositionVehicle(current_x, current_y, min_x = 0, min_y = 0, max_x = $dataMap.width, max_y = $dataMap.height) {
         let boats = PotadraSpawn_checkBoat(current_x, current_y, min_x, min_y, max_x, max_y);
         PotadraSpawn_checkShip(current_x, current_y, min_x, min_y, max_x, max_y, boats[0], boats[1]);
-        PotadraSpawn_checkAirShip(current_x, current_y, max_x, max_y);
-        PotadraSpawn_checkAirShip(min_x, min_y, max_x, max_y);
+        let move_airship = PotadraSpawn_checkAirShip(current_x, current_y, max_x, max_y);
+        if (!move_airship) PotadraSpawn_checkAirShip(min_x, min_y, current_x, current_y);
     }
     function PotadraSpawn_check(x, y, d) {
         const x2 = $gameMap.roundXWithDirection(x, d);
@@ -1314,18 +1587,24 @@ https://github.com/pota-gon/GenerateWorld
         }
         return true;
     }
+    function PotadraSpawn_isLandOk(x, y) {
+        return PotadraSpawn_check(x, y, 2) || PotadraSpawn_check(x, y, 4) || PotadraSpawn_check(x, y, 6) || PotadraSpawn_check(x, y, 8);
+    }
     function PotadraSpawn_checkBoat(current_x, current_y, min_x, min_y, max_x, max_y) {
-        if ($gameMap.boat()._mapId === $gameMap.mapId()) {
-            let boat_x = $dataSystem.boat.startX;
-            let boat_y = $dataSystem.boat.startY;
+        let boat = $gameMap.boat();
+        if (boat._mapId === $gameMap.mapId()) {
+            let boat_x = boat._x;
+            let boat_y = boat._y;
+            if ($gameMap.isBoatPassable(boat_x, boat_y) && PotadraSpawn_isLandOk(boat_x, boat_y) && !(boat_x === current_x && boat_y === current_y)) {
+                boat.setPosition(boat_x, boat_y);
+                return [boat_x, boat_y];
+            }
             for (let x = min_x; x < max_x; x++) {
                 for (let y = min_y; y < max_y; y++) {
                     if (x === current_x && y === current_y) continue;
-                    if ($gameMap.isBoatPassable(x, y) && (PotadraSpawn_check(x, y, 2) || PotadraSpawn_check(x, y, 4) || PotadraSpawn_check(x, y, 6) || PotadraSpawn_check(x, y, 8))) {
-                        $gameMap.boat().setPosition(x, y);
-                        boat_x = x;
-                        boat_y = y;
-                        return [boat_x, boat_y];
+                    if ($gameMap.isBoatPassable(x, y) && PotadraSpawn_isLandOk(x, y)) {
+                        boat.setPosition(x, y);
+                        return [x, y];
                     }
                 }
             }
@@ -1333,12 +1612,19 @@ https://github.com/pota-gon/GenerateWorld
         return [-1, -1];
     }
     function PotadraSpawn_checkShip(current_x, current_y, min_x, min_y, max_x, max_y, boat_x, boat_y) {
-        if ($gameMap.ship()._mapId === $gameMap.mapId()) {
+        let ship = $gameMap.ship();
+        if (ship._mapId === $gameMap.mapId()) {
+            let ship_x = ship._x;
+            let ship_y = ship._y;
+            if ($gameMap.isShipPassable(ship_x, ship_y) && PotadraSpawn_isLandOk(ship_x, ship_y) && !(ship_x === current_x && ship_y === current_y) && !(ship_x === boat_x && ship_y === boat_y)) {
+                ship.setPosition(ship_x, ship_y);
+                return true;
+            }
             for (let x = min_x; x < max_x; x++) {
                 for (let y = min_y; y < max_y; y++) {
                     if ((x === current_x && y === current_y) || (x === boat_x && y === boat_y)) continue;
-                    if ($gameMap.isShipPassable(x, y) && (PotadraSpawn_check(x, y, 2) || PotadraSpawn_check(x, y, 4) || PotadraSpawn_check(x, y, 6) || PotadraSpawn_check(x, y, 8))) {
-                        $gameMap.ship().setPosition(x, y);
+                    if ($gameMap.isShipPassable(x, y) && PotadraSpawn_isLandOk(x, y)) {
+                        ship.setPosition(x, y);
                         return true;
                     }
                 }
@@ -1346,16 +1632,24 @@ https://github.com/pota-gon/GenerateWorld
         }
     }
     function PotadraSpawn_checkAirShip(min_x, min_y, max_x, max_y) {
-        if ($gameMap.airship()._mapId === $gameMap.mapId()) {
+        let airship = $gameMap.airship();
+        if (airship._mapId === $gameMap.mapId()) {
+            let air_x = airship._x;
+            let air_y = airship._y;
+            if ($gameMap.isAirshipLandOk(air_x, air_y)) {
+                airship.setPosition(air_x, air_y);
+                return true;
+            }
             for (let x = min_x; x < max_x; x++) {
                 for (let y = min_y; y < max_y; y++) {
                     if ($gameMap.isAirshipLandOk(x, y)) {
-                        $gameMap.airship().setPosition(x, y);
+                        airship.setPosition(x, y);
                         return true;
                     }
                 }
             }
         }
+        return false;
     }
 
 
@@ -1759,6 +2053,58 @@ https://github.com/pota-gon/GenerateWorld
     //==============================================================================
     // バイオーム
     //==============================================================================
+    const BIOME = {
+        // タイルID, 下限, 上限, レイヤー
+        2048: { 'top_tile': [[2048, 0, 1, 0]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 海
+        2096: { 'top_tile': [[2048, 0, 1, 0]], 'bottom_tile': [[2048, 0, -1, 0], [2096, 0, -1, 1]] }, // 深い海
+        2144: { 'top_tile': [[2048, 0, 1, 0]], 'bottom_tile': [[2048, 0, -1, 0], [2144, 0, -1, 1]] }, // 岩礁
+        2192: { 'top_tile': [[2048, 0, 1, 0]], 'bottom_tile': [[2048, 0, -1, 0], [2192, 0, -1, 1]] }, // 氷山
+        2240: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.5, 1, 1]], 'bottom_tile': [[2240, 0, -1, 0]] }, // 毒の沼
+        2288: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.2, 1, 1]], 'bottom_tile': [[2240, 0, -1, 0]] }, // 枯れ木
+        2336: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.5, 1, 1]], 'bottom_tile': [[2336, 0, -1, 0]] }, // 溶岩
+        2384: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.2, 1, 1]], 'bottom_tile': [[2336, 0, -1, 0]] }, // 溶岩の泡
+        2432: { 'top_tile': [[2816, 0, 1, 0], [3008, 0.2, 0.35, 1], [3104, 0.35, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[2432, 0, -1, 0]] }, // 池
+        2480: { 'top_tile': [[2816, 0, 1, 0], [3008, 0.2, 0.3, 1], [3104, 0.3, 0.45, 1], [3872, 0.45, 1, 1]], 'bottom_tile': [[2432, 0, -1, 0]] }, // 岩
+        2528: { 'top_tile': [[3968, 0, 1, 0], [4160, 0.2, 1, 1]], 'bottom_tile': [[2528, 0, -1, 0]] }, // 凍った海
+        2576: { 'top_tile': [[2048, 0, 1, 0]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 渦
+        2624: { 'top_tile': [[2816, 0, 1, 0], [3008, 0.25, 0.35, 1], [3104, 0.35, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[2624, 0, -1, 0]] }, // 大地の境界
+        2672: { 'top_tile': [[2816, 0, 1, 0], [3008, 0.25, 0.35, 1], [3104, 0.35, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[2624, 0, -1, 0]] }, // 下界に落ちる滝
+        2720: { 'top_tile': [[4064, 0, 1, 0], [4112, 0.5, 1, 1]], 'bottom_tile': [[2720, 0, -1, 0]] }, // 雲（大地の境界）
+        2768: { 'top_tile': [[4064, 0, 1, 0], [4112, 0.5, 1, 1]], 'bottom_tile': [[2720, 0, -1, 0]] }, // 雲
+        2816: { 'top_tile': [[2816, 0, 1, 0], [3008, 0.25, 0.35, 1], [3104, 0.35, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[2816, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 平原
+        2864: { 'top_tile': [[2816, 0, 1, 0], [2864, 0.35, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 草原A（濃）
+        2912: { 'top_tile': [[2912, 0, 1, 0], [3056, 0.25, 0.35, 1], [3104, 0.35, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 草原B
+        2960: { 'top_tile': [[2912, 0, 1, 0], [2960, 0.35, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 草原B（濃）
+        3008: { 'top_tile': [[2816, 0, 1, 0], [3008, 0, 1, 1]], 'bottom_tile': [[2816, 0, -1, 0]] }, // 森
+        3056: { 'top_tile': [[2816, 0, 1, 0], [3056, 0, 1, 1]], 'bottom_tile': [[2816, 0, -1, 0]] }, // 森（針葉樹）
+        3104: { 'top_tile': [[2816, 0, 1, 0], [3104, 0, 1, 1]], 'bottom_tile': [[2816, 0, -1, 0]] }, // 山（草）
+        3152: { 'top_tile': [[3296, 0, 1, 0], [3152, 0, 1, 1]], 'bottom_tile': [[3296, 0, -1, 0]] }, // 山（土）
+        3200: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.3, 0.5, 1], [3488, 0.5, 1, 1]], 'bottom_tile': [[3200, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 荒れ地A
+        3248: { 'top_tile': [[3200, 0, 1, 0], [3248, 0.35, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 荒れ地B
+        3296: { 'top_tile': [[3296, 0, 1, 0], [3392, 0.3, 0.5, 1], [3152, 0.5, 1, 1]], 'bottom_tile': [[3296, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 土肌A
+        3344: { 'top_tile': [[3296, 0, 1, 0], [3248, 0.35, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 土肌B
+        3392: { 'top_tile': [[3200, 0, 1, 0], [3392, 0, 1, 1]], 'bottom_tile': [[3200, 0, -1, 0]] }, // 森（枯れ木）
+        3440: { 'top_tile': [[2816, 0, 1, 0], [3440, 0, 1, 1]], 'bottom_tile': [[2816, 0, -1, 0]] }, // 道（土）
+        3488: { 'top_tile': [[3200, 0, 1, 0], [3488, 0, 1, 1]], 'bottom_tile': [[3200, 0, -1, 0]] }, // 丘（土）
+        3536: { 'top_tile': [[3200, 0, 1, 0], [3536, 0, 1, 1]], 'bottom_tile': [[3200, 0, -1, 0]] }, // 山（砂岩）
+        3584: { 'top_tile': [[3584, 0, 1, 0], [3776, 0.15, 0.25, 1], [3536, 0.4, 1, 1]], 'bottom_tile': [[3584, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 砂漠
+        3632: { 'top_tile': [[3584, 0, 1, 0], [3632, 0.35, 1, 1]], 'bottom_tile': [[2048, 0, -1, 0], [2096, -0.5, -1, 1]] }, // 砂漠B
+        3680: { 'top_tile': [[3680, 0, 1, 0], [3392, 0.3, 0.5, 1], [3872, 0.5, 1, 1]], 'bottom_tile': [[3680, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 岩地A
+        3728: { 'top_tile': [[3680, 0, 1, 0], [3728, 0.3, 1, 1], [3920, 0.5, 1, 1]], 'bottom_tile': [[3680, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 岩地B（溶岩）
+        3776: { 'top_tile': [[3584, 0, 1, 0], [3776, 0, 1, 1]], 'bottom_tile': [[3584, 0, -1, 0]] }, // 森（ヤシの木）
+        3824: { 'top_tile': [[2816, 0, 1, 0], [3824, 0, 1, 1]], 'bottom_tile': [[2816, 0, -1, 0]] }, // 道（舗装）
+        3872: { 'top_tile': [[3680, 0, 1, 0], [3872, 0, 1, 1]], 'bottom_tile': [[3680, 0, -1, 0]] }, // 山（岩）
+        3920: { 'top_tile': [[3680, 0, 1, 0], [3920, 0, 1, 1]], 'bottom_tile': [[3680, 0, -1, 0], [3728, -0.25, -1, 1]] }, // 山（溶岩）
+        3968: { 'top_tile': [[3968, 0, 1, 0], [4160, 0.3, 0.5, 1], [4016, 0.5, 1, 1]], 'bottom_tile': [[3968, 0, -0.1, 0], [2048, -0.1, -1, 0], [2096, -0.5, -1, 1]] }, // 雪原
+        4016: { 'top_tile': [[3968, 0, 1, 0], [4016, 0, 1, 1]], 'bottom_tile': [[3968, 0, -1, 0]] }, // 山（雪）
+        4064: { 'top_tile': [[4064, 0, 1, 0], [4112, 0.5, 1, 1]], 'bottom_tile': [[2720, 0, -1, 0]] }, // 雲
+        4112: { 'top_tile': [[4064, 0, 1, 0], [4112, 0.5, 1, 1]], 'bottom_tile': [[2720, 0, -1, 0]] }, // 大きな雲
+        4160: { 'top_tile': [[3968, 0, 1, 0], [4160, 0, 1, 1]], 'bottom_tile': [[3968, 0, -1, 0]] }, // 森（雪）
+        4208: { 'top_tile': [[3200, 0, 1, 0], [3392, 0.3, 0.5, 1], [3488, 0.5, 1, 1]], 'bottom_tile': [[3200, 0, -1, 0], [4208, 0, -1, 1]] }, // 穴
+        4256: { 'top_tile': [[3200, 0, 1, 0], [4256, 0, 1, 1]], 'bottom_tile': [[3200, 0, -1, 0]] }, // 丘（砂岩）
+        4304: { 'top_tile': [[3968, 0, 1, 0], [4304, 0, 1, 1]], 'bottom_tile': [[3968, 0, -1, 0]] } // 丘（雪）
+    };
+
     function MiniatureTileId(x, y, z = 0) {
         let tileId = _Game_Map_tileId.call(this, x, y, z);
         const autotileType = tileId >= Tilemap.TILE_ID_A1 ? Math.floor((tileId - Tilemap.TILE_ID_A1) % 48) : -1;
@@ -1834,16 +2180,17 @@ https://github.com/pota-gon/GenerateWorld
 
                 for (let x = start_x; x < end_x; x++) {
                     for (let y = start_y; y < end_y; y++) {
-                        if (tiles[i][j] === 1) { // 固定
+                        const tile = tiles[i][j];
+                        if (tile === 1) { // 固定
                             if (layer1[i][j] && layer1[i][j] !== 0) setTileId(x, y, 0, layer1[i][j]);
                             if (layer2[i][j] && layer2[i][j] !== 0) setTileId(x, y, 1, layer2[i][j]);
                             if (layer3[i][j] && layer3[i][j] !== 0) setTileId(x, y, 2, layer3[i][j]);
                             if (layer4[i][j] && layer4[i][j] !== 0) setTileId(x, y, 3, layer4[i][j]);
                             if (layer5[i][j] && layer5[i][j] !== 0) setTileId(x, y, 4, layer5[i][j]);
-                        } else if (PotadraBiome_BIOME()[tiles[i][j]]) {
-                            createBiome(x, y, PotadraBiome_BIOME()[tiles[i][j]], SEED_LENGTH, seed);
+                        } else if (BIOME[tile]) {
+                            createBiome(x, y, BIOME[tile], SEED_LENGTH, seed);
                         } else {
-                            // console.debug(tiles[i][j]);
+                            // console.debug(tile);
                         }
                     }
                 }
@@ -2140,7 +2487,7 @@ https://github.com/pota-gon/GenerateWorld
                 if (end_y > $dataMap.height) end_y = $dataMap.height;
                 for (let x = start_x; x < end_x; x++) {
                     for (let y = start_y; y < end_y; y++) {
-                        createBiome(x, y, PotadraBiome_BIOME()[BaseBiome], seed_length, seed);
+                        createBiome(x, y, BIOME[BaseBiome], seed_length, seed);
                     }
                 }
             }
@@ -2822,16 +3169,38 @@ https://github.com/pota-gon/GenerateWorld
     // コマンドキー
     //==============================================================================
     if (CommandKey && Potadra_isTest(PlayTestKey)) {
-        if (RegenerateKey === 'M') Input.keyMapper[77] = 'M';
-        if (ExportJsonKey === 'E') Input.keyMapper[69] = 'E';
-        if (OutputJsonKey === 'O') Input.keyMapper[79] = 'O';
+        let regenerate_code, export_json_code, output_json_code;
+        if (RegenerateKey) {
+            regenerate_code = Potadra_keyCode(RegenerateKey);
+            if (regenerate_code) {
+                Input.keyMapper[regenerate_code] = RegenerateKey;
+            } else {
+                console.warn('ワールド再生成のキーが競合しています。この機能を使う場合はプラグインパラメータから他のキーを指定してください。');
+            }
+        }
+        if (ExportJsonKey) {
+            export_json_code = Potadra_keyCode(ExportJsonKey);
+            if (export_json_code) {
+                Input.keyMapper[export_json_code] = ExportJsonKey;
+            } else {
+                console.warn('マップJSON出力(イベントあり)のキーが競合しています。この機能を使う場合はプラグインパラメータから他のキーを指定してください。');
+            }
+        }
+        if (OutputJsonKey) {
+            output_json_code = Potadra_keyCode(OutputJsonKey);
+            if (output_json_code) {
+                Input.keyMapper[output_json_code] = OutputJsonKey;
+            } else {
+                console.warn('マップJSON出力(イベントなし)のキーが競合しています。この機能を使う場合はプラグインパラメータから他のキーを指定してください。');
+            }
+        }
 
         const _Game_Player_triggerButtonAction = Game_Player.prototype.triggerButtonAction;
         Game_Player.prototype.triggerButtonAction = function () {
             const value = _Game_Player_triggerButtonAction.apply(this, arguments);
-            if (Input.isTriggered(RegenerateKey)) RegenerateWorld();
-            if (Input.isTriggered(ExportJsonKey)) JsonExport(SameMapExportJson, true);
-            if (Input.isTriggered(OutputJsonKey)) JsonExport(SameMapExportJson, false);
+            if (regenerate_code && Input.isTriggered(RegenerateKey)) RegenerateWorld();
+            if (export_json_code && Input.isTriggered(ExportJsonKey)) JsonExport(SameMapExportJson, true);
+            if (output_json_code && Input.isTriggered(OutputJsonKey)) JsonExport(SameMapExportJson, false);
             return value;
         };
     }
