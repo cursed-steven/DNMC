@@ -20,6 +20,40 @@
  * @orderAfter DNMC_sceneMenu
  * 
  * @help DNMC_sceneSkill.js
+ * 
+ * @param withImmediateMove
+ * @text マップ/移動スキルのCEV
+ * @type common_event[]
+ * 
+ * @param lastUsedSkillId
+ * @text 直前に使用したスキルのID
+ * @desc 直前に使用したスキルのIDを格納する変数のID
+ * @type variable
+ * 
+ * @param lastUsedSkillHPCost
+ * @text 直前に使用したスキルのHPコスト
+ * @desc 直前に使用したスキルのHPコストを格納する変数のID
+ * @type variable
+ * 
+ * @param lastUsedSkillMPCost
+ * @text 直前に使用したスキルのMPコスト
+ * @desc 直前に使用したスキルのMPコストを格納する変数のID
+ * @type variable
+ * 
+ * @param lastUsedSkillTPCost
+ * @text 直前に使用したスキルのTPコスト
+ * @desc 直前に使用したスキルのTPコストを格納する変数のID
+ * @type variable
+ * 
+ * @param lastSubjectActorId
+ * @text 直前に行動したアクターのID
+ * @desc 直前に行動したアクターのIDを格納する変数のID
+ * @type variable
+ * 
+ * @param lastTargetActorId
+ * @text 直前に対象となったアクターのID
+ * @desc 直前に対象となったアクターのIDを格納する変数のID
+ * @type variable
  */
 
 (() => {
@@ -204,6 +238,34 @@
         this._skillTypeWindow.activate();
         this._skillTypeWindow.selectLast();
         this._buttonGuide.setActiveWindow("Window_SkillType");
+    };
+
+    const _Scene_Skill_onItemOk = Scene_Skill.prototype.onItemOk;
+    /**
+     * 移動やマップ上の効果を伴うスキルを使用した場合はすぐにScene_Mapに移行してCEV実行
+     */
+    Scene_Skill.prototype.onItemOk = function () {
+        const isMoveImmediate = this.item().effects.find(e => {
+            return e.code === Game_Action.EFFECT_COMMON_EVENT
+                && param.withImmediateMove.includes(e.dataId);
+        });
+
+        if (isMoveImmediate) {
+            console.log(`> isMoveImmediate skillId: ${this.item().id}`);
+            console.log(`> user: ${this.user()._actorId}`);
+            console.log(`> hpCost: ${this.item().hpCost}`);
+            console.log(`> mpCost: ${this.item().mpCost}`);
+            console.log(`> tpCost: ${this.item().tpCost}`);
+            $v.set(param.lastSubjectActorId, this.user()._actorId);
+            $v.set(param.lastUsedSkillId, this.item().id);
+            $v.set(param.lastUsedSkillHPCost, this.item().hpCost);
+            $v.set(param.lastUsedSkillMPCost, this.item().mpCost);
+            $v.set(param.lastUsedSkillTPCost, this.item().tpCost);
+            $gameTemp.reserveCommonEvent(isMoveImmediate.dataId);
+            SceneManager.goto(Scene_Map);
+        } else {
+            _Scene_Skill_onItemOk.call(this);
+        }
     };
 
     /**
