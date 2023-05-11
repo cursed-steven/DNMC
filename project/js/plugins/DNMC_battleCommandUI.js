@@ -444,20 +444,11 @@
      * 新設カスタムアクターコマンドウィンドウの領域
      */
     Scene_Battle.prototype.customActorCommandWindowRect = function () {
-        const ww = Graphics.boxWidth - this._partyCommandWindow.width;
+        const ww = Graphics.boxWidth - 160;
         const wh = this.windowAreaHeight();
         const wx = 0;
         const wy = Graphics.boxHeight - wh;
         return new Rectangle(wx, wy, ww, wh);
-    };
-
-    const _Scene_Battle_startPartyCommandSelection = Scene_Battle.prototype.startPartyCommandSelection;
-    /**
-     * パーティーコマンド表示中はアクターコマンドウィンドウは非活性に
-     */
-    Scene_Battle.prototype.startPartyCommandSelection = function () {
-        _Scene_Battle_startPartyCommandSelection.call(this);
-        this._actorCommandWindow.deactivate();
     };
 
     //-------------------------------------------------------------------------
