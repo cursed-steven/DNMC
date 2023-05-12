@@ -502,12 +502,13 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         const paramX = this.paramX();
         const paramWidth = this.paramWidth();
         const rightArrowWidth = this.rightArrowWidth();
+        const diffOffset = 24;
         if (this._actor) {
-            this.drawCurrentDiff(paramX + paramWidth * 3 + rightArrowWidth, y, paramId);
+            this.drawCurrentDiff(paramX + paramWidth * 3 + rightArrowWidth - diffOffset, y, paramId);
         }
-        this.drawRightArrow(paramX + paramWidth * 5, y);
+        this.drawRightArrow(paramX + paramWidth * 5 - diffOffset, y);
         if (this._tempActor) {
-            this.drawNewDiff(paramX + paramWidth * 5 + rightArrowWidth, y, paramId);
+            this.drawNewDiff(paramX + paramWidth * 5 + rightArrowWidth - diffOffset, y, paramId);
         }
     };
 
@@ -621,7 +622,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
      */
     Window_EquipDetail.prototype.initialize = function (rect, actor) {
         Window_Selectable.prototype.initialize.call(this, rect);
-        this.contents.fontSize = 12;
+        this.contents.fontSize = 15;
         this._actor = actor;
         this.clearAllTraits();
     };
