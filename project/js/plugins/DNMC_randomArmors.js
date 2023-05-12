@@ -550,7 +550,7 @@ function DNMC_randomArmors() {
      */
     DNMC_randomArmors.traitToDesc = function (trait) {
         const tmplParam = "{{param}} {{value}}{{updown}}";
-        const tmplElement = "{{element}}ダメージ x{{value}}";
+        const tmplElement = "{{element}}属性被ダメージ x{{value}}";
         const tmplState = "{{state}}発生率 x{{value}}";
         const tmplDebuff = "{{param}}弱体発生率 x{{value}}";
         let param = null;
@@ -578,6 +578,7 @@ function DNMC_randomArmors() {
                 return TextManager.trait(trait.code);
                 break;
             case Game_BattlerBase.TRAIT_ELEMENT_RATE:
+                if (trait.value === 1) return "";
                 elementState = $dataSystem.elements[trait.dataId];
                 return trait.value
                     ? tmplElement.replace("{{element}}", elementState)
@@ -585,6 +586,7 @@ function DNMC_randomArmors() {
                     : "";
                 break;
             case Game_BattlerBase.TRAIT_DEBUFF_RATE:
+                if (trait.value === 1) return "";
                 param = TextManager.param(trait.dataId);
                 return trait.value
                     ? tmplDebuff.replace("{{param}}", param)
@@ -592,6 +594,7 @@ function DNMC_randomArmors() {
                     : "";
                 break;
             case Game_BattlerBase.TRAIT_STATE_RATE:
+                if (trait.value === 1) return "";
                 elementState = $dataStates[trait.dataId].name;
                 return trait.value
                     ? tmplState.replace("{{state}}", elementState)
