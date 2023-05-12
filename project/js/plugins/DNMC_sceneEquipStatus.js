@@ -345,6 +345,8 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
     Scene_EquipStatus.prototype.hideItemWindow = function () {
         this._slotWindow.activate();
         this._itemWindow.deselect();
+        this._statusWindow.setTempActor(null);
+        this._statusWindow.refresh();
     };
 
     const _Scene_EquipStatus_update = Scene_EquipStatus.prototype.update;
