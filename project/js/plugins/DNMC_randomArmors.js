@@ -588,14 +588,14 @@ function DNMC_randomArmors() {
                 param = TextManager.param(trait.dataId);
                 return trait.value
                     ? tmplDebuff.replace("{{param}}", param)
-                        .replace("{{value}}", trait.value)
+                        .replace("{{value}}", Math.floor(trait.value * 100) / 100)
                     : "";
                 break;
             case Game_BattlerBase.TRAIT_STATE_RATE:
                 elementState = $dataStates[trait.dataId].name;
                 return trait.value
-                    ? tmplState.replace("{{param}}", param)
-                        .replace("{{value}}", trait.value)
+                    ? tmplState.replace("{{state}}", elementState)
+                        .replace("{{value}}", Math.floor(trait.value * 100) / 100)
                     : "";
                 break;
             case Game_BattlerBase.TRAIT_STATE_RESIST:
@@ -606,7 +606,7 @@ function DNMC_randomArmors() {
                 return TextManager.trait(trait.code, trait.dataId);
                 break;
             case Game_BattlerBase.TRAIT_SPARAM:
-                param = TextManager.trait(trait.code, trait.dataId);
+                param = TextManager.trait(trait.code, trait.dataId).replace("TP", TextManager.tpA);
                 value = " x" + (Math.floor(trait.value * 100) / 100).toString();
                 updown = "";
                 break;
