@@ -797,7 +797,9 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
                     dataId: stateNos[i][0].dataId
                 };
                 this.drawText(
-                    traitToDesc(trait),
+                    slot === 0
+                        ? DNMC_randomWeapons.traitToDesc(trait)
+                        : DNMC_randomArmors.traitToDesc(trait),
                     this.itemWidth() * slot,
                     this.lineHeight() * ctr
                 );
@@ -816,7 +818,9 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
                     dataId: i
                 };
                 this.drawText(
-                    traitToDesc(trait),
+                    slot === 0
+                        ? DNMC_randomWeapons.traitToDesc(trait)
+                        : DNMC_randomArmors.traitToDesc(trait),
                     this.itemWidth() * slot,
                     this.lineHeight() * ctr
                 );
@@ -906,7 +910,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
                     value: value
                 };
                 this.drawText(
-                    traitToDesc(trait),
+                    DNMC_randomArmors.traitToDesc(trait),
                     this.itemWidth() * 5,
                     this.lineHeight2() * ctr + offsetY
                 );
@@ -927,7 +931,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
                     dataId: sa[i][0].dataId
                 };
                 this.drawText(
-                    traitToDesc(trait),
+                    DNMC_randomArmors.traitToDesc(trait),
                     this.itemWidth() * 5,
                     this.lineHeight2() * ctr + offsetY
                 );
@@ -948,7 +952,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
                     dataId: i
                 };
                 this.drawText(
-                    traitToDesc(trait),
+                    DNMC_randomArmors.traitToDesc(trait),
                     this.itemWidth() * 5,
                     this.lineHeight2() * ctr + offsetY
                 );
@@ -998,7 +1002,9 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
                     lineHeight = this.lineHeight2() * ctr + offsetY;
                 }
                 this.drawText(
-                    traitToDesc(trait),
+                    slot === 0
+                        ? DNMC_randomWeapons.traitToDesc(trait)
+                        : DNMC_randomArmors.traitToDesc(trait),
                     this.itemWidth() * slot,
                     lineHeight
                 );
@@ -1037,7 +1043,9 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
                     lineHeight = this.lineHeight2() * ctr + offsetY;
                 }
                 this.drawText(
-                    traitToDesc(trait),
+                    slot === 0
+                        ? DNMC_randomWeapons.traitToDesc(trait)
+                        : DNMC_randomArmors.traitToDesc(trait),
                     this.itemWidth() * slot,
                     lineHeight
                 );
@@ -1072,7 +1080,9 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
             lineHeight = this.lineHeight2() * ctr + offsetY;
         }
         this.drawText(
-            traitToDesc(trait),
+            slot === 0
+                ? DNMC_randomWeapons.traitToDesc(trait)
+                : DNMC_randomArmors.traitDesc(trait),
             this.itemWidth() * slot,
             lineHeight
         );
@@ -1111,105 +1121,6 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
             specials: [[], [], [], [], [], [], [], [], [], []]
         };
     };
-
-    /**
-     * 特徴の内容から説明文を出力する。
-     * @param {Trait_Effect} trait 
-     * @returns string
-     */
-    function traitToDesc(trait) {
-        const tmplParam = "{{param}}{{value}}";
-        const tmplElement = "対{{element}}{{value}}";
-        const tmplState = "{{state}}やられ{{value}}";
-        const tmplDebuff = "{{param}}弱体{{value}}";
-        let param = null;
-        let elementState = null;
-        let value = null;
-
-        switch (trait.code) {
-            case Game_BattlerBase.TRAIT_PARAM:
-                param = TextManager.param(trait.dataId);
-                value = valueStringMultiply(trait.value);
-                break;
-            case Game_BattlerBase.TRAIT_XPARAM:
-                param = TextManager.additionalParam(trait.dataId);
-                value = valueStringAddSub(trait.value);
-                break;
-            case Game_BattlerBase.TRAIT_ATTACK_ELEMENT:
-                return "攻撃属性: " + $dataSystem.elements[trait.dataId];
-                break;
-            case Game_BattlerBase.TRAIT_ATTACK_TIMES:
-                return TextManager.trait(trait.code) + trait.value;
-                break;
-            case Game_BattlerBase.TRAIT_ACTION_PLUS:
-                return TextManager.trait(trait.code) + trait.value;
-                break;
-            case Game_BattlerBase.TRAIT_ELEMENT_RATE:
-                elementState = $dataSystem.elements[trait.dataId];
-                value = valueStringMultiply(trait.value);
-                return value ? tmplElement.replace("{{element}}", elementState).replace("{{value}}", value) : "";
-                break;
-            case Game_BattlerBase.TRAIT_DEBUFF_RATE:
-                param = TextManager.param(trait.dataId);
-                value = valueStringMultiply(trait.value);
-                return value ? tmplDebuff.replace("{{param}}", param).replace("{{value}}", value) : "";
-                break;
-            case Game_BattlerBase.TRAIT_STATE_RATE:
-                elementState = $dataStates[trait.dataId].name;
-                value = valueStringMultiply(trait.value);
-                return value ? tmplState.replace("{{state}}", elementState).replace("{{value}}", value) : "";
-                break;
-            case Game_BattlerBase.TRAIT_STATE_RESIST:
-                elementState = $dataStates[trait.dataId].name;
-                return elementState + "無効";
-                break;
-            case Game_BattlerBase.TRAIT_PARTY_ABILITY:
-                return TextManager.trait(trait.code, trait.dataId);
-                break;
-            case Game_BattlerBase.TRAIT_SPARAM:
-                param = TextManager.trait(trait.code, trait.dataId);
-                value = valueStringMultiply(trait.value);
-                break;
-        }
-
-        return value ? tmplParam.replace("{{param}}", param).replace("{{value}}", value) : "";
-    }
-
-    /**
-     * 数値から説明文パーツを組み立てて返す(倍率の場合)
-     * @param {number} tvalue 
-     * @returns string
-     */
-    function valueStringMultiply(tvalue) {
-        let value = "";
-        if (tvalue > 1) {
-            value = (Math.floor((tvalue - 1) * 100)).toString() + "%↑";
-        } else if (tvalue === 1) {
-            return "";
-        } else if (tvalue < 1) {
-            value = Math.floor(tvalue * 100 - 100).toString().replace("-", "") + "%↓";
-        }
-
-        return value;
-    }
-
-    /**
-     * 数値から説明文パーツを組み立てて返す(確率加算の場合)
-     * @param {number} tvalue 
-     * @returns string
-     */
-    function valueStringAddSub(tvalue) {
-        let value = "";
-        if (tvalue > 0) {
-            value = (Math.floor(tvalue * 100)).toString() + "%↑";
-        } else if (tvalue === 0) {
-            return "";
-        } else if (tvalue < 0) {
-            value = (Math.floor(tvalue * 100)).toString().replace("-", "") + "%↓";
-        }
-
-        return value;
-    }
 
     /**
      * このウィンドウ専用の行の高さ

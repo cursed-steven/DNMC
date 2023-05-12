@@ -293,21 +293,24 @@ function DNMC_randomWeapons() {
      * @param {any} trait 
      * @returns string
      */
-    function traitToDesc(trait) {
-        const tmpl = "{{param}}: {{value}}";
+    DNMC_randomWeapons.traitToDesc = function (trait) {
+        const tmpl = "{{param}} {{value}}{{updown}}";
         let param = null;
         let value = null;
+        let updown = null;
 
         switch (trait.code) {
             case Game_BattlerBase.TRAIT_PARAM:
                 if (trait.value === 1) return "";
                 param = TextManager.param(trait.dataId);
-                value = valueStringMultiply(trait.value);
+                value = " x" + (Math.floor(trait.value * 100) / 100).toString();
+                updown = "";
                 break;
             case Game_BattlerBase.TRAIT_XPARAM:
                 if (trait.value === 0) return "";
                 param = TextManager.additionalParam(trait.dataId);
                 value = valueStringAddSub(trait.value);
+                updown = trait.value > 0 ? "UP" : "DOWN";
                 break;
             case Game_BattlerBase.TRAIT_ATTACK_ELEMENT:
                 return $dataSystem.elements[trait.dataId];
@@ -321,29 +324,13 @@ function DNMC_randomWeapons() {
         }
 
         const result = param && value
-            ? tmpl.replace("{{param}}", param).replace("{{value}}", value)
+            ? tmpl.replace("{{param}}", param)
+                .replace("{{value}}", value)
+                .replace("{{updown}}", updown)
             : "";
 
         return result;
-    }
-
-    /**
-     * 数値から説明文パーツを組み立てて返す(倍率の場合)
-     * @param {number} tvalue 
-     * @returns string
-     */
-    function valueStringMultiply(tvalue) {
-        let value = "";
-        if (tvalue > 1) {
-            value = (Math.floor((tvalue - 1) * 100)).toString() + "%↑";
-        } else if (tvalue === 1) {
-            return "";
-        } else if (tvalue < 1) {
-            value = Math.floor(tvalue * 100 - 100).toString().replace("-", "") + "%↓";
-        }
-
-        return value;
-    }
+    };
 
     /**
      * 数値から説明文パーツを組み立てて返す(確率加算の場合)
@@ -353,11 +340,11 @@ function DNMC_randomWeapons() {
     function valueStringAddSub(tvalue) {
         let value = "";
         if (tvalue > 0) {
-            value = (Math.floor(tvalue * 100)).toString() + "%↑";
+            value = (Math.floor(tvalue * 100)).toString() + "%";
         } else if (tvalue === 0) {
             return "";
         } else if (tvalue < 0) {
-            value = (Math.floor(tvalue * 100)).toString().replace("-", "") + "%↓";
+            value = (Math.floor(tvalue * 100)).toString().replace("-", "") + "%";
         }
 
         return value;
@@ -792,16 +779,16 @@ function DNMC_randomWeapons() {
         traits1 = traits1.concat(wtype.fixedTraits);
         traits1 = traits1.concat(mat.elementTraits);
         for (const trait of traits1) {
-            if (trait && traitToDesc(trait)) {
-                descItems.push(traitToDesc(trait));
+            if (trait && DNMC_randomWeapons.traitToDesc(trait)) {
+                descItems.push(DNMC_randomWeapons.traitToDesc(trait));
                 price += traitToPrice(trait);
             }
         }
         descItems.push("\n");
         traits2 = randomTraits(mat);
         for (const trait of traits2) {
-            if (trait && traitToDesc(trait)) {
-                descItems.push(traitToDesc(trait));
+            if (trait && DNMC_randomWeapons.traitToDesc(trait)) {
+                descItems.push(DNMC_randomWeapons.traitToDesc(trait));
                 price += traitToPrice(trait);
             }
         }

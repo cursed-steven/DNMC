@@ -548,23 +548,28 @@ function DNMC_randomArmors() {
      * @param {Trait_Effect} trait 
      * @returns string
      */
-    function traitToDesc(trait) {
-        const tmplParam = "{{param}}{{value}}";
-        const tmplElement = "対{{element}}{{value}}";
-        const tmplState = "{{state}}やられ{{value}}";
-        const tmplDebuff = "{{param}}弱体{{value}}";
+    DNMC_randomArmors.traitToDesc = function (trait) {
+        const tmplParam = "{{param}} {{value}}{{updown}}";
+        const tmplElement = "{{element}}ダメージ x{{value}}";
+        const tmplState = "{{state}}発生率 x{{value}}";
+        const tmplDebuff = "{{param}}弱体発生率 x{{value}}";
         let param = null;
         let elementState = null;
         let value = null;
+        let updown = "";
 
         switch (trait.code) {
             case Game_BattlerBase.TRAIT_PARAM:
+                if (trait.value === 1) return "";
                 param = TextManager.param(trait.dataId);
-                value = valueStringMultiply(trait.value);
+                value = " x" + (Math.floor(trait.value * 100) / 100).toString();
+                updown = "";
                 break;
             case Game_BattlerBase.TRAIT_XPARAM:
+                if (trait.value === 0) return "";
                 param = TextManager.additionalParam(trait.dataId);
                 value = valueStringAddSub(trait.value);
+                updown = trait.value > 0 ? "UP" : "DOWN";
                 break;
             case Game_BattlerBase.TRAIT_ATTACK_TIMES:
                 return TextManager.trait(trait.code);
@@ -574,18 +579,24 @@ function DNMC_randomArmors() {
                 break;
             case Game_BattlerBase.TRAIT_ELEMENT_RATE:
                 elementState = $dataSystem.elements[trait.dataId];
-                value = valueStringMultiply(trait.value);
-                return value ? tmplElement.replace("{{element}}", elementState).replace("{{value}}", value) : "";
+                return trait.value
+                    ? tmplElement.replace("{{element}}", elementState)
+                        .replace("{{value}}", Math.floor(trait.value * 100) / 100)
+                    : "";
                 break;
             case Game_BattlerBase.TRAIT_DEBUFF_RATE:
                 param = TextManager.param(trait.dataId);
-                value = valueStringMultiply(trait.value);
-                return value ? tmplDebuff.replace("{{param}}", param).replace("{{value}}", value) : "";
+                return trait.value
+                    ? tmplDebuff.replace("{{param}}", param)
+                        .replace("{{value}}", trait.value)
+                    : "";
                 break;
             case Game_BattlerBase.TRAIT_STATE_RATE:
                 elementState = $dataStates[trait.dataId].name;
-                value = valueStringMultiply(trait.value);
-                return value ? tmplState.replace("{{state}}", elementState).replace("{{value}}", value) : "";
+                return trait.value
+                    ? tmplState.replace("{{param}}", param)
+                        .replace("{{value}}", trait.value)
+                    : "";
                 break;
             case Game_BattlerBase.TRAIT_STATE_RESIST:
                 elementState = $dataStates[trait.dataId].name;
@@ -596,29 +607,16 @@ function DNMC_randomArmors() {
                 break;
             case Game_BattlerBase.TRAIT_SPARAM:
                 param = TextManager.trait(trait.code, trait.dataId);
-                value = valueStringMultiply(trait.value);
+                value = " x" + (Math.floor(trait.value * 100) / 100).toString();
+                updown = "";
                 break;
         }
 
-        return value ? tmplParam.replace("{{param}}", param).replace("{{value}}", value) : "";
-    }
-
-    /**
-     * 数値から説明文パーツを組み立てて返す(倍率の場合)
-     * @param {number} tvalue 
-     * @returns string
-     */
-    function valueStringMultiply(tvalue) {
-        let value = "";
-        if (tvalue > 1) {
-            value = (Math.floor((tvalue - 1) * 100)).toString() + "%↑";
-        } else if (tvalue === 1) {
-            return "";
-        } else if (tvalue < 1) {
-            value = Math.floor(tvalue * 100 - 100).toString().replace("-", "") + "%↓";
-        }
-
-        return value;
+        return value
+            ? tmplParam.replace("{{param}}", param)
+                .replace("{{value}}", value)
+                .replace("{{updown}}", updown)
+            : "";
     }
 
     /**
@@ -629,11 +627,11 @@ function DNMC_randomArmors() {
     function valueStringAddSub(tvalue) {
         let value = "";
         if (tvalue > 0) {
-            value = (Math.floor(tvalue * 100)).toString() + "%↑";
+            value = (Math.floor(tvalue * 100)).toString() + "%";
         } else if (tvalue === 0) {
             return "";
         } else if (tvalue < 0) {
-            value = (Math.floor(tvalue * 100)).toString().replace("-", "") + "%↓";
+            value = (Math.floor(tvalue * 100)).toString().replace("-", "") + "%";
         }
 
         return value;
@@ -1059,15 +1057,15 @@ function DNMC_randomArmors() {
         }
         traits = traits1.concat(traits2);
         for (const trait of traits1) {
-            if (trait && traitToDesc(trait)) {
-                descItems.push(traitToDesc(trait));
+            if (trait && DNMC_randomArmors.traitToDesc(trait)) {
+                descItems.push(DNMC_randomArmors.traitToDesc(trait));
                 price += traitToPrice(trait);
             }
         }
         descItems.push("\n");
         for (const trait of traits2) {
-            if (trait && traitToDesc(trait)) {
-                descItems.push(traitToDesc(trait));
+            if (trait && DNMC_randomArmors.traitToDesc(trait)) {
+                descItems.push(DNMC_randomArmors.traitToDesc(trait));
                 price += traitToPrice(trait);
             }
         }
