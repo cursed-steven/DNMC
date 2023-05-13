@@ -700,7 +700,7 @@
                 rect.width - costWidth,
                 index
             );
-            this.drawSkillCost(cmd, rect.x, rect.y, costWidth);
+            this.drawSkillCost(cmd, rect);
             this.changePaintOpacity(1);
         }
     };
@@ -732,54 +732,54 @@
     /**
      * スキルの発動BB上限とMPコストの描画
      * @param {any} cmd 
-     * @param {number} x 
-     * @param {number} y 
-     * @param {number} width 
+     * @param {Rectangle} rect
      * @returns void
      */
-    Window_CustomActorCommand.prototype.drawSkillCost = function (cmd, x, y, width) {
+    Window_CustomActorCommand.prototype.drawSkillCost = function (cmd, rect) {
         if (!this.actor()) return;
 
         const skill = $dataSkills[cmd.ext];
         if (!skill) return;
 
-        // X座標微調整
-        const x2 = x + this.width / 2 - this.costWidth() * 2 + this.textWidth("0");
-
-        this.drawTpCost(skill, x2, y);
-        this.drawMpCost(skill, x2 + this.textWidth("0000"), y);
-    };
-
-    /**
-     * 発動BB上限の描画
-     * @param {any} skill 
-     * @param {number} x 
-     * @param {number} y 
-     */
-    Window_CustomActorCommand.prototype.drawTpCost = function (skill, x, y) {
-        const cost = this.actor() ? this.actor().skillTpCost(skill) : 0;
-        const width = this.textWidth("000");
-
-        this.changeTextColor(ColorManager.tpCostColor());
-        if (cost < 100) {
-            this.drawText(cost, x, y, width, "right");
-        }
+        if (skill.mpCost) this.drawMpCost(skill, rect);
+        if (skill.tpCost) this.drawTpCost(skill, rect);
         this.resetTextColor();
     };
 
     /**
      * MPコストの描画
      * @param {any} skill 
-     * @param {number} x 
-     * @param {number} y 
+     * @param {Rectangle} rect
      */
-    Window_CustomActorCommand.prototype.drawMpCost = function (skill, x, y) {
-        const cost = this.actor() ? this.actor().skillMpCost(skill) : 0;
-        const width = this.textWidth("000");
-
+    Window_CustomActorCommand.prototype.drawMpCost = function (skill, rect) {
+        const mpCostHeader = TextManager.mpA + ": ";
         this.changeTextColor(ColorManager.mpCostColor());
-        this.drawText(cost, x, y, width, "right");
-        this.resetTextColor();
+        this.drawText(
+            mpCostHeader + skill.mpCost,
+            rect.x + rect.width / 2,
+            rect.y,
+            rect.width / 3
+        );
+    };
+
+    /**
+     * 発動BB上限の描画
+     * @param {any} skill 
+     * @param {Rectangle} rect
+     */
+    Window_CustomActorCommand.prototype.drawTpCost = function (skill, rect) {
+        const tpLimitHeader = TextManager.tpA + ": ";
+        const tpLimitFooter = "以下";
+        this.changeTextColor(ColorManager.tpCostColor());
+        if (skill.tpCost < 100) {
+            this.drawText(
+                tpLimitHeader + skill.tpCost + tpLimitFooter,
+                rect.x + rect.width * 2 / 3,
+                rect.y,
+                rect.width / 3 * 2
+                // "right"
+            );
+        }
     };
 
     /**
@@ -852,7 +852,7 @@
      * @returns number
      */
     Window_CustomActorCommand.prototype.keysNameWidth = function () {
-        return this.textWidth("000");
+        return this.textWidth("0000");
     };
 
     /**
@@ -860,7 +860,7 @@
      * @returns number
      */
     Window_CustomActorCommand.prototype.costWidth = function () {
-        return this.textWidth("0000000");
+        return this.width / 2;
     };
 
 })();

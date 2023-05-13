@@ -486,7 +486,7 @@
         }
 
         if (skill.tpCost) {
-            const tpLimitHeader = TextManager.tpA;
+            const tpLimitHeader = TextManager.tpA + ": ";
             const tpLimitFooter = "以下";
             this.changeTextColor(ColorManager.tpCostColor());
             if (skill.tpCost < 100) {

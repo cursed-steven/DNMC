@@ -633,7 +633,7 @@ Scene_Operation.prototype.initialize = function () {
         }
 
         if (skill.tpCost) {
-            const tpLimitHeader = TextManager.tpA;
+            const tpLimitHeader = TextManager.tpA + ": ";
             const tpLimit = actor ? actor.skillTpCost(skill) : skill.tpCost;
             const tpLimitFooter = "以下";
             this.changeTextColor(ColorManager.tpCostColor());
