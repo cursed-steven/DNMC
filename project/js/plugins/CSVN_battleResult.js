@@ -339,7 +339,7 @@
      * @returns number
      */
     Window_LvUP.prototype.numVisibleRows = function () {
-        return 2;
+        return 4;
     };
 
     /**
@@ -348,12 +348,10 @@
      */
     Window_LvUP.prototype.drawItem = function (index) {
         const data = this._data[index];
-        const actor = $gameActors.actor(data.actorId);
         const rect = this.itemRect(index);
         this.drawPendingItemBackground(index);
         this.drawActorNameClass(data, index);
         this.drawLv(rect, data, index);
-        this.drawParams(actor, rect, data);
     };
 
     /**
@@ -850,7 +848,6 @@
         const current = ba0.after.exp;
         const next = actor.expForLevel(actor._level + 1);
         const diff = next - current;
-        const earned = BattleManager._rewards.exp;
         let tmpX = 0;
 
         rect.y -= 12;
@@ -858,20 +855,29 @@
         this.drawExpParamName(rect, index);
         tmpX = rect.width / 10 * 3 + this.itemPadding() * 4 + this.textWidth("Lv: 00 ");
 
-        this.drawExpValue(current, tmpX, rect.y, actor.isMaxLevel());
-        tmpX += this.textWidth("0000000");
-
         this.drawText(" + ", tmpX, rect.y + 10, this.textWidth("000"), "center");
         tmpX += this.textWidth("000");
 
-        this.drawExpValue(earned, tmpX, rect.y);
-        tmpX += this.textWidth("0000000 ");
+        this.drawExpValue(this.getEarned(actor), tmpX, rect.y);
+        tmpX += this.textWidth("00000000000");
 
         this.drawText("→ Left: ", tmpX, rect.y + 10, this.textWidth("→ Left: "));
-        tmpX += this.textWidth("→ Left: ");
+        tmpX += this.textWidth("→____Left:_");
 
         this.drawExpValue(diff, tmpX, rect.y, actor.isMaxLevel());
         tmpX += this.textWidth("0000000");
+    };
+
+    /**
+     * 取得経験値に各所の特徴を反映した値を返す
+     * @param {Game_Actor} actor 
+     * @returns number
+     */
+    Window_Exp.prototype.getEarned = function (actor) {
+        let earned = BattleManager._rewards.exp;
+        earned *= actor.traitsPi(Game_BattlerBase.TRAIT_SPARAM, SPECIAL_PARAM.EXP_GET_RATE);
+
+        return earned;
     };
 
     /**
