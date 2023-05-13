@@ -472,6 +472,17 @@ class Trait_Effect {
     };
 
     //-----------------------------------------------------------------------------
+    // Game_Message
+
+    /**
+     * outlineWidth を増やした影響でアウトライン部分が切れるのを防止する workaround 。
+     * @param {string} text 
+     */
+    Game_Message.prototype.add = function (text) {
+        this._texts.push(` ${text} `);
+    };
+
+    //-----------------------------------------------------------------------------
     // Window_StatusBase
     //
     // actor が null できてしまうこと自体おかしいけど一時的に workaround
