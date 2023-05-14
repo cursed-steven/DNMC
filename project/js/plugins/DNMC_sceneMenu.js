@@ -188,6 +188,17 @@
         }
     };
 
+    //-----------------------------------------------------------------------------
+    // Scene_Options
+
+    const _Scene_Options_maxCommands = Scene_Options.prototype.maxCommands;
+    /**
+     * オプションのコマンド数に1追加
+     * @returns number
+     */
+    Scene_Options.prototype.maxCommands = function () {
+        return _Scene_Options_maxCommands.call(this) + 1;
+    };
 
     //-----------------------------------------------------------------------------
     // Window_Command
@@ -223,7 +234,6 @@
         this.addFormationCommand();
         this.addOptionsCommand();
         this.addSaveCommand();
-        this.addGameEndCommand();
     };
 
     /**
@@ -306,6 +316,53 @@
      */
     Window_MenuActor.prototype.numVisibleRows = function () {
         return $gameParty.size() < 4 ? $gameParty.size() : 4;
+    };
+
+    //-----------------------------------------------------------------------------
+    // Window_Option
+
+    const _Window_Options_makeCommandList = Window_Options.prototype.makeCommandList;
+    Window_Options.prototype.addGameEndCommand = Window_MenuCommand.prototype.addGameEndCommand;
+    Window_Options.prototype.isGameEndEnabled = Window_MenuCommand.prototype.isGameEndEnabled;
+    /**
+     * 「ゲーム終了」を追加
+     */
+    Window_Options.prototype.makeCommandList = function () {
+        _Window_Options_makeCommandList.call(this);
+        this.addGameEndCommand();
+    };
+
+    /**
+     * 「ゲーム終了」のための分岐を追加
+     * @param {number} index 
+     */
+    Window_Options.prototype.drawItem = function (index) {
+        const title = this.commandName(index);
+        const status = this.statusText(index);
+        const rect = this.itemLineRect(index);
+        const statusWidth = this.statusWidth();
+        const titleWidth = rect.width - statusWidth;
+        this.resetTextColor();
+        this.changePaintOpacity(this.isCommandEnabled(index));
+        this.drawText(title, rect.x, rect.y, titleWidth, "left");
+        if (index < this.maxItems() - 1) {
+            this.drawText(status, rect.x + titleWidth, rect.y, statusWidth, "right");
+        }
+    };
+
+    const _Window_Options_processOk = Window_Options.prototype.processOk;
+    /**
+     * OK時の処理に使用ゲームパッドの変更を追加
+     */
+    Window_Options.prototype.processOk = function () {
+        const index = this.index();
+        const symbol = this.commandSymbol(index);
+        if (symbol === 'gameEnd') {
+            this.playOkSound();
+            SceneManager.push(Scene_GameEnd);
+        } else {
+            _Window_Options_processOk.call(this);
+        }
     };
 
     //-----------------------------------------------------------------------------
