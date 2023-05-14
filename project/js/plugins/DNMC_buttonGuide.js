@@ -315,8 +315,10 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
         switch (this.activeWindow) {
             case "Window_CtlrL":
             case "Window_CtlrR":
-                this.drawButton("pageup", "←キャラ", 0, this.fontSize * this.lhr * 0);
-                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * this.lhr * 1);
+                this.drawButton("left", "L(左)側", 0, 0);
+                this.drawButton("right", "R(右)側", 0, this.fontSize * this.lhr);
+                this.drawButton("pageup", "←キャラ", 0, this.fontSize * this.lhr * 2);
+                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * this.lhr * 3);
                 break;
             case "Window_SkillType":
                 this.drawButton("left", "←スキルタイプ", 0, 0);
