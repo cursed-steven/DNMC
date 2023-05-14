@@ -661,7 +661,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
      */
     Window_EquipDetail.prototype.drawHeader = function () {
         this.changeTextColor(ColorManager.systemColor());
-        this.drawText(TextManager.originalCommand(6), 0, 0);
+        this.drawText(TextManager.originalCommand(6), 8, 0);
         this.resetTextColor();
     };
 
@@ -671,7 +671,12 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
     Window_EquipDetail.prototype.drawSlotNames = function () {
         this.changeTextColor(ColorManager.systemColor());
         let slotName = "";
-        for (let i = 1; i <= 5; i++) {
+
+        // 最初のスロットだけ少し右にずらす(outline見切れ対策)
+        slotName = $dataSystem.equipTypes[this._actor.equipSlots()[0]];
+        this.drawText(slotName, 8, this.lineHeight() * 1);
+
+        for (let i = 2; i <= 5; i++) {
             slotName = $dataSystem.equipTypes[this._actor.equipSlots()[i - 1]];
             this.drawText(slotName, this.itemWidth() * (i - 1), this.lineHeight() * 1);
         }
@@ -758,7 +763,6 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         let sa = [];
         let ctr = 2;
         let trait = {};
-        let value = 0;
 
         sa = paramValues;
         ctr = this.drawTraitMultiply(sa, slot, ctr, "params");
@@ -799,9 +803,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
                     dataId: stateNos[i][0].dataId
                 };
                 this.drawText(
-                    slot === 0
-                        ? DNMC_randomWeapons.traitToDesc(trait)
-                        : DNMC_randomArmors.traitToDesc(trait),
+                    DNMC_randomArmors.traitToDesc(trait),
                     this.itemWidth() * slot,
                     this.lineHeight() * ctr
                 );
@@ -1004,10 +1006,10 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
                     lineHeight = this.lineHeight2() * ctr + offsetY;
                 }
                 this.drawText(
+                    DNMC_randomArmors.traitToDesc(trait),
                     slot === 0
-                        ? DNMC_randomWeapons.traitToDesc(trait)
-                        : DNMC_randomArmors.traitToDesc(trait),
-                    this.itemWidth() * slot,
+                        ? 8
+                        : this.itemWidth() * slot,
                     lineHeight
                 );
                 ctr++;
@@ -1045,10 +1047,10 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
                     lineHeight = this.lineHeight2() * ctr + offsetY;
                 }
                 this.drawText(
+                    DNMC_randomArmors.traitToDesc(trait),
                     slot === 0
-                        ? DNMC_randomWeapons.traitToDesc(trait)
-                        : DNMC_randomArmors.traitToDesc(trait),
-                    this.itemWidth() * slot,
+                        ? 8
+                        : this.itemWidth() * slot,
                     lineHeight
                 );
                 ctr++;
@@ -1082,10 +1084,10 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
             lineHeight = this.lineHeight2() * ctr + offsetY;
         }
         this.drawText(
+            DNMC_randomArmors.traitDesc(trait),
             slot === 0
-                ? DNMC_randomWeapons.traitToDesc(trait)
-                : DNMC_randomArmors.traitDesc(trait),
-            this.itemWidth() * slot,
+                ? 8
+                : this.itemWidth() * slot,
             lineHeight
         );
         ctr++;
@@ -1137,7 +1139,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
      * @returns number
      */
     Window_EquipDetail.prototype.lineHeight2 = function () {
-        return Math.floor(this.lineHeight() * 0.8);
+        return this.lineHeight();
     };
 
     /**
