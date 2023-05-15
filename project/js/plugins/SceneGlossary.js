@@ -1055,6 +1055,29 @@
  * @type boolean
  */
 
+
+/**
+ * 用語集ウィンドウです。
+ * ※カスタマイズ用に定義を外出し(cursed_steven 2023/05/15)
+ * @constructor
+ */
+function Window_Glossary() {
+    this.initialize.apply(this, arguments);
+}
+Window_Glossary.prototype = Object.create(Window_Base.prototype);
+Window_Glossary.prototype.constructor = Window_Glossary;
+
+/**
+ * 用語集カテゴリウィンドウです。
+ * ※カスタマイズ用に定義を外出し(cursed_steven 2023/05/15)
+ * @constructor
+ */
+function Window_GlossaryCategory() {
+    this.initialize.apply(this, arguments);
+}
+Window_GlossaryCategory.prototype = Object.create(Window_Selectable.prototype);
+Window_GlossaryCategory.prototype.constructor = Window_GlossaryCategory;
+
 (function () {
     'use strict';
     var metaTagPrefix = 'SG';
@@ -1689,24 +1712,8 @@
     Scene_Glossary.prototype = Object.create(Scene_ItemBase.prototype);
     Scene_Glossary.prototype.constructor = Scene_Glossary;
 
-    // [begin] layout customize by cursed_steven 2023/04/19
-    const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
-    Scene_Glossary.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
-    Scene_Glossary.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;
-    Scene_Glossary.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
-    Scene_Glossary.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
-    Scene_Glossary.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
-    Scene_Glossary.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
-    // [end] layout customize by cursed_steven 2023/04/19
-
     Scene_Glossary.prototype.create = function () {
         Scene_ItemBase.prototype.create.call(this);
-        // [begin] layout customize by cursed_steven 2023/04/19
-        _Scene_Map_createMapHUD.call(this);
-        this.createQuestHUD();
-        this.createCommandWindow();
-        this.createGoldWindow();
-        // [end] layout customize by cursed_steven 2023/04/19
         this.createHelpWindow();
         this.createGlossaryWindow();
         this.createGlossaryListWindow();
@@ -1716,40 +1723,6 @@
         this.createActorWindow();
         this.setInitActivateWindow();
     };
-
-    // [begin] layout customize by cursed_steven 2023/04/19
-    /**
-     * クエストHUDの表示と更新を追加
-     */
-    Scene_Glossary.prototype.update = function () {
-        Scene_ItemBase.prototype.update.call(this);
-        this._questHUD.show();
-        this._questHUD.refresh();
-    };
-
-    /**
-     * 選択後のコマンドウィンドウ作成。
-     */
-    Scene_Glossary.prototype.createCommandWindow = function () {
-        const rect = this.commandWindowRect();
-        const commandWindow = new Window_MenuCommand(rect);
-        this.addWindow(commandWindow);
-        this._commandWindow = commandWindow;
-        this._commandWindow.deactivate();
-    };
-
-    /**
-     * 選択後のコマンドウィンドウ領域を返す。
-     * @returns Rectangle
-     */
-    Scene_Glossary.prototype.commandWindowRect = function () {
-        const ww = this.mainCommandWidth();
-        const wh = this.mainAreaHeight() - this.calcWindowHeight(1, true) - 8;
-        const wx = Graphics.boxWidth - ww - 160;
-        const wy = this.calcWindowHeight(3, true);
-        return new Rectangle(wx, wy, ww, wh);
-    };
-    // [end] layout customize by cursed_steven 2023/04/19
 
     Scene_Glossary.prototype.isBottomHelpMode = function () {
         return param.BottomHelpMode;
@@ -1764,9 +1737,7 @@
     };
 
     Scene_Glossary.prototype.createGlossaryWindow = function () {
-        // layout customize by cursed_steven 2023/04/19
-        const y = this.calcWindowHeight(3, true);
-        this._glossaryWindow = new Window_Glossary($gameParty.getGlossaryListWidth(), y, this._helpWindow);
+        this._glossaryWindow = new Window_Glossary($gameParty.getGlossaryListWidth(), this.mainAreaTop(), this._helpWindow);
         this.addWindow(this._glossaryWindow);
     };
 
@@ -1990,16 +1961,6 @@
         this.deactivate();
         this.hide();
     };
-
-    /**
-     * 用語集カテゴリウィンドウです。
-     * @constructor
-     */
-    function Window_GlossaryCategory() {
-        this.initialize.apply(this, arguments);
-    }
-    Window_GlossaryCategory.prototype = Object.create(Window_Selectable.prototype);
-    Window_GlossaryCategory.prototype.constructor = Window_GlossaryCategory;
 
     Window_GlossaryCategory.prototype.initialize = function (glWindow) {
         this._glossaryListWindow = glWindow;
@@ -2321,20 +2282,9 @@
         this.drawTextEx($gameParty.getGlossaryCompleteMessage().format(percent.padZero(3)), 0, 0);
     };
 
-    /**
-     * 用語集ウィンドウです。
-     * @constructor
-     */
-    function Window_Glossary() {
-        this.initialize.apply(this, arguments);
-    }
-    Window_Glossary.prototype = Object.create(Window_Base.prototype);
-    Window_Glossary.prototype.constructor = Window_Glossary;
-
     Window_Glossary.prototype.initialize = function (x, y, helpWindow) {
         var height = Graphics.boxHeight - y - (param.BottomHelpMode ? helpWindow.height : 0);
-        // layout customize by cursed_steven 2023/04/19
-        var width = Graphics.boxWidth - x - 160 * 2;
+        var width = Graphics.boxWidth - x;
         this._maxPages = 1;
         this._itemData = null;
         this._pageIndex = 0;
@@ -2658,12 +2608,10 @@
     Window_Glossary.prototype.drawItemText = function (text, y) {
         if (typeof TranslationManager !== 'undefined') {
             TranslationManager.getTranslatePromise(text).then(function (translatedText) {
-                // layout customize by cursed_steven 2023/04/19
-                this.drawTextEx(translatedText, 18, y + 18);
+                this.drawTextEx(translatedText, 0, y);
             }.bind(this));
         } else {
-            // layout customize by cursed_steven 2023/04/19
-            this.drawTextEx(text, 18, y + 18);
+            this.drawTextEx(text, 0, y);
         }
     };
 
