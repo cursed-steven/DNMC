@@ -89,7 +89,6 @@
     };
 
     Scene_Glossary.prototype.createGlossaryWindow = function () {
-        // layout customize by cursed_steven 2023/04/19
         const y = this.calcWindowHeight(3, true);
         this._glossaryWindow = new Window_Glossary($gameParty.getGlossaryListWidth(), y, this._helpWindow);
         this.addWindow(this._glossaryWindow);

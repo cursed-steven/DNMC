@@ -1,5 +1,5 @@
 //=============================================================================
-// RPG Maker MZ - CSVN_helpScene
+// RPG Maker MZ - CSVN_sceneHelp
 // ----------------------------------------------------------------------------
 // (C)2023 cursed_steven
 // This software is released under the MIT License.
@@ -18,7 +18,7 @@
  * @base CSVN_base
  * @orderAfter CSVN_base
  * 
- * @help CSVN_helpScene.js
+ * @help CSVN_sceneHelp.js
  * 
  * @param leftTopX
  * @text 左上隅のX座標
