@@ -80,11 +80,11 @@
  * @type string
  * @default >
  * 
- * @param closeStr
- * @text 「閉じる」の表示テキスト
- * @desc 各項目を閉じるための文字列表示
+ * @param doneStr
+ * @text 「終了」の表示テキスト
+ * @desc 各項目を終わるための文字列表示
  * @type string
- * @default x
+ * @default End
  * 
  * @command startScene
  * @text ヘルプシーン開始
@@ -264,8 +264,9 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         const rect = this.buttonWindowRect();
         this._buttonWindow = new Window_HelpButton(rect);
         this._buttonWindow.setHandler('cancel', this.onChildCancel.bind(this));
-        this._buttonWindow.setHandler('pagedown', this.prevChild.bind(this));
-        this._buttonWindow.setHandler('pageup', this.nextChild.bind(this));
+        this._buttonWindow.setHandler('ok', this.onChildOk.bind(this));
+        this._buttonWindow.setHandler('pageup', this.prevChild.bind(this));
+        this._buttonWindow.setHandler('pagedown', this.nextChild.bind(this));
         this.addWindow(this._buttonWindow);
     };
 
@@ -325,6 +326,23 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         this._articleWindow.deactivate();
         this.refreshAll();
         this._buttonWindow.activate();
+        this._buttonWindow.isEnabled(1)
+            ? this._buttonWindow.select(1)
+            : this._buttonWindow.select(2);
+    };
+
+    Scene_Help.prototype.onChildOk = function () {
+        switch (this._buttonWindow.index()) {
+            case 0:
+                this.prevChild();
+                break;
+            case 1:
+                this.nextChild();
+                break;
+            case 2:
+                this.onChildCancel();
+                break;
+        }
     };
 
     Scene_Help.prototype.onChildCancel = function () {
@@ -344,9 +362,12 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     };
 
     Scene_Help.prototype.refreshAll = function () {
-        this._titleWindow.refresh();
-        this._helpChildWindow.refresh();
-        this._naviWindow.refresh();
+        // this._titleWindow.refresh();
+        // this._helpChildWindow.refresh();
+        // this._naviWindow.refresh();
+
+        const childrenCount = this._articleWindow.item().children.length;
+        this._buttonWindow.setChildrenCount(childrenCount);
         this._buttonWindow.refresh();
     };
 
@@ -463,5 +484,72 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     //-------------------------------------------------------------------------
     // Window_HelpButton
+
+    Window_HelpButton.prototype.initialize = function (rect) {
+        Window_Selectable.prototype.initialize.call(this, rect);
+        this._currentPage = 0;
+        this._childrenCount = 0;
+        this.makeItemList();
+    };
+
+    Window_HelpButton.prototype.maxCols = function () {
+        return 3;
+    };
+
+    Window_HelpButton.prototype.maxItems = function () {
+        return 3;
+    };
+
+    Window_HelpButton.prototype.getChildrenCount = function () {
+        return this._childrenCount;
+    };
+
+    Window_HelpButton.prototype.setChildrenCount = function (count) {
+        this._childrenCount = count;
+    };
+
+    Window_HelpButton.prototype.item = function () {
+        return this.itemAt(this.index());
+    };
+
+    Window_HelpButton.prototype.itemAt = function (index) {
+        return this._data && index >= 0 ? this._data[index] : null;
+    };
+
+    Window_HelpButton.prototype.isCurrentItemEnabled = function () {
+        return this.isEnabled(this.item());
+    };
+
+    Window_HelpButton.prototype.isEnabled = function (index) {
+        if (this._currentPage === 0 && index === 0) {
+            return false;
+        } else if (this._currentPage === this.getChildrenCount() - 1
+            && index === 1) {
+            return false;
+        }
+
+        return true;
+    };
+
+    Window_HelpButton.prototype.makeItemList = function () {
+        this._data = [
+            param.prevStr,
+            param.nextStr,
+            param.doneStr
+        ];
+    };
+
+    Window_HelpButton.prototype.drawItem = function (index) {
+        const label = this.itemAt(index);
+        const rect = this.itemLineRect(index);
+        const enabled = this.isEnabled(index);
+        this.changePaintOpacity(enabled);
+        this.drawText(label, rect.x, rect.y, rect.width, 'center');
+        this.changePaintOpacity(1);
+    };
+
+    Window_HelpButton.prototype.refresh = function () {
+        Window_Selectable.prototype.refresh.call(this);
+    };
 
 })();
