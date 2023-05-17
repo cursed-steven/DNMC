@@ -354,14 +354,17 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     Scene_Help.prototype.prevChild = function () {
         this._buttonWindow.prev();
         this.refreshAll();
+        this._buttonWindow.activate();
     };
 
     Scene_Help.prototype.nextChild = function () {
         this._buttonWindow.next();
         this.refreshAll();
+        this._buttonWindow.activate();
     };
 
     Scene_Help.prototype.refreshAll = function () {
+        console.log('refreshAll');
         // this._titleWindow.refresh();
         // this._helpChildWindow.refresh();
         // this._naviWindow.refresh();
@@ -546,6 +549,18 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         this.changePaintOpacity(enabled);
         this.drawText(label, rect.x, rect.y, rect.width, 'center');
         this.changePaintOpacity(1);
+    };
+
+    Window_HelpButton.prototype.prev = function () {
+        if (this._currentPage > 0) {
+            this._currentPage--;
+        }
+    };
+
+    Window_HelpButton.prototype.next = function () {
+        if (this._currentPage < this.getChildrenCount() - 1) {
+            this._currentPage++;
+        }
     };
 
     Window_HelpButton.prototype.refresh = function () {
