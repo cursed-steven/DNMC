@@ -336,10 +336,15 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         const article = this._articleWindow.item();
         this._articleWindow.deactivate();
 
+        this._titleWindow.setCurrentPage(0);
+        this._titleWindow.setArticle(article);
         this._titleWindow.setArticleChild(article.children[0]);
+        this._helpChildWindow.setCurrentPage(0);
         this._helpChildWindow.setArticle(article);
         this._helpChildWindow.setArticleChild(article.children[0]);
 
+        this._naviWindow.setCurrentPage(0);
+        this._buttonWindow.setCurrentPage(0);
         this._buttonWindow.activate();
         this._buttonWindow.isEnabled(1)
             ? this._buttonWindow.select(1)
@@ -371,14 +376,30 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     Scene_Help.prototype.prevChild = function () {
         this._buttonWindow.prev();
+        this.prevAll();
         this.refreshAll();
         this._buttonWindow.activate();
     };
 
     Scene_Help.prototype.nextChild = function () {
         this._buttonWindow.next();
+        this.nextAll();
         this.refreshAll();
         this._buttonWindow.activate();
+    };
+
+    Scene_Help.prototype.prevAll = function () {
+        this._titleWindow.prev();
+        this._helpChildWindow.prev();
+        this._naviWindow.prev();
+        this._buttonWindow.prev();
+    };
+
+    Scene_Help.prototype.nextAll = function () {
+        this._titleWindow.next();
+        this._helpChildWindow.next();
+        this._naviWindow.next();
+        this._buttonWindow.next();
     };
 
     Scene_Help.prototype.refreshAll = function () {
@@ -394,13 +415,13 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     Scene_Help.prototype.clear1 = function () {
         this._titleWindow.clear();
-        this._helpChildWindow.clear();
+        this._helpChildWindow.clear1();
     };
 
     Scene_Help.prototype.clear2 = function () {
+        this._helpChildWindow.clear2();
         this._naviWindow.clear();
         this._buttonWindow.clear();
-        this._helpChildWindow.destroySprite();
     };
 
     //-------------------------------------------------------------------------
@@ -522,14 +543,28 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         this._picture = picture;
     };
 
-    Window_HelpChild.prototype.clear = function () {
+    Window_HelpChild.prototype.clear1 = function () {
         this.setText('');
         this.setPicture('');
-        this._sprite.hide();
     };
 
-    Window_HelpChild.prototype.destroySprite = function () { 
-        this._sprite.destroy();
+    Window_HelpChild.prototype.clear2 = function () {
+        if (this._sprite) this._sprite.hide();
+    };
+
+    Window_HelpChild.prototype.destroySprite = function () {
+        if (this._sprite) {
+            try {
+                this._sprite.destroy();
+                this._sprite = null;
+            } catch (ex) {
+                console.error(ex);
+            }
+        }
+    };
+
+    Window_HelpChild.prototype.setCurrentPage = function (p) {
+        this._currentPage = p;
     };
 
     Window_HelpChild.prototype.setArticle = function (article) {
@@ -541,14 +576,31 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         this.setPicture(child ? child.image : '');
         if (this._picture) {
             this.loadSprite();
+        } else if (this._sprite) {
+            this.destroySprite();
         }
     }
 
-    Window_HelpChild.prototype.loadSprite = function () { 
+    Window_HelpChild.prototype.loadSprite = function () {
+        this.destroySprite();
         this._sprite = new Sprite();
         this._sprite.hide();
         this._sprite.bitmap = ImageManager.loadPicture(this._picture);
         this.addChildToBack(this._sprite);
+    };
+
+    Window_HelpChild.prototype.prev = function () {
+        if (this._currentPage > 0) {
+            this._currentPage--;
+            this.setArticleChild(this._article.children[this._currentPage]);
+        }
+    };
+
+    Window_HelpChild.prototype.next = function () {
+        if (this._currentPage < this._article.children.length - 1) {
+            this._currentPage++;
+            this.setArticleChild(this._article.children[this._currentPage]);
+        }
     };
 
     Window_HelpChild.prototype.processDesc = function () {
@@ -567,16 +619,11 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     Window_HelpChild.prototype.refresh = function () {
         this.contents.clear();
         if (this._article) {
-            const pxo = 8;
+            const pxo = 16;
             const pyo = 16;
             let currentY = this.processDesc();
-            if (this._sprite) { 
-                const spriteWidth = this._sprite.bitmap.width;
-                if (spriteWidth > 0) {
-                    this._sprite.x = (this.width - spriteWidth) / 2;
-                } else {
-                    this._sprite.x = pxo;
-                }
+            if (this._sprite) {
+                this._sprite.x = pxo;
                 this._sprite.y = currentY + pyo;
                 this._sprite.show();
             }
@@ -588,6 +635,7 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     Window_HelpTitle.prototype.initialize = function (rect) {
         Window_Base.prototype.initialize.call(this, rect);
+        this._article = {};
         this._currentPage = 0;
         this._text = '';
     };
@@ -600,8 +648,30 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         this.setText('');
     };
 
+    Window_HelpTitle.prototype.setCurrentPage = function (p) {
+        this._currentPage = p;
+    };
+
+    Window_HelpTitle.prototype.setArticle = function (article) {
+        this._article = article;
+    };
+
     Window_HelpTitle.prototype.setArticleChild = function (child) {
         this.setText(child ? child.title : '');
+    };
+
+    Window_HelpTitle.prototype.prev = function () {
+        if (this._currentPage > 0) {
+            this._currentPage--;
+            this.setArticleChild(this._article.children[this._currentPage]);
+        }
+    };
+
+    Window_HelpTitle.prototype.next = function () {
+        if (this._currentPage < this._article.children.length - 1) {
+            this._currentPage++;
+            this.setArticleChild(this._article.children[this._currentPage]);
+        }
     };
 
     Window_HelpTitle.prototype.refresh = function () {
@@ -628,15 +698,19 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         this._childrenCount = count;
     };
 
+    Window_HelpNavi.prototype.setCurrentPage = function (p) {
+        this._currentPage = p;
+    };
+
     Window_HelpNavi.prototype.makeItemList = function () {
         const rect = this.baseTextRect();
         const yo = 4;
         let currentX = 16;
         for (let i = 0; i < this.getChildrenCount(); i++) {
             if (this._currentPage === i) {
-                this.drawText(param.currentPageStr, currentX, rect.y + yo, rect.width);
+                this.drawText(param.currentPageStr + ' ', currentX, rect.y + yo, rect.width);
             } else {
-                this.drawText(param.pageStr, currentX, rect.y + yo, rect.width);
+                this.drawText(param.pageStr + ' ', currentX, rect.y + yo, rect.width);
             }
             currentX += this.textWidth('00');
         }
@@ -659,6 +733,7 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     };
 
     Window_HelpNavi.prototype.refresh = function () {
+        this.contents.clear();
         this.makeItemList();
     };
 
@@ -686,6 +761,10 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     Window_HelpButton.prototype.setChildrenCount = function (count) {
         this._childrenCount = count;
+    };
+
+    Window_HelpButton.prototype.setCurrentPage = function (p) {
+        this._currentPage = p;
     };
 
     Window_HelpButton.prototype.item = function () {
