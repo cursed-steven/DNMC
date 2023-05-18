@@ -68,6 +68,16 @@
  * @type struct<HelpArticle>[]
  * @default []
  * 
+ * @param pageStr
+ * @text ナビ中で各ページを表す文字
+ * @type string
+ * @default ○
+ * 
+ * @param currentPageStr
+ * @text ナビ中で表示中のページを表す文字
+ * @type string
+ * @default ●
+ * 
  * @param prevStr
  * @text 「前」の表示テキスト
  * @desc 各項目の前画面に移るための文字列表示
@@ -323,12 +333,16 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     };
 
     Scene_Help.prototype.onArticleOk = function () {
+        const article = this._articleWindow.item();
         this._articleWindow.deactivate();
-        this.refreshAll();
+
+        this._titleWindow.setArticleChild(article.children[0]);
+
         this._buttonWindow.activate();
         this._buttonWindow.isEnabled(1)
             ? this._buttonWindow.select(1)
             : this._buttonWindow.select(2);
+        this.refreshAll();
     };
 
     Scene_Help.prototype.onChildOk = function () {
@@ -347,6 +361,7 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     Scene_Help.prototype.onChildCancel = function () {
         this._articleWindow.activate();
+        this._titleWindow.clear();
         this.refreshAll();
         this._buttonWindow.deactivate();
     };
@@ -364,13 +379,13 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     };
 
     Scene_Help.prototype.refreshAll = function () {
-        console.log('refreshAll');
-        // this._titleWindow.refresh();
+        this._titleWindow.refresh();
         // this._helpChildWindow.refresh();
-        // this._naviWindow.refresh();
 
         const childrenCount = this._articleWindow.item().children.length;
+        this._naviWindow.setChildrenCount(childrenCount);
         this._buttonWindow.setChildrenCount(childrenCount);
+        this._naviWindow.refresh();
         this._buttonWindow.refresh();
     };
 
@@ -482,8 +497,79 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     //-------------------------------------------------------------------------
     // Window_HelpTitle
 
+    Window_HelpTitle.prototype.initialize = function (rect) {
+        Window_Base.prototype.initialize.call(this, rect);
+        this._currentPage = 0;
+        this._text = '';
+    };
+
+    Window_HelpTitle.prototype.setText = function (text) {
+        this._text = text;
+    };
+
+    Window_HelpTitle.prototype.clear = function () {
+        this.setText('');
+    };
+
+    Window_HelpTitle.prototype.setArticleChild = function (child) {
+        this.setText(child ? child.title : '');
+    };
+
+    Window_HelpTitle.prototype.refresh = function () {
+        const rect = this.baseTextRect();
+        const yo = 4;
+        this.contents.clear();
+        this.drawText(this._text, rect.x, rect.y + yo, rect.width);
+    };
+
     //-------------------------------------------------------------------------
     // Window_HelpNavi
+
+    Window_HelpNavi.prototype.initialize = function (rect) {
+        Window_Base.prototype.initialize.call(this, rect);
+        this._currentPage = 0;
+        this._childrenCount = 0;
+    };
+
+    Window_HelpNavi.prototype.getChildrenCount = function () {
+        return this._childrenCount;
+    };
+
+    Window_HelpNavi.prototype.setChildrenCount = function (count) {
+        this._childrenCount = count;
+    };
+
+    Window_HelpNavi.prototype.makeItemList = function () {
+        const rect = this.baseTextRect();
+        const yo = 4;
+        let currentX = 16;
+        for (let i = 0; i < this.getChildrenCount(); i++) {
+            if (this._currentPage === i) {
+                console.log(`current: ${i}`);
+                this.drawText(param.currentPageStr, currentX, rect.y + yo, rect.width);
+            } else {
+                console.log(`other: ${i}`);
+                this.drawText(param.pageStr, currentX, rect.y + yo, rect.width);
+            }
+            currentX += this.textWidth('00');
+        }
+    };
+
+    Window_HelpNavi.prototype.prev = function () {
+        if (this._currentPage > 0) {
+            this._currentPage--;
+        }
+    };
+
+    Window_HelpNavi.prototype.next = function () {
+        if (this._currentPage < this.getChildrenCount() - 1) {
+            this._currentPage++;
+        }
+    };
+
+    Window_HelpNavi.prototype.refresh = function () {
+        this.makeItemList();
+    };
 
     //-------------------------------------------------------------------------
     // Window_HelpButton
