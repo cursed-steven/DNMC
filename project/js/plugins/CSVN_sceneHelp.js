@@ -337,6 +337,8 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         this._articleWindow.deactivate();
 
         this._titleWindow.setArticleChild(article.children[0]);
+        this._helpChildWindow.setArticle(article);
+        this._helpChildWindow.setArticleChild(article.children[0]);
 
         this._buttonWindow.activate();
         this._buttonWindow.isEnabled(1)
@@ -361,8 +363,9 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     Scene_Help.prototype.onChildCancel = function () {
         this._articleWindow.activate();
-        this._titleWindow.clear();
+        this.clear1();
         this.refreshAll();
+        this.clear2();
         this._buttonWindow.deactivate();
     };
 
@@ -380,13 +383,24 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     Scene_Help.prototype.refreshAll = function () {
         this._titleWindow.refresh();
-        // this._helpChildWindow.refresh();
+        this._helpChildWindow.refresh();
 
         const childrenCount = this._articleWindow.item().children.length;
         this._naviWindow.setChildrenCount(childrenCount);
         this._buttonWindow.setChildrenCount(childrenCount);
         this._naviWindow.refresh();
         this._buttonWindow.refresh();
+    };
+
+    Scene_Help.prototype.clear1 = function () {
+        this._titleWindow.clear();
+        this._helpChildWindow.clear();
+    };
+
+    Scene_Help.prototype.clear2 = function () {
+        this._naviWindow.clear();
+        this._buttonWindow.clear();
+        this._helpChildWindow.destroySprite();
     };
 
     //-------------------------------------------------------------------------
@@ -480,9 +494,6 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
             this.resetTextColor();
             this.changePaintOpacity(true);
             this.drawText(article.title, rect.x, rect.y, rect.width);
-
-            // 最初のページの画像をロードしておく
-            ImageManager.loadPicture(article.children[0].image);
         }
     };
 
@@ -493,6 +504,84 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     //-------------------------------------------------------------------------
     // Window_HelpChild
+
+    Window_HelpChild.prototype.initialize = function (rect) {
+        Window_Base.prototype.initialize.call(this, rect);
+        this._currentPage = 0;
+        this._article = {};
+        this._text = '';
+        this._picture = '';
+        this._sprite = null;
+    };
+
+    Window_HelpChild.prototype.setText = function (text) {
+        this._text = text;
+    };
+
+    Window_HelpChild.prototype.setPicture = function (picture) {
+        this._picture = picture;
+    };
+
+    Window_HelpChild.prototype.clear = function () {
+        this.setText('');
+        this.setPicture('');
+        this._sprite.hide();
+    };
+
+    Window_HelpChild.prototype.destroySprite = function () { 
+        this._sprite.destroy();
+    };
+
+    Window_HelpChild.prototype.setArticle = function (article) {
+        this._article = article;
+    };
+
+    Window_HelpChild.prototype.setArticleChild = function (child) {
+        this.setText(child ? child.desc : '');
+        this.setPicture(child ? child.image : '');
+        if (this._picture) {
+            this.loadSprite();
+        }
+    }
+
+    Window_HelpChild.prototype.loadSprite = function () { 
+        this._sprite = new Sprite();
+        this._sprite.hide();
+        this._sprite.bitmap = ImageManager.loadPicture(this._picture);
+        this.addChildToBack(this._sprite);
+    };
+
+    Window_HelpChild.prototype.processDesc = function () {
+        const rect = this.baseTextRect();
+        const tyo = 4;
+        let currentY = rect.y + tyo;
+        const lines = this._text.split("\n");
+        lines.forEach(line => {
+            this.drawText(line, rect.x, currentY, rect.width);
+            currentY += this.lineHeight();
+        });
+
+        return currentY;
+    };
+
+    Window_HelpChild.prototype.refresh = function () {
+        this.contents.clear();
+        if (this._article) {
+            const pxo = 8;
+            const pyo = 16;
+            let currentY = this.processDesc();
+            if (this._sprite) { 
+                const spriteWidth = this._sprite.bitmap.width;
+                if (spriteWidth > 0) {
+                    this._sprite.x = (this.width - spriteWidth) / 2;
+                } else {
+                    this._sprite.x = pxo;
+                }
+                this._sprite.y = currentY + pyo;
+                this._sprite.show();
+            }
+        }
+    };
 
     //-------------------------------------------------------------------------
     // Window_HelpTitle
@@ -545,14 +634,16 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         let currentX = 16;
         for (let i = 0; i < this.getChildrenCount(); i++) {
             if (this._currentPage === i) {
-                console.log(`current: ${i}`);
                 this.drawText(param.currentPageStr, currentX, rect.y + yo, rect.width);
             } else {
-                console.log(`other: ${i}`);
                 this.drawText(param.pageStr, currentX, rect.y + yo, rect.width);
             }
             currentX += this.textWidth('00');
         }
+    };
+
+    Window_HelpNavi.prototype.clear = function () {
+        this.contents.clear();
     };
 
     Window_HelpNavi.prototype.prev = function () {
@@ -635,6 +726,11 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         this.changePaintOpacity(enabled);
         this.drawText(label, rect.x, rect.y, rect.width, 'center');
         this.changePaintOpacity(1);
+    };
+
+    Window_HelpButton.prototype.clear = function () {
+        this.contents.clear();
+        this.deselect();
     };
 
     Window_HelpButton.prototype.prev = function () {
