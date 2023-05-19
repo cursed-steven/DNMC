@@ -375,6 +375,7 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     };
 
     Scene_Help.prototype.prevChild = function () {
+        this._buttonWindow.playOkSound();
         this._buttonWindow.prev();
         this.prevAll();
         this.refreshAll();
@@ -382,6 +383,7 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     };
 
     Scene_Help.prototype.nextChild = function () {
+        this._buttonWindow.playOkSound();
         this._buttonWindow.next();
         this.nextAll();
         this.refreshAll();

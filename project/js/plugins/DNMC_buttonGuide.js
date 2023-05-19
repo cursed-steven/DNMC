@@ -241,6 +241,9 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
             case "Scene_PartyEliminate":
                 this.drawScenePartyChangeGuide();
                 break;
+            case "Scene_Help":
+                this.drawSceneHelpGuide();
+                break;
         }
         this.contents.fontSize = $gameSystem.mainFontSize();
     };
@@ -351,6 +354,18 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
     Window_ButtonGuide.prototype.drawScenePartyChangeGuide = function () {
         this.drawButton("pageup", "控え側ソートキー変更", 0, 0);
         this.drawButton("pagedown", "控え側ソートキー変更", 0, this.fontSize * this.lhr);
+    };
+
+    /**
+     * Scene_Helpのボタンガイド
+     */
+    Window_ButtonGuide.prototype.drawSceneHelpGuide = function () {
+        console.log(`activeWindow: ${this.activeWindow}`);
+        if (this.activeWindow === 'Window_HelpButton') {
+            this.drawButton("pageup", "前ページ", 0, 0);
+            this.drawButton("pagedown", "次ページ", 0, this.fontSize * this.lhr);
+            this.drawButton("cancel", "もどる", 0, this.fontSize * this.lhr * 2);
+        }
     };
 
     /**

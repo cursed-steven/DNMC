@@ -28,8 +28,10 @@
     const param = PluginManagerEx.createParameter(script);
 
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
+    const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
     Scene_Help.prototype.createGoldWindow = Scene_Menu.prototype.createGoldWindow;
     Scene_Help.prototype.goldWindowRect = Scene_Menu.prototype.goldWindowRect;
+    Scene_Help.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     Scene_Help.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
     Scene_Help.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_Help.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
@@ -39,9 +41,10 @@
     // Scene_Help
 
     const _Scene_Help_create = Scene_Help.prototype.create;
-    Scene_Help.prototype.create = function () { 
+    Scene_Help.prototype.create = function () {
         _Scene_Help_create.call(this);
         _Scene_Map_createMapHUD.call(this);
+        _Scene_Map_createButtonGuide.call(this);
         this.createQuestHUD();
         this.createCommandWindow();
         this.createGoldWindow();
@@ -77,6 +80,20 @@
         const wx = Graphics.boxWidth - ww - 160;
         const wy = this.calcWindowHeight(3, true);
         return new Rectangle(wx, wy, ww, wh);
+    };
+
+    const _Scene_Help_onArticleOk = Scene_Help.prototype.onArticleOk;
+    Scene_Help.prototype.onArticleOk = function () {
+        _Scene_Help_onArticleOk.call(this);
+        this._buttonGuide.setActiveWindow('Window_HelpButton');
+        this._buttonGuide.refresh();
+    };
+
+    const _Scene_Help_onChildCancel = Scene_Help.prototype.onChildCancel;
+    Scene_Help.prototype.onChildCancel = function () {
+        _Scene_Help_onChildCancel.call(this);
+        this._buttonGuide.setActiveWindow('Window_HelpArticle');
+        this._buttonGuide.refresh();
     };
 
 })();
