@@ -64,7 +64,6 @@
  * 
  * @param articles
  * @text ヘルプ項目リスト
- * @desc 当面項目と画像は1:1とします。
  * @type struct<HelpArticle>[]
  * @default []
  * 
@@ -179,6 +178,17 @@ Window_HelpArticle.prototype = Object.create(Window_Selectable.prototype);
 Window_HelpArticle.prototype.constructor = Window_HelpArticle;
 
 //-------------------------------------------------------------------------
+// Widnow_HelpChildBase
+//
+// The base class of Window_HelpChild/Window_HelpTitle/Window_HelpNavi/Window_HelpButton.
+
+function Window_HelpChildBase() {
+    this.initialize(...arguments);
+}
+Window_HelpChildBase.prototype = Object.create(Window_Base.prototype);
+Window_HelpChildBase.prototype.constructor = Window_HelpChildBase;
+
+//-------------------------------------------------------------------------
 // Widnow_HelpChild
 //
 // The window class of the help article children.
@@ -186,7 +196,7 @@ Window_HelpArticle.prototype.constructor = Window_HelpArticle;
 function Window_HelpChild() {
     this.initialize(...arguments);
 }
-Window_HelpChild.prototype = Object.create(Window_Base.prototype);
+Window_HelpChild.prototype = Object.create(Window_HelpChildBase.prototype);
 Window_HelpChild.prototype.constructor = Window_HelpChild;
 
 //-------------------------------------------------------------------------
@@ -197,7 +207,7 @@ Window_HelpChild.prototype.constructor = Window_HelpChild;
 function Window_HelpTitle() {
     this.initialize(...arguments);
 }
-Window_HelpTitle.prototype = Object.create(Window_Base.prototype);
+Window_HelpTitle.prototype = Object.create(Window_HelpChildBase.prototype);
 Window_HelpTitle.prototype.constructor = Window_HelpTitle;
 
 //-------------------------------------------------------------------------
@@ -208,7 +218,7 @@ Window_HelpTitle.prototype.constructor = Window_HelpTitle;
 function Window_HelpNavi() {
     this.initialize(...arguments);
 }
-Window_HelpNavi.prototype = Object.create(Window_Base.prototype);
+Window_HelpNavi.prototype = Object.create(Window_HelpChildBase.prototype);
 Window_HelpNavi.prototype.constructor = Window_HelpNavi;
 
 //-------------------------------------------------------------------------
@@ -336,15 +346,9 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         const article = this._articleWindow.item();
         this._articleWindow.deactivate();
 
-        this._titleWindow.setCurrentPage(0);
-        this._titleWindow.setArticle(article);
-        this._titleWindow.setArticleChild(article.children[0]);
-        this._helpChildWindow.setCurrentPage(0);
-        this._helpChildWindow.setArticle(article);
-        this._helpChildWindow.setArticleChild(article.children[0]);
+        this.setCurrentPageAll(0);
+        this.setArticleAll(article);
 
-        this._naviWindow.setCurrentPage(0);
-        this._buttonWindow.setCurrentPage(0);
         this._buttonWindow.activate();
         this._buttonWindow.isEnabled(1)
             ? this._buttonWindow.select(1)
@@ -367,16 +371,14 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     };
 
     Scene_Help.prototype.onChildCancel = function () {
+        this.clearAll();
         this._articleWindow.activate();
-        this.clear1();
-        this.refreshAll();
-        this.clear2();
+        this._buttonWindow.deselect();
         this._buttonWindow.deactivate();
     };
 
     Scene_Help.prototype.prevChild = function () {
         this._buttonWindow.playOkSound();
-        this._buttonWindow.prev();
         this.prevAll();
         this.refreshAll();
         this._buttonWindow.activate();
@@ -384,10 +386,23 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     Scene_Help.prototype.nextChild = function () {
         this._buttonWindow.playOkSound();
-        this._buttonWindow.next();
         this.nextAll();
         this.refreshAll();
         this._buttonWindow.activate();
+    };
+
+    Scene_Help.prototype.setCurrentPageAll = function (p) {
+        this._titleWindow.setCurrentPage(p);
+        this._helpChildWindow.setCurrentPage(p);
+        this._naviWindow.setCurrentPage(p);
+        this._buttonWindow.setCurrentPage(p);
+    };
+
+    Scene_Help.prototype.setArticleAll = function (article) {
+        this._titleWindow.setArticle(article);
+        this._helpChildWindow.setArticle(article);
+        this._naviWindow.setArticle(article);
+        this._buttonWindow.setArticle(article);
     };
 
     Scene_Help.prototype.prevAll = function () {
@@ -407,23 +422,16 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     Scene_Help.prototype.refreshAll = function () {
         this._titleWindow.refresh();
         this._helpChildWindow.refresh();
-
-        const childrenCount = this._articleWindow.item().children.length;
-        this._naviWindow.setChildrenCount(childrenCount);
-        this._buttonWindow.setChildrenCount(childrenCount);
         this._naviWindow.refresh();
         this._buttonWindow.refresh();
     };
 
-    Scene_Help.prototype.clear1 = function () {
-        this._titleWindow.clear();
-        this._helpChildWindow.clear1();
-    };
-
-    Scene_Help.prototype.clear2 = function () {
-        this._helpChildWindow.clear2();
-        this._naviWindow.clear();
-        this._buttonWindow.clear();
+    Scene_Help.prototype.clearAll = function () {
+        this._titleWindow.contents.clear();
+        this._helpChildWindow.contents.clear();
+        this._helpChildWindow.destroyPicture();
+        this._naviWindow.contents.clear();
+        this._buttonWindow.contents.clear();
     };
 
     //-------------------------------------------------------------------------
@@ -526,90 +534,98 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     };
 
     //-------------------------------------------------------------------------
-    // Window_HelpChild
+    // Window_HelpChildBase
 
-    Window_HelpChild.prototype.initialize = function (rect) {
+    Window_HelpChildBase.prototype.initialize = function (rect) {
         Window_Base.prototype.initialize.call(this, rect);
         this._currentPage = 0;
         this._article = {};
-        this._text = '';
-        this._picture = '';
-        this._sprite = null;
     };
 
-    Window_HelpChild.prototype.setText = function (text) {
-        this._text = text;
+    Window_HelpChildBase.prototype.clear = function () {
+        this.contents.clear();
+        this._currentPage = 0;
+        this._article = {};
     };
 
-    Window_HelpChild.prototype.setPicture = function (picture) {
-        this._picture = picture;
+    Window_HelpChildBase.prototype.getCurrentPage = function () {
+        return this._currentPage;
     };
 
-    Window_HelpChild.prototype.clear1 = function () {
-        this.setText('');
-        this.setPicture('');
-    };
-
-    Window_HelpChild.prototype.clear2 = function () {
-        if (this._sprite) this._sprite.hide();
-    };
-
-    Window_HelpChild.prototype.destroySprite = function () {
-        if (this._sprite) {
-            try {
-                this._sprite.destroy();
-                this._sprite = null;
-            } catch (ex) {
-                console.error(ex);
-            }
-        }
-    };
-
-    Window_HelpChild.prototype.setCurrentPage = function (p) {
+    Window_HelpChildBase.prototype.setCurrentPage = function (p) {
         this._currentPage = p;
     };
 
-    Window_HelpChild.prototype.setArticle = function (article) {
+    Window_HelpChildBase.prototype.getArticle = function () {
+        return this._article;
+    };
+
+    Window_HelpChildBase.prototype.setArticle = function (article) {
         this._article = article;
     };
 
-    Window_HelpChild.prototype.setArticleChild = function (child) {
-        this.setText(child ? child.desc : '');
-        this.setPicture(child ? child.image : '');
-        if (this._picture) {
-            this.loadSprite();
-        } else if (this._sprite) {
-            this.destroySprite();
+    Window_HelpChildBase.prototype.getArticleChild = function (index) {
+        if (index === undefined) {
+            index = this.getCurrentPage();
         }
-    }
+        return this._article.children[index];
+    };
+
+    Window_HelpChildBase.prototype.countArticleChildren = function () {
+        return this.getArticle().children.length;
+    };
+
+    Window_HelpChildBase.prototype.prev = function () {
+        if (this.getCurrentPage() > 0) {
+            this.setCurrentPage(this.getCurrentPage() - 1);
+            this.refresh();
+        }
+    };
+
+    Window_HelpChildBase.prototype.next = function () {
+        if (this.getCurrentPage() < this.countArticleChildren() - 1) {
+            this.setCurrentPage(this.getCurrentPage() + 1);
+            this.refresh();
+        }
+    };
+
+    Window_HelpChildBase.prototype.refresh = function () {
+        // Nothing to do here.
+    };
+
+    //-------------------------------------------------------------------------
+    // Window_HelpChild
+
+    Window_HelpChild.prototype.initialize = function (rect) {
+        Window_HelpChildBase.prototype.initialize.call(this, rect);
+        this._sprite = null;
+    };
+
+    Window_HelpChild.prototype.hidePicture = function () {
+        if (this._sprite) this._sprite.hide();
+    };
+
+    Window_HelpChild.prototype.destroyPicture = function () {
+        if (this._sprite) {
+            this._sprite.destroy();
+            this._sprite = null;
+        }
+    };
 
     Window_HelpChild.prototype.loadSprite = function () {
-        this.destroySprite();
+        this.destroyPicture();
+        const picturePath = this.getArticleChild().image;
         this._sprite = new Sprite();
         this._sprite.hide();
-        this._sprite.bitmap = ImageManager.loadPicture(this._picture);
+        this._sprite.bitmap = ImageManager.loadPicture(picturePath);
         this.addChildToBack(this._sprite);
     };
 
-    Window_HelpChild.prototype.prev = function () {
-        if (this._currentPage > 0) {
-            this._currentPage--;
-            this.setArticleChild(this._article.children[this._currentPage]);
-        }
-    };
-
-    Window_HelpChild.prototype.next = function () {
-        if (this._currentPage < this._article.children.length - 1) {
-            this._currentPage++;
-            this.setArticleChild(this._article.children[this._currentPage]);
-        }
-    };
-
-    Window_HelpChild.prototype.processDesc = function () {
+    Window_HelpChild.prototype.drawDesc = function () {
         const rect = this.baseTextRect();
         const tyo = 4;
         let currentY = rect.y + tyo;
-        const lines = this._text.split("\n");
+        const lines = this.getArticleChild().desc.split("\n");
         lines.forEach(line => {
             this.drawText(line, rect.x, currentY, rect.width);
             currentY += this.lineHeight();
@@ -620,15 +636,14 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
 
     Window_HelpChild.prototype.refresh = function () {
         this.contents.clear();
-        if (this._article) {
+        if (this.getArticle()) {
             const pxo = 16;
             const pyo = 16;
-            let currentY = this.processDesc();
-            if (this._sprite) {
-                this._sprite.x = pxo;
-                this._sprite.y = currentY + pyo;
-                this._sprite.show();
-            }
+            let currentY = this.drawDesc();
+            this.loadSprite();
+            this._sprite.x = pxo;
+            this._sprite.y = currentY + pyo;
+            this._sprite.show();
         }
     };
 
@@ -636,101 +651,35 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     // Window_HelpTitle
 
     Window_HelpTitle.prototype.initialize = function (rect) {
-        Window_Base.prototype.initialize.call(this, rect);
-        this._article = {};
-        this._currentPage = 0;
-        this._text = '';
-    };
-
-    Window_HelpTitle.prototype.setText = function (text) {
-        this._text = text;
-    };
-
-    Window_HelpTitle.prototype.clear = function () {
-        this.setText('');
-    };
-
-    Window_HelpTitle.prototype.setCurrentPage = function (p) {
-        this._currentPage = p;
-    };
-
-    Window_HelpTitle.prototype.setArticle = function (article) {
-        this._article = article;
-    };
-
-    Window_HelpTitle.prototype.setArticleChild = function (child) {
-        this.setText(child ? child.title : '');
-    };
-
-    Window_HelpTitle.prototype.prev = function () {
-        if (this._currentPage > 0) {
-            this._currentPage--;
-            this.setArticleChild(this._article.children[this._currentPage]);
-        }
-    };
-
-    Window_HelpTitle.prototype.next = function () {
-        if (this._currentPage < this._article.children.length - 1) {
-            this._currentPage++;
-            this.setArticleChild(this._article.children[this._currentPage]);
-        }
+        Window_HelpChildBase.prototype.initialize.call(this, rect);
     };
 
     Window_HelpTitle.prototype.refresh = function () {
         const rect = this.baseTextRect();
         const yo = 4;
+        const title = this.getArticleChild().title;
         this.contents.clear();
-        this.drawText(this._text, rect.x, rect.y + yo, rect.width);
+        this.drawText(title, rect.x, rect.y + yo, rect.width);
     };
 
     //-------------------------------------------------------------------------
     // Window_HelpNavi
 
     Window_HelpNavi.prototype.initialize = function (rect) {
-        Window_Base.prototype.initialize.call(this, rect);
-        this._currentPage = 0;
-        this._childrenCount = 0;
-    };
-
-    Window_HelpNavi.prototype.getChildrenCount = function () {
-        return this._childrenCount;
-    };
-
-    Window_HelpNavi.prototype.setChildrenCount = function (count) {
-        this._childrenCount = count;
-    };
-
-    Window_HelpNavi.prototype.setCurrentPage = function (p) {
-        this._currentPage = p;
+        Window_HelpChildBase.prototype.initialize.call(this, rect);
     };
 
     Window_HelpNavi.prototype.makeItemList = function () {
         const rect = this.baseTextRect();
         const yo = 4;
         let currentX = 16;
-        for (let i = 0; i < this.getChildrenCount(); i++) {
+        for (let i = 0; i < this.countArticleChildren(); i++) {
             if (this._currentPage === i) {
                 this.drawText(param.currentPageStr + ' ', currentX, rect.y + yo, rect.width);
             } else {
                 this.drawText(param.pageStr + ' ', currentX, rect.y + yo, rect.width);
             }
             currentX += this.textWidth('00');
-        }
-    };
-
-    Window_HelpNavi.prototype.clear = function () {
-        this.contents.clear();
-    };
-
-    Window_HelpNavi.prototype.prev = function () {
-        if (this._currentPage > 0) {
-            this._currentPage--;
-        }
-    };
-
-    Window_HelpNavi.prototype.next = function () {
-        if (this._currentPage < this.getChildrenCount() - 1) {
-            this._currentPage++;
         }
     };
 
@@ -745,7 +694,7 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     Window_HelpButton.prototype.initialize = function (rect) {
         Window_Selectable.prototype.initialize.call(this, rect);
         this._currentPage = 0;
-        this._childrenCount = 0;
+        this._article = {};
         this.makeItemList();
     };
 
@@ -757,17 +706,13 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
         return 3;
     };
 
-    Window_HelpButton.prototype.getChildrenCount = function () {
-        return this._childrenCount;
-    };
-
-    Window_HelpButton.prototype.setChildrenCount = function (count) {
-        this._childrenCount = count;
-    };
-
-    Window_HelpButton.prototype.setCurrentPage = function (p) {
-        this._currentPage = p;
-    };
+    Window_HelpButton.prototype.getCurrentPage = Window_HelpChildBase.prototype.getCurrentPage;
+    Window_HelpButton.prototype.setCurrentPage = Window_HelpChildBase.prototype.setCurrentPage;
+    Window_HelpButton.prototype.getArticle = Window_HelpChildBase.prototype.getArticle;
+    Window_HelpButton.prototype.setArticle = Window_HelpChildBase.prototype.setArticle;
+    Window_HelpButton.prototype.countArticleChildren = Window_HelpChildBase.prototype.countArticleChildren;
+    Window_HelpButton.prototype.prev = Window_HelpChildBase.prototype.prev;
+    Window_HelpButton.prototype.next = Window_HelpChildBase.prototype.next;
 
     Window_HelpButton.prototype.item = function () {
         return this.itemAt(this.index());
@@ -782,9 +727,9 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     };
 
     Window_HelpButton.prototype.isEnabled = function (index) {
-        if (this._currentPage === 0 && index === 0) {
+        if (this.getCurrentPage() === 0 && index === 0) {
             return false;
-        } else if (this._currentPage === this.getChildrenCount() - 1
+        } else if (this.getCurrentPage() === this.countArticleChildren() - 1
             && index === 1) {
             return false;
         }
@@ -812,18 +757,6 @@ Window_HelpButton.prototype.constructor = Window_HelpButton;
     Window_HelpButton.prototype.clear = function () {
         this.contents.clear();
         this.deselect();
-    };
-
-    Window_HelpButton.prototype.prev = function () {
-        if (this._currentPage > 0) {
-            this._currentPage--;
-        }
-    };
-
-    Window_HelpButton.prototype.next = function () {
-        if (this._currentPage < this.getChildrenCount() - 1) {
-            this._currentPage++;
-        }
     };
 
     Window_HelpButton.prototype.refresh = function () {
