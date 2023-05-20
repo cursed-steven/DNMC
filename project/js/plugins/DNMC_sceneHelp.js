@@ -96,4 +96,48 @@
         this._buttonGuide.refresh();
     };
 
+    //-------------------------------------------------------------------------
+    // Window_HelpChild
+
+    Window_HelpChild.prototype.drawDesc = function () {
+        const rect = this.baseTextRect();
+        const tyo = 4;
+        const iconOffset = 4;
+        let currentX = rect.x;
+        let currentY = rect.y + tyo;
+        const lines = this.getArticleChild().desc.split("\n");
+        let partsA = null;
+        let partsB = null;
+        let parsed = null;
+        lines.forEach(line => {
+            partsA = line.split('<Icon:');
+            partsA.forEach(partA => {
+                if (partA !== '') {
+                    partsB = partA.split('>');
+                    parsed = parseInt(partsB[0]);
+                    if (parsed.toString() !== 'NaN') {
+                        partsB[0] = parsed;
+                    }
+                    if (typeof partsB[0] === 'number') {
+                        currentX += iconOffset;
+                        this.drawIcon(partsB[0], currentX, currentY);
+                        currentX += ImageManager.iconWidth + iconOffset;
+                        this.drawText(partsB[1], currentX, currentY, rect.width);
+                        currentX += this.textWidth(partsB[1]);
+                    } else {
+                        if (partsB[0] !== '') {
+                            this.drawText(partsB[0], rect.x, currentY, rect.width);
+                            currentX += this.textWidth(partsB[0]);
+                        }
+                    }
+                }
+            });
+            currentX = rect.x;
+            currentY += this.lineHeight();
+        });
+
+        return currentY;
+    };
+
+
 })();
