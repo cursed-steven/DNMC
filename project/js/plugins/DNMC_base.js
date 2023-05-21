@@ -319,6 +319,17 @@ class Trait_Effect {
     };
 
     //-----------------------------------------------------------------------------
+    // Scene_Message
+
+    Scene_Message.prototype.messageWindowRect = function () {
+        const ww = Graphics.boxWidth - 160;
+        const wh = this.calcWindowHeight(4, false) + 8;
+        const wx = 0;
+        const wy = 0;
+        return new Rectangle(wx, wy, ww, wh);
+    };
+
+    //-----------------------------------------------------------------------------
     // Game_Temp
 
     const _Game_Temp_initialize = Game_Temp.prototype.initialize;
