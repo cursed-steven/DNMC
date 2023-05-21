@@ -321,6 +321,9 @@ class Trait_Effect {
     //-----------------------------------------------------------------------------
     // Scene_Title
 
+    /**
+     * ゲームタイトル描画のもろもろ変更
+     */
     Scene_Title.prototype.drawGameTitle = function () {
         const x = 480;
         const y = 440;
@@ -338,6 +341,10 @@ class Trait_Effect {
     //-----------------------------------------------------------------------------
     // Scene_Message
 
+    /**
+     * メッセージウィンドウの変更
+     * @returns Rectangle
+     */
     Scene_Message.prototype.messageWindowRect = function () {
         const ww = Graphics.boxWidth - 160;
         const wh = this.calcWindowHeight(4, false) + 8;
@@ -345,6 +352,14 @@ class Trait_Effect {
         const wy = 0;
         return new Rectangle(wx, wy, ww, wh);
     };
+
+    //-----------------------------------------------------------------------------
+    // Scene_MenuBase
+
+    /**
+     * 無効化
+     */
+    Scene_MenuBase.prototype.createPageButtons = function () { };
 
     //-----------------------------------------------------------------------------
     // Game_Temp

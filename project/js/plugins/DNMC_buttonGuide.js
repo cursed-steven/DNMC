@@ -287,8 +287,6 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
             case "Window_SkillCategory":
                 this.drawButton("left", "←カテゴリ", 0, 0);
                 this.drawButton("right", "カテゴリ→", 0, this.fontSize * this.lhr);
-                this.drawButton("pageup", "←キャラ", 0, this.fontSize * this.lhr * 2);
-                this.drawButton("pagedown", "キャラ→", 0, this.fontSize * this.lhr * 3);
                 break;
             case "Window_SkillList":
                 break;
