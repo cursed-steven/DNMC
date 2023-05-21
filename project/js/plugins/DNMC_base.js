@@ -556,4 +556,15 @@ class Trait_Effect {
         }
     };
 
+    //-----------------------------------------------------------------------------
+    // Window_NameBox
+
+    /**
+     * outlineWidth変更のための微調整
+     * @returns number
+     */
+    Window_NameBox.prototype.windowHeight = function () {
+        return this.fittingHeight(1) + 8;
+    };
+
 })();

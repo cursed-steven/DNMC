@@ -1579,7 +1579,8 @@
     const _Window_NameBox_baseTextRect    = Window_NameBox.prototype.baseTextRect;
     Window_NameBox.prototype.baseTextRect = function() {
         const rect = _Window_NameBox_baseTextRect.apply(this, arguments);
-        rect.y += 2;
+        // outlineWidth変更のための微調整 by cursed_steven 2023/05/22
+        rect.y += 4;
         return rect;
     };
 
