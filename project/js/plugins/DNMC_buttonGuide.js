@@ -209,6 +209,9 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
      * ボタンガイド更新
      */
     Window_ButtonGuide.prototype.refresh = function () {
+        // For credit screen.
+        if ($gameMap.mapId() === 82) return;
+
         this.contents.clear();
         this.contents.fontSize = this.fontSize;
         const sceneName = SceneManager._scene.constructor.name;

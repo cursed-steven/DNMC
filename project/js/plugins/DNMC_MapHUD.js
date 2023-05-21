@@ -124,6 +124,9 @@ Window_MapHUD.prototype.constructor = Window_MapHUD;
      * @param {number} index 
      */
     Window_MapHUD.prototype.drawItem = function (index) {
+        // For credit screen.
+        if ($gameMap.mapId() === 82) return;
+
         const actor = this.actor(index);
         const rect = this.itemRect(index);
         const x = rect.x;

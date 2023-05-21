@@ -319,6 +319,23 @@ class Trait_Effect {
     };
 
     //-----------------------------------------------------------------------------
+    // Scene_Title
+
+    Scene_Title.prototype.drawGameTitle = function () {
+        const x = 480;
+        const y = 440;
+        const maxWidth = Graphics.width - x * 2;
+        const text = $dataSystem.gameTitle;
+        const bitmap = this._gameTitleSprite.bitmap;
+        bitmap.fontFace = $gameSystem.numberFontFace();
+        bitmap.textColor = ColorManager.systemColor();
+        bitmap.outlineColor = "black";
+        bitmap.outlineWidth = 8;
+        bitmap.fontSize = 24;
+        bitmap.drawText(text, x, y, maxWidth, 48, "center");
+    };
+
+    //-----------------------------------------------------------------------------
     // Scene_Message
 
     Scene_Message.prototype.messageWindowRect = function () {
