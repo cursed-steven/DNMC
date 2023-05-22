@@ -412,6 +412,16 @@ class Trait_Effect {
         this.recoverAll();
     };
 
+    /**
+     * 指定の職業データが見つからない場合仮のデータを返す
+     * @returns any
+     */
+    Game_Actor.prototype.currentClass = function () {
+        return $dataClasses[this._classId]
+            ? $dataClasses[this._classId]
+            : $dataClasses[16];
+    };
+
     //-----------------------------------------------------------------------------
     // Game_Unit
 
