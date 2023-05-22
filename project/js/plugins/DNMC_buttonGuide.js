@@ -185,6 +185,47 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
         this.playCursorSound();
     };
 
+    //-----------------------------------------------------------------------------
+    // ConfigManager
+
+    const _ConfigManager_makeData = ConfigManager.makeData;
+    /**
+     * 設定保存用データにゲームパッドのフィールドを追加
+     * @returns any
+     */
+    ConfigManager.makeData = function () {
+        let config = _ConfigManager_makeData.call(this);
+        config.gamepads = this.gamepads;
+        return config;
+    };
+
+    const _ConfigManager_applyData = ConfigManager.applyData;
+    /**
+     * 設定読み込み処理にゲームパッドの設定を追加
+     * @param {any} config 
+     */
+    ConfigManager.applyData = function (config) {
+        _ConfigManager_applyData.call(this, config);
+        this.gamepads = this.readValue(config, 'gamepads');
+    };
+
+    /**
+     * フラグ、ボリューム以外の値の読み込み
+     * @param {any} config 
+     * @param {string} name 
+     * @returns number
+     */
+    ConfigManager.readValue = function (config, name) {
+        if (name in config) {
+            return Number(config[name]);
+        } else {
+            return 0;
+        }
+    };
+
+    //-----------------------------------------------------------------------------
+    // Window_ButtonGuide
+
     /**
      * ボタンガイド初期化
      * @param {Rectangle} rect 
