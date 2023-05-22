@@ -258,4 +258,4 @@ const NUMBER_KEY_MAP = {
     }
 };
 
-const PADS = ["NINTENDO", "PLAYSTATION", "XBOX", "KEYBOARD"];
+const PADS = ["XBOX", "NINTENDO", "PLAYSTATION", "KEYBOARD"];
