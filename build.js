@@ -16,11 +16,11 @@ builder.build({
     config: {
         productName: 'donut-machine-mz-mac',
         appId: 'com.electron.${name}',
-        copyright: 'Copyright (c) 2023 cursed_steven, 2020 Gotcha Gotcha Games Inc., 2020 YOJI OJIMA',
+        copyright: '© 2023 cursed_steven, © 2020 Gotcha Gotcha Games Inc./YOJI OJIMA',
         mac: {
             icon: 'icon.png',
             target: {
-                target: 'zip',
+                target: 'dir',
                 arch: ['x64', 'arm64']
             },
             category: 'public.app-category.games'
