@@ -142,13 +142,18 @@ function DNMC_base() {
     //-----------------------------------------------------------------------------
     // StorageManager
 
+    const _StorageManager_isLocalMode = StorageManager.isLocalMode;
     /**
-     * 常にfalse
+     * NW.jsの場合(Window用)の対処
      * @returns boolean
      */
     StorageManager.isLocalMode = function () {
-        // NW.js 環境であっても false を返して local storage を読ませる
-        return false;
+        const ua = window.navigator.userAgent.toLowerCase();
+        if (ua.indexOf('windows nt') !== -1) {
+            return false;
+        } else {
+            return _StorageManager_isLocalMode.call(this);
+        }
     };
 
     /**
