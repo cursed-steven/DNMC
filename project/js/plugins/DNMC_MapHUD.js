@@ -125,7 +125,7 @@ Window_MapHUD.prototype.constructor = Window_MapHUD;
      */
     Window_MapHUD.prototype.drawItem = function (index) {
         // For credit screen.
-        if (DNMC_base.isMapForCredit()) return;
+        if (DNMC_base.isMapNoHUD()) return;
 
         const actor = this.actor(index);
         const rect = this.itemRect(index);

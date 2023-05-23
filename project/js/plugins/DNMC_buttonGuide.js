@@ -251,7 +251,7 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
      */
     Window_ButtonGuide.prototype.refresh = function () {
         // For credit screen.
-        if (DNMC_base.isMapForCredit()) return;
+        if (DNMC_base.isMapNoHUD()) return;
 
         this.contents.clear();
         this.contents.fontSize = this.fontSize;
