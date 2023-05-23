@@ -99,6 +99,22 @@ function DNMC_base() {
     const param = PluginManagerEx.createParameter(script);
 
     /**
+     * いまいるのがHUD非表示マップかどうかを返す
+     * @returns boolean
+     */
+    DNMC_base.isMapNoHUD = function () {
+        return this.isMapForCredit() || this.isMapForInit();
+    };
+
+    /**
+     * いまいるのが初期処理用マップかどうかを返す
+     * @returns boolean
+     */
+    DNMC_base.isMapForInit = function () {
+        return $gameMap.mapId() === MAP_INIT;
+    };
+
+    /**
      * いまいるのがクレジット用マップかどうかを返す
      * @returns boolean
      */
@@ -144,97 +160,31 @@ function DNMC_base() {
 
     const _StorageManager_isLocalMode = StorageManager.isLocalMode;
     /**
-     * NW.jsの場合(Window用)の対処
+     * 常にfalse
      * @returns boolean
      */
     StorageManager.isLocalMode = function () {
-        const ua = window.navigator.userAgent.toLowerCase();
-        if (ua.indexOf('windows nt') !== -1) {
-            return false;
-        } else {
-            return _StorageManager_isLocalMode.call(this);
-        }
+        return false;
     };
 
     /**
-     * 一部データ向けにはまだ $dataSystem が読まれてないタイミングがありうるので改修
+     * System.json のロードを待たずに直接ゲームIDを定義する
      * @param {string} saveName 
      * @returns string
      */
     StorageManager.forageKey = function (saveName) {
-        let gameId = '';
-        if (Utils.isOptionValid('debug')) {
-            gameId = 'dev';
-        } else {
-            if ($dataSystem) {
-                gameId = $dataSystem.advanced.gameId;
-            } else {
-                gameId = 'dev';
-            }
-        }
-        return "rmmzsave." + gameId + "." + saveName;
+        return "rmmzsave." + GAME_ID + "." + saveName;
     };
 
     /**
-     * デバッグ用のセーブデータキーを返す
-     * @param {string} saveName 
-     * @returns string
-     */
-    StorageManager.forageKeyDev = function (saveName) {
-        if (saveName === 'Actors.json'
-            || saveName === 'Weapons.json'
-            || saveName === 'Armors.json') {
-            return "rmmzsave.dev." + saveName.split('.')[0];
-        } else {
-            return this.forageKey(saveName);
-        }
-    };
-
-    const _StorageManager_loadFromForage = StorageManager.loadFromForage;
-    /**
-     * デバッグ中はデバッグ用データをロードする
+     * キーのログ出力のみ追加
      * @param {string} saveName 
      * @returns binary?
      */
     StorageManager.loadFromForage = function (saveName) {
-        if (Utils.isOptionValid('debug')) {
-            return this.loadFromForageDev(saveName);
-        } else {
-            return _StorageManager_loadFromForage.call(this, saveName);
-        }
-    };
-
-    /**
-     * デバッグ用のセーブデータをロードする
-     * @param {string} saveName 
-     * @returns binary?
-     */
-    StorageManager.loadFromForageDev = function (saveName) {
-        const key = this.forageKeyDev(saveName);
+        const key = this.forageKey(saveName);
+        console.log(`** loading forage key: ${key}`);
         return localforage.getItem(key);
-    };
-
-    const _StorageManager_saveToForage = StorageManager.saveToForage;
-    /**
-     * デバッグ中はデバッグ用データにもセーブする
-     * @param {string} saveName 
-     * @param {binary?} zip 
-     * @returns number
-     */
-    StorageManager.saveToForage = function (saveName, zip) {
-        let result = _StorageManager_saveToForage.call(this, saveName, zip);
-
-        if (Utils.isOptionValid('debug')) {
-            const testKey = this.forageTestKey();
-            const devKey = this.forageKeyDev(saveName);
-            setTimeout(() => localforage.removeItem(testKey));
-            result = localforage
-                .setItem(testKey, zip)
-                .then(() => localforage.setItem(devKey, zip))
-                .then(() => this.updateForageKeys());
-        }
-
-        return result;
     };
 
     //-----------------------------------------------------------------------------
@@ -247,17 +197,28 @@ function DNMC_base() {
      * @param {string} src 
      */
     DataManager.loadDataFile = async function (name, src) {
-        // console.log(`>>>> DataManager.loadDataFile: ${name}, ${src}`);
         if (src === 'Actors.json'
             || src === 'Weapons.json'
             || src === 'Armors.json') {
-            const forageData = await StorageManager.loadObject(src);
+            const saveName = src.split('.')[0];
+            const forageData = await StorageManager.loadObject(saveName);
             if (forageData) {
-                console.log(`>> Data loaded from localforage: ${name}, ${src}`);
+                console.log(`>> Data loaded from localforage: ${name}, ${saveName}`);
                 window[name] = forageData;
                 this.onLoad(window[name]);
             } else {
-                _DataManager_loadDataFile.call(this, name, src);
+                console.log(`>> forage Data not found: ${name}, ${src}`);
+                switch (src) {
+                    case 'Actors.json':
+                        this.resetActor();
+                        break;
+                    case 'Weapons.json':
+                        this.resetWeapon();
+                        break;
+                    case 'Armors.json':
+                        this.resetArmor();
+                        break;
+                }
             }
         } else {
             console.log(`>> Data loaded from local filesystem: ${name}, ${src}`);
@@ -309,7 +270,9 @@ function DNMC_base() {
      */
     DataManager.resetWeapon = function () {
         console.log('>> resetWeapon');
-        const orgWeapon = $dataWeapons[1];
+        const orgWeapon = $dataWeapons && $dataWeapons[1]
+            ? $dataWeapons[1]
+            : { "id": 1, "animationId": 0, "description": "", "etypeId": 1, "traits": [{ "code": 31, "dataId": 1, "value": 0 }, { "code": 22, "dataId": 0, "value": 0 }], "iconIndex": 0, "name": "", "note": "", "params": [0, 0, 0, 0, 0, 0, 0, 0], "price": 0, "wtypeId": 0, "meta": {} };
         $dataWeapons = [];
         $dataWeapons.push(null);
         $dataWeapons.push(orgWeapon);
@@ -321,7 +284,9 @@ function DNMC_base() {
      */
     DataManager.resetArmor = function () {
         console.log('>> resetArmor');
-        const orgArmor = $dataArmors[1];
+        const orgArmor = $dataArmors && $dataArmors[1]
+            ? $dataArmors[1]
+            : { "id": 1, "atypeId": 0, "description": "", "etypeId": 2, "traits": [{ "code": 22, "dataId": 1, "value": 0 }], "iconIndex": 0, "name": "", "note": "", "params": [0, 0, 0, 0, 0, 0, 0, 0], "price": 0, "meta": {} };
         $dataArmors = [];
         $dataArmors.push(null);
         $dataArmors.push(orgArmor);
@@ -333,7 +298,9 @@ function DNMC_base() {
      */
     DataManager.resetActor = function () {
         console.log('>> resetActor');
-        const orgActor = $dataActors[1];
+        const orgActor = $dataActors && $dataActors[1]
+            ? $dataActors[1]
+            : { "id": 1, "battlerName": "", "characterIndex": 6, "characterName": "", "classId": 0, "equips": [0, 0, 0, 0, 0], "faceIndex": 0, "faceName": "", "traits": [], "initialLevel": 1, "maxLevel": 99, "name": "", "nickname": "", "note": "", "profile": "", "meta": {}, "normalAutoRate": 100, "FreeAutoActions": null };
         $dataActors = [];
         $dataActors.push(null);
         $dataActors.push(orgActor);
