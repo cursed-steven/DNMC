@@ -111,7 +111,6 @@ RPG MAKERは、株式会社Gotcha Gotcha Gamesの登録商標又は商標です�
 © panda (PANDA_KeywordColor.js under MIT License)
 Ultra Mode 7 licensed under BSD License 2.0, Copyright © Boris "Blizzard" Mikić
 © 2022 ポテトードラゴン (GenerateWorld.js under MIT License)
-© 2020 mattuup (MAT_LoadComSim.js under MIT License)
 © 2018 村人Ａ (tintBattleBack.js)
 © 木星ペンギン (Plugins under MIT License)
 © ルルの教会 (LL_ExGaugeDrawing.js)
