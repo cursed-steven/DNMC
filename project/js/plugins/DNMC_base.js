@@ -143,6 +143,15 @@ function DNMC_base() {
     // StorageManager
 
     /**
+     * 常にfalse
+     * @returns boolean
+     */
+    StorageManager.isLocalMode = function () {
+        // NW.js 環境であっても false を返して local storage を読ませる
+        return false;
+    };
+
+    /**
      * 一部データ向けにはまだ $dataSystem が読まれてないタイミングがありうるので改修
      * @param {string} saveName 
      * @returns string
