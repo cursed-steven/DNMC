@@ -123,7 +123,7 @@
      */
     Window_QuestHUD.prototype.refresh = function () {
         // For credit screen.
-        if ($gameMap.mapId() === 82) return;
+        if (DNMC_base.isMapForCredit()) return;
 
         this.contents.clear();
         this.contents.fontSize = this.fontSize;

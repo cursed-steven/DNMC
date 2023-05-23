@@ -83,20 +83,28 @@ class Trait_Effect {
 
 }
 
+//-----------------------------------------------------------------------------
+// DNMC_base
+//
+// Common static functions for Donut Machine.
+
+function DNMC_base() {
+    throw new Error("This is a static class");
+}
+
 (() => {
 
     'use strict';
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
 
-    //-----------------------------------------------------------------------------
-    // DNMC_base
-    //
-    // Common static functions for Donut Machine.
-
-    function DNMC_base() {
-        throw new Error("This is a static class");
-    }
+    /**
+     * いまいるのがクレジット用マップかどうかを返す
+     * @returns boolean
+     */
+    DNMC_base.isMapForCredit = function () {
+        return $gameMap.mapId() === MAP_FOR_CREDIT;
+    };
 
     /**
      * 指定した職業の装備可能な武器タイプをIDの配列で返す。

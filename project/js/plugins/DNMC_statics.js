@@ -13,13 +13,18 @@
 
 /*:ja
  * @target MZ
- * @plugindesc ランダム生成用定数
+ * @plugindesc DNMC特有の定数
  * @author cursed_steven
  * @base DNMC_system3
  * @orderAfter DNMC_system3
  * 
  * @help DNMC_randomStatics.js
  */
+
+/**
+ * クレジット表示用マップ
+ */
+const MAP_FOR_CREDIT = 82;
 
 /**
  * ランクとそれに属する職業
