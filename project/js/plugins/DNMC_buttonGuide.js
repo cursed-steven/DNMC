@@ -455,7 +455,7 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
      * @returns string
      */
     Window_ButtonGuide.prototype.keyName = function (role) {
-        if (role === "menu") role = "escape";
+        if (role === "cancel") role = "escape";
 
         const keyNo = Object.keys(Input.keyMapper).filter(
             n => Input.keyMapper[n] === role
@@ -471,8 +471,9 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
         } else {
             resultKeyNo = Math.min.apply(null, priorKeyNo);
         }
+        const keyName = NUMBER_KEY_MAP.KEYBOARD[resultKeyNo];
 
-        return NUMBER_KEY_MAP.KEYBOARD[resultKeyNo];
+        return keyName ? keyName : '';
     };
 
 

@@ -661,34 +661,16 @@ Scene_Operation.prototype.initialize = function () {
         const keys = [
             pad === "KEYBOARD" ? this.keyboardKeysName("ok") : this.gamePadBtn("ok"),
             pad === "KEYBOARD" ? this.keyboardKeysName("cancel") : this.gamePadBtn("cancel"),
-            pad === "KEYBOARD" ? this.keyboardKeysName("menu") : this.gamePadBtn("menu"),
+            pad === "KEYBOARD" ? '' : this.gamePadBtn("menu"),
             pad === "KEYBOARD" ? this.keyboardKeysName("shift") : this.gamePadBtn("shift")
         ];
+        const keyName = keys[index] ? keys[index] : '';
 
-        return LKEY + "+" + keys[index];
+        return keyName ? LKEY + "+" + keyName : '';
     };
 
     Window_CtlrL.prototype.gamePadBtn = Window_ButtonGuide.prototype.gamePadBtn;
-    Window_CtlrL.prototype.keyboardKeysName = function (role) {
-        if (role === "menu") role = "escape";
-
-        const keyNo = Object.keys(Input.keyMapper).filter(
-            n => Input.keyMapper[n] === role
-        );
-        const priorKeyNo = keyNo.filter(
-            n => 65 <= parseInt(n) && parseInt(n) <= 90
-        );
-
-        // A-Zに割り当てがあればそれを優先
-        let resultKeyNo = 0;
-        if (priorKeyNo.length === 0) {
-            resultKeyNo = Math.min.apply(null, keyNo);
-        } else {
-            resultKeyNo = Math.min.apply(null, priorKeyNo);
-        }
-
-        return NUMBER_KEY_MAP.KEYBOARD[resultKeyNo];
-    };
+    Window_CtlrL.prototype.keyboardKeysName = Window_ButtonGuide.prototype.keyName;
 
     /**
      * L側ウィンドウで右を押したときの処理
@@ -823,11 +805,12 @@ Scene_Operation.prototype.initialize = function () {
         const keys = [
             pad === "KEYBOARD" ? this.keyboardKeysName("ok") : this.gamePadBtn("ok"),
             pad === "KEYBOARD" ? this.keyboardKeysName("cancel") : this.gamePadBtn("cancel"),
-            pad === "KEYBOARD" ? this.keyboardKeysName("menu") : this.gamePadBtn("menu"),
+            pad === "KEYBOARD" ? '' : this.gamePadBtn("menu"),
             pad === "KEYBOARD" ? this.keyboardKeysName("shift") : this.gamePadBtn("shift")
         ];
+        const keyName = keys[index] ? keys[index] : '';
 
-        return RKEY + "+" + keys[index];
+        return keyName ? RKEY + "+" + keyName : '';
     };
 
     Window_CtlrR.prototype.gamePadBtn = Window_ButtonGuide.prototype.gamePadBtn;

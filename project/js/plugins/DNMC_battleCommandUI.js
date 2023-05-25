@@ -795,7 +795,7 @@
         const keys = [
             pad === "KEYBOARD" ? this.keyboardKeysName("ok") : this.gamePadBtn("ok"),
             pad === "KEYBOARD" ? this.keyboardKeysName("cancel") : this.gamePadBtn("cancel"),
-            pad === "KEYBOARD" ? this.keyboardKeysName("menu") : this.gamePadBtn("menu"),
+            pad === "KEYBOARD" ? '' : this.gamePadBtn("menu"),
             pad === "KEYBOARD" ? this.keyboardKeysName("shift") : this.gamePadBtn("shift")
         ];
 
@@ -812,7 +812,7 @@
                 break;
             case 4:
             case 5:
-                ABXY = keys[2];
+                ABXY = keys[2] ? keys[2] : '';
                 break;
             case 6:
             case 7:
@@ -822,30 +822,11 @@
                 break;
         }
 
-        return LR + "+" + ABXY;
+        return ABXY ? LR + "+" + ABXY : '';
     };
 
     Window_CustomActorCommand.prototype.gamePadBtn = Window_ButtonGuide.prototype.gamePadBtn;
-    Window_CustomActorCommand.prototype.keyboardKeysName = function (role) {
-        if (role === "menu") role = "escape";
-
-        const keyNo = Object.keys(Input.keyMapper).filter(
-            n => Input.keyMapper[n] === role
-        );
-        const priorKeyNo = keyNo.filter(
-            n => 65 <= parseInt(n) && parseInt(n) <= 90
-        );
-
-        // A-Zに割り当てがあればそれを優先
-        let resultKeyNo = 0;
-        if (priorKeyNo.length === 0) {
-            resultKeyNo = Math.min.apply(null, keyNo);
-        } else {
-            resultKeyNo = Math.min.apply(null, priorKeyNo);
-        }
-
-        return NUMBER_KEY_MAP.KEYBOARD[resultKeyNo];
-    };
+    Window_CustomActorCommand.prototype.keyboardKeysName = Window_ButtonGuide.prototype.keyName;
 
     /**
      * キー描画用の幅を返す
