@@ -296,7 +296,7 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
      * Scene_Mapのボタンガイド
      */
     Window_ButtonGuide.prototype.drawSceneMapGuide = function () {
-        this.drawButton("cancel", "メニュー", 0, 0);
+        this.drawButton("menu", "メニュー", 0, 0);
         this.drawButton("shift", "ダッシュ切替", 0, this.fontSize * this.lhr);
     };
 
@@ -455,6 +455,7 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
      * @returns string
      */
     Window_ButtonGuide.prototype.keyName = function (role) {
+        if (role === "menu") role = "cancel";
         if (role === "cancel") role = "escape";
 
         const keyNo = Object.keys(Input.keyMapper).filter(
