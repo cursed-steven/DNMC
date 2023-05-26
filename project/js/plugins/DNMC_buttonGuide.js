@@ -296,7 +296,7 @@ Window_ButtonGuide.prototype.constructor = Window_ButtonGuide;
      * Scene_Mapのボタンガイド
      */
     Window_ButtonGuide.prototype.drawSceneMapGuide = function () {
-        this.drawButton("menu", "メニュー", 0, 0);
+        this.drawButton("cancel", "メニュー", 0, 0);
         this.drawButton("shift", "ダッシュ切替", 0, this.fontSize * this.lhr);
     };
 
