@@ -34,8 +34,8 @@ macOS: https://support.apple.com/ja-jp/guide/mac-help/mh40616/mac
 
 ● ゲームパッド(PLAYSTATION系)
 - 移動: 十字キー/左スティック
-- 決定: ○
-- キャンセル: ×
+- 決定: ×
+- キャンセル: ○
 - メニュー: △
 - ダッシュ: □
 - 前ページ: L1
@@ -44,8 +44,8 @@ macOS: https://support.apple.com/ja-jp/guide/mac-help/mh40616/mac
 
 ● ゲームパッド(Nintendo系)
 - 移動: 十字キー/左スティック
-- 決定: A
-- キャンセル: B
+- 決定: B
+- キャンセル: A
 - メニュー: X
 - ダッシュ: Y
 - 前ページ: L
