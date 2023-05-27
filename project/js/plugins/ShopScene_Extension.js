@@ -642,24 +642,30 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
         let targetItem = {};
         for (const equip of actor.equips()) {
             // console.group($dataSystem.equipTypes[equip.etypeId]);
-            if (equip.etypeId === newItem.etypeId) {
-                // 交換になる装備について
-                targetItem = newItem;
-            } else {
-                // いま装備しているものについて
-                targetItem = equip;
-            }
-            // console.log(targetItem);
-            targetItemParam += targetItem.params[paramId];
-            // console.log(`targetItemParam, w/o trait: ${targetItemParam}`);
-            const targetItemTraitsRate = targetItem.traits.reduce((nitv, t) => {
-                if (t && t.code === Game_BattlerBase.TRAIT_PARAM
-                    && t.dataId === paramId) {
-                    return nitv * t.value;
+            if (equip) {
+                if (equip.etypeId === newItem.etypeId) {
+                    // 交換になる装備について
+                    targetItem = newItem;
                 } else {
-                    return nitv;
+                    // いま装備しているものについて
+                    targetItem = equip;
                 }
-            }, 1);
+            } else {
+                // 何も装備していない場合は交換になる装備について
+                targetItem = newItem;
+            }
+            let targetItemTraitsRate = 1;
+            if (targetItem) {
+                targetItemParam += targetItem.params[paramId];
+                targetItemTraitsRate = targetItem.traits.reduce((nitv, t) => {
+                    if (t && t.code === Game_BattlerBase.TRAIT_PARAM
+                        && t.dataId === paramId) {
+                        return nitv * t.value;
+                    } else {
+                        return nitv;
+                    }
+                }, 1);
+            }
             // console.log(`targetItemTraitsRate: ${targetItemTraitsRate}`);
             newItemTraitsRate *= targetItemTraitsRate;
 
