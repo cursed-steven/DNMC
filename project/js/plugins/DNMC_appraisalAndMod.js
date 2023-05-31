@@ -19,6 +19,9 @@
  * @orderAfter DNMC_sceneShop
  * 
  * @help DNMC_appraisalAndMod.js
+ * 
+ * @command start
+ * @text シーン開始
  */
 
 (() => {
@@ -27,6 +30,10 @@
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
 
+    PluginManagerEx.registerCommand(script, 'start', () => {
+        SceneManager.push(Scene_AppMod);
+    });
+
     //-------------------------------------------------------------------------
     // Scene_AppMod
     //
@@ -34,8 +41,6 @@
 
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
     const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
-    Scene_AppMod.prototype.mapHUDRect = Scene_Map.prototype.mapHUDRect;
-    Scene_AppMod.prototype.HUDHeight = Scene_Map.prototype.HUDHeight;
     Scene_AppMod.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
     Scene_AppMod.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
     Scene_AppMod.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
@@ -77,6 +82,26 @@
     Scene_AppMod.prototype.helpWindowRect = Scene_Shop.prototype.helpWindowRect;
     Scene_AppMod.prototype.createGoldWindow = Scene_Shop.prototype.createGoldWindow;
     Scene_AppMod.prototype.goldWindowRect = Scene_Shop.prototype.goldWindowRect;
+
+    /**
+     * HUDの領域を返す。
+     * @returns Rectangle
+     */
+    Scene_AppMod.prototype.mapHUDRect = function () {
+        const ww = 160;
+        const wh = this.HUDHeight();
+        const wx = Graphics.boxWidth - ww;
+        const wy = this.calcWindowHeight(3, true);
+        return new Rectangle(wx, wy, ww, wh);
+    };
+
+    /**
+     * HUDの高さを返す
+     * @returns number
+     */
+    Scene_AppMod.prototype.HUDHeight = function () {
+        return this.calcWindowHeight(3 * $gameParty.size(), true);
+    };
 
     /**
      * コマンドウィンドウを作成
@@ -247,13 +272,71 @@
      * 鑑定実行
      */
     Scene_AppMod.prototype.execAppraisal = function () {
-        // TODO
+        // TODO this._item から鑑定結果の
+        //      ランク(meta)
+        //      スロット(meta)
+        // TODO ランクごとに鑑定料を提示
+        // TODO ランクから対象職業をランダム決定
+        // TODO 武器(=スロット1)の場合 DNMC_randomWeapons で生成
+        // TODO 防具(=スロット2-5)の場合 DNMC_randomArmors で生成
+        //      ※武器タイプ・防具タイプは職業からランダム決定されるので手で決めなくてよい
+        // TODO アニメーションか何かで演出
+        // TODO 生成したものをインベントリに追加して鑑定対象アイテムを減らす
+        // TODO 鑑定結果の表示
+        // TODO 鑑定料徴収
     };
 
     /**
      * 改造材料の選択を開始
      */
     Scene_AppMod.prototype.startSelectModMats = function () {
-        // TODO
+        // TODO 
     };
+
+    //-----------------------------------------------------------------------------
+    // Window_AppModCommand
+    //
+    // The window for selecting appraisal/mod on the appmod shop screen.
+
+    function Window_AppModCommand() {
+        this.initialize(...arguments);
+    }
+
+    Window_AppModCommand.prototype = Object.create(Window_HorzCommand.prototype);
+    Window_AppModCommand.prototype.constructor = Window_AppModCommand;
+
+    /**
+     * 初期化
+     * @param {Rectangle} rect 
+     */
+    Window_AppModCommand.prototype.initialize = function (rect) {
+        Window_HorzCommand.prototype.initialize.call(this, rect);
+    };
+
+    /**
+     * 列数を返す
+     * @returns number
+     */
+    Window_AppModCommand.prototype.maxCols = function () {
+        return 3;
+    };
+
+    /**
+     * コマンドリスト作成
+     */
+    Window_AppModCommand.prototype.makeCommandList = function () {
+        const appCommandName = TextManager.originalCommand[8];
+        const modCommandName = TextManager.originalCommand[9];
+        this.addCommand(appCommandName ? appCommandName : 'Appraisal', 'appraisal');
+        this.addCommand(modCommandName ? modCommandName : 'Mod', 'mod');
+        this.addCommand(TextManager.cancel, 'cancel');
+    };
+
+    //-----------------------------------------------------------------------------
+    // Window_Appraisal
+    //
+    // The window for selecting item tobe appraised on the appmod shop screen.
+
+
+
 })();
