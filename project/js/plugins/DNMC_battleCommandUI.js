@@ -41,6 +41,45 @@
     const param = PluginManagerEx.createParameter(script);
     const FRAMES_TO_BE_SUSPENDED = 10;
 
+    /**
+     * セット中スキルの書き込み先変数番号を取得する
+     */
+    function getVarNumForRegisterSkill(actorId) { 
+        const ssvi = parseInt(param.setSkillVarIndex);
+        const maxActorCount = parseInt(param.actorsMaxLength);
+        let vi = ssvi + 1;
+        let actorIdInVar = 0;
+        let viFound = false;
+
+        // 新式でまずさがす
+        for (let i = 0; i < maxActorCount; i++) {
+            actorIdInVar = $v.get(vi + i).toString().split(',').length > 0
+                ? $v.get(vi + i).toString().split(',')[0]
+                : 0;
+            if (parseInt(actorIdInVar) === parseInt(actorId)) {
+                vi += i;
+                viFound = true;
+                break
+            };
+        }
+        if (viFound) {
+            console.log(`vi found [new]: ${vi}`);
+            return vi;
+        }
+
+        // 新式にいなければ旧式を使う
+        vi = ssvi + parseInt(actorId);
+        if (vi > ssvi + maxActorCount) {
+            vi = ssvi + 1;
+            while ($v.get(vi) !== 0) {
+                vi++;
+            }
+        }
+        console.log(`vi [old]: ${vi}`);
+
+        return vi;
+    };
+
     //-----------------------------------------------------------------------------
     // Game_BattlerBase
 
@@ -591,7 +630,7 @@
     Window_CustomActorCommand.prototype.addActorCommand = function () {
         this._data = [];
         if (this.actor()) {
-            const vi = param.setSkillVarIndex + this.actor().actorId();
+            const vi = getVarNumForRegisterSkill(this.actor().actorId());
             const ss = $gameVariables.value(vi).toString().split(",");
 
             // 新式データの場合
@@ -605,11 +644,17 @@
                 this._data.push($dataSkills[ss[7]]);
                 this._data.push($dataSkills[ss[8]]);
             } else {
-                ss.map(s => {
-                    this._data.push($dataSkills[s]);
-                });
+                this._data.push($dataSkills[ss[0]]);
+                this._data.push($dataSkills[ss[1]]);
+                this._data.push($dataSkills[ss[2]]);
+                this._data.push($dataSkills[ss[3]]);
+                this._data.push($dataSkills[ss[4]]);
+                this._data.push($dataSkills[ss[5]]);
+                this._data.push($dataSkills[ss[6]]);
+                this._data.push($dataSkills[ss[7]]);
             }
         }
+        // console.log(this._data);
 
         if (!this._data[0]) this._data = this.defaultData();
 
