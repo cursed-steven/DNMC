@@ -680,7 +680,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
             slotName = $dataSystem.equipTypes[this._actor.equipSlots()[i - 1]];
             this.drawText(slotName, this.itemWidth() * (i - 1), this.lineHeight() * 1);
         }
-        this.drawText(TextManager.others(1), this.itemWidth() * 5, this.lineHeight() * 1);
+        this.drawText(TextManager.others(1), 8, this.height / 2);
 
         this.resetTextColor();
     };
@@ -708,17 +708,17 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
         ];
         const equip = this._actor.equips()[slot];
         if (!equip) return;
+        let ix = -1;
         let paramValues = [[], [], [], [], [], [], [], []];
         let addParamValues = [[], [], [], [], [], [], [], [], [], []];
         let addAttacks = 0;
         let addActions = 0;
         let elementValues = [[], [], [], [], [], [], [], [], [], [], []];
         let debuffValues = [[], [], [], [], [], [], [], []];
-        let ix = -1;
         let stateParams = [[], [], [], [], [], [], [], [], [], [], [], [], []];
         let stateNos = [[], [], [], [], [], [], [], [], [], [], [], [], []];
         let specialParams = [[], [], [], [], [], [], [], [], [], []];
-        let parties = [0, 0, 0, 0, 0, 0];
+        let parties = [[], [], [], [], [], []];
         for (const trait of equip.traits) {
             ix = -1;
             if (!trait) continue;
@@ -726,387 +726,256 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
             switch (trait.code) {
                 case Game_BattlerBase.TRAIT_PARAM:
                     paramValues[trait.dataId].push(trait);
+                    this._allTraits.params[trait.dataId].push(trait);
                     break;
                 case Game_BattlerBase.TRAIT_XPARAM:
                     addParamValues[trait.dataId].push(trait);
+                    this._allTraits.addParams[trait.dataId].push(trait);
                     break;
                 case Game_BattlerBase.TRAIT_ATTACK_TIMES:
                     addAttacks++;
+                    this._allTraits.addAttacks.push(trait);
                     break;
                 case Game_BattlerBase.TRAIT_ACTION_PLUS:
                     addActions++;
+                    this._allTraits.addActions.push(trait);
+                    break;
                 case Game_BattlerBase.TRAIT_DEBUFF_RATE:
                     debuffValues[trait.dataId].push(trait);
+                    this._allTraits.debuffs[trait.dataId].push(trait);
                     break;
                 case Game_BattlerBase.TRAIT_ELEMENT_RATE:
                     if (elementValues[trait.dataId - 1]) {
                         elementValues[trait.dataId - 1].push(trait);
+                        this._allTraits.elements[trait.dataId - 1].push(trait);
                     }
                     break;
                 case Game_BattlerBase.TRAIT_STATE_RATE:
                     ix = STATES.indexOf(trait.dataId);
-                    if (ix != -1) stateParams[ix].push(trait);
+                    if (ix != -1) {
+                        stateParams[ix].push(trait);
+                        this._allTraits.states[ix].push(trait);
+                    }
                     break;
                 case Game_BattlerBase.TRAIT_STATE_RESIST:
                     ix = STATES.indexOf(trait.dataId);
-                    if (ix != -1) stateNos[ix].push(trait);
+                    if (ix != -1) {
+                        stateNos[ix].push(trait);
+                        this._allTraits.stateNos[ix].push(trait);
+                    }
                     break;
                 case Game_BattlerBase.TRAIT_PARTY_ABILITY:
-                    parties[trait.dataId]++;
+                    parties[trait.dataId].push(trait);
+                    this._allTraits.parties[trait.dataId].push(trait);
                     break;
                 case Game_BattlerBase.TRAIT_SPARAM:
                     specialParams[trait.dataId].push(trait);
+                    this._allTraits.specials[trait.dataId].push(trait);
                     break;
             }
         }
 
-        let sa = [];
-        let ctr = 2;
-        let trait = {};
-
-        sa = paramValues;
-        ctr = this.drawTraitMultiply(sa, slot, ctr, "params");
-
-        sa = addParamValues;
-        ctr = this.drawTraitAddSub(sa, slot, ctr, "addParams");
-
-        if (addAttacks > 0) {
-            ctr = this.drawTraitCount(
-                Game_BattlerBase.TRAIT_ATTACK_TIMES,
-                addAttacks,
-                slot,
-                ctr,
-                "addAttacks"
-            );
-        }
-
-        if (addActions > 0) {
-            ctr = this.drawTraitCount(
-                Game_BattlerBase.TRAIT_ACTION_PLUS,
-                addActions,
-                slot,
-                ctr,
-                "addActions"
-            );
-        }
-
-        sa = elementValues;
-        ctr = this.drawTraitMultiply(sa, slot, ctr, "elements");
-
-        sa = stateParams;
-        ctr = this.drawTraitMultiply(sa, slot, ctr, "states");
-
-        for (let i = 0; i < 13; i++) {
-            if (stateNos[i] && stateNos[i][0]) {
-                trait = {
-                    code: stateNos[i][0].code,
-                    dataId: stateNos[i][0].dataId
-                };
-                this.drawText(
-                    DNMC_randomArmors.traitToDesc(trait),
-                    this.itemWidth() * slot,
-                    this.lineHeight() * ctr
-                );
-                this._allTraits.stateNos[i].push(trait);
-                ctr++;
-            }
-        }
-
-        sa = debuffValues;
-        ctr = this.drawTraitMultiply(sa, slot, ctr, "debuffs");
-
-        for (let i = 0; i < 6; i++) {
-            if (parties[i] > 0) {
-                trait = {
-                    code: Game_BattlerBase.TRAIT_PARTY_ABILITY,
-                    dataId: i
-                };
-                this.drawText(
-                    slot === 0
-                        ? DNMC_randomWeapons.traitToDesc(trait)
-                        : DNMC_randomArmors.traitToDesc(trait),
-                    this.itemWidth() * slot,
-                    this.lineHeight() * ctr
-                );
-                this._allTraits.parties[i]++;
-                ctr++;
-            }
-        }
-
-        sa = specialParams;
-        ctr = this.drawTraitMultiply(sa, slot, ctr, "specials");
-
-        // console.log(this._allTraits);
+        // console.log(`---------------- slot ${slot} ----------------`);
+        this.drawTraitParamValues(slot, paramValues);
+        this.drawTraitAddParamValues(slot, addParamValues);
+        this.drawTraitAddAttacks(slot, addAttacks);
+        this.drawTraitAddActions(slot, addActions);
+        this.drawTraitElementValues(slot, elementValues);
+        this.drawTraitDebuffValues(slot, debuffValues);
+        this.drawTraitStateParams(slot, stateParams);
+        this.drawTraitStateNos(slot, stateNos);
+        this.drawTraitSpecialParams(slot, specialParams);
+        this.drawTraitParties(slot, parties);
+        this._yDrawIx = 0;
     };
 
+    Window_EquipDetail.prototype.drawTraitParamValues = function (slot, values) { 
+        // console.log('-------- paramValues');
+        let paramName = '';
+        let value = 0;
+        for (let i = 0; i < values.length; i++) {
+            if (values[i].length > 0) {
+                // console.log(values[i][0]);
+                // console.log(`${DNMC_randomArmors.traitToDesc(values[i][0])} (slot: ${slot}, _yDrawIx: ${this._yDrawIx})`);
+                this.drawText(
+                    DNMC_randomArmors.traitToDesc(values[i][0]),
+                    slot === 0
+                        ? 8
+                        : this.itemWidth() * slot,
+                    this.lineHeight() * (this._yDrawIx + 2)
+                );
+                this._yDrawIx++;
+            }
+        }
+    };
+
+    Window_EquipDetail.prototype.drawTraitAddParamValues = function (slot, values) { 
+        // console.log('-------- addParamValues');
+        for (let i = 0; i < values.length; i++) {
+            if (values[i].length > 0) {
+                // console.log(values[i][0]);
+                // console.log(`${DNMC_randomArmors.traitToDesc(values[i][0])} (slot: ${slot}, _yDrawIx: ${this._yDrawIx})`);
+                this.drawText(
+                    DNMC_randomArmors.traitToDesc(values[i][0]),
+                    slot === 0
+                        ? 8
+                        : this.itemWidth() * slot,
+                    this.lineHeight() * (this._yDrawIx + 2)
+                );
+                this._yDrawIx++;
+            }
+        }
+    };
+
+    Window_EquipDetail.prototype.drawTraitAddAttacks = function (slot, values) { 
+        // console.log('-------- addAttacks');
+        if (values > 0) {
+            // console.log(values);
+            // console.log(`${DNMC_randomArmors.traitToDesc(Game_BattlerBase.TRAIT_ATTACK_TIMES)} (slot: ${slot}, _yDrawIx: ${this._yDrawIx})`);
+            this.drawText(
+                DNMC_randomArmors.traitToDesc(Game_BattlerBase.TRAIT_ATTACK_TIMES),
+                slot === 0
+                    ? 8
+                    : this.itemWidth() * slot,
+                this.lineHeight() * (this._yDrawIx + 2)
+            );
+            this._yDrawIx++;
+        }
+    };
+
+    Window_EquipDetail.prototype.drawTraitAddActions = function (slot, values) { 
+        // console.log('-------- addActions');
+        if (values > 0) {
+            // console.log(values);
+            // console.log(`${DNMC_randomArmors.traitToDesc(Game_BattlerBase.TRAIT_ACTION_PLUS)} (slot: ${slot}, _yDrawIx: ${this._yDrawIx})`);
+            this.drawText(
+                DNMC_randomArmors.traitToDesc(Game_BattlerBase.TRAIT_ACTION_PLUS),
+                slot === 0
+                    ? 8
+                    : this.itemWidth() * slot,
+                this.lineHeight() * (this._yDrawIx + 2)
+            );
+            this._yDrawIx++;
+        }
+    };
+
+    Window_EquipDetail.prototype.drawTraitElementValues = function (slot, values) { 
+        // console.log('-------- elementValues');
+        let paramName = '';
+        let value = 0;
+        for (let i = 0; i < values.length; i++) {
+            if (values[i].length > 0) {
+                // console.log(values[i][0]);
+                // console.log(`${DNMC_randomArmors.traitToDesc(values[i][0])} (slot: ${slot}, _yDrawIx: ${this._yDrawIx})`);
+                this.drawText(
+                    DNMC_randomArmors.traitToDesc(values[i][0]),
+                    slot === 0
+                        ? 8
+                        : this.itemWidth() * slot,
+                    this.lineHeight() * (this._yDrawIx + 2)
+                );
+                this._yDrawIx++;
+            }
+        }
+    };
+
+    Window_EquipDetail.prototype.drawTraitDebuffValues = function (slot, values) { 
+        // console.log('-------- debuffValues');
+        for (let i = 0; i < values.length; i++) {
+            if (values[i].length > 0) {
+                // console.log(values[i][0]);
+                // console.log(`${DNMC_randomArmors.traitToDesc(values[i][0])} (slot: ${slot}, _yDrawIx: ${this._yDrawIx})`);
+                this.drawText(
+                    DNMC_randomArmors.traitToDesc(values[i][0]),
+                    slot === 0
+                        ? 8
+                        : this.itemWidth() * slot,
+                    this.lineHeight() * (this._yDrawIx + 2)
+                );
+                this._yDrawIx++;
+            }
+        }
+    };
+
+    Window_EquipDetail.prototype.drawTraitStateParams = function (slot, values) { 
+        // console.log('-------- stateParams');
+        for (let i = 0; i < values.length; i++) {
+            if (values[i].length > 0) {
+                // console.log(values[i][0]);
+                // console.log(`${DNMC_randomArmors.traitToDesc(values[i][0])} (slot: ${slot}, _yDrawIx: ${this._yDrawIx})`);
+                this.drawText(
+                    DNMC_randomArmors.traitToDesc(values[i][0]),
+                    slot === 0
+                        ? 8
+                        : this.itemWidth() * slot,
+                    this.lineHeight() * (this._yDrawIx + 2)
+                );
+                this._yDrawIx++;
+            }
+        }
+    };
+
+    Window_EquipDetail.prototype.drawTraitStateNos = function (slot, values) { 
+        // console.log('-------- stateNos');
+        for (let i = 0; i < values.length; i++) {
+            if (values[i].length > 0) {
+                // console.log(values[i][0]);
+                // console.log(`${DNMC_randomArmors.traitToDesc(values[i][0])} (slot: ${slot}, _yDrawIx: ${this._yDrawIx})`);
+                this.drawText(
+                    DNMC_randomArmors.traitToDesc(values[i][0]),
+                    slot === 0
+                        ? 8
+                        : this.itemWidth() * slot,
+                    this.lineHeight() * (this._yDrawIx + 2)
+                );
+                this._yDrawIx++;
+            }
+        }
+    };
+
+    Window_EquipDetail.prototype.drawTraitSpecialParams = function (slot, values) { 
+        // console.log('-------- specialParams');
+        for (let i = 0; i < values.length; i++) {
+            if (values[i].length > 0) {
+                // console.log(values[i][0]);
+                // console.log(`${DNMC_randomArmors.traitToDesc(values[i][0])} (slot: ${slot}, _yDrawIx: ${this._yDrawIx})`);
+                this.drawText(
+                    DNMC_randomArmors.traitToDesc(values[i][0]),
+                    slot === 0
+                        ? 8
+                        : this.itemWidth() * slot,
+                    this.lineHeight() * (this._yDrawIx + 2)
+                );
+                this._yDrawIx++;
+            }
+        }
+    };
+
+    Window_EquipDetail.prototype.drawTraitParties = function (slot, values) { 
+        // console.log('-------- parties');
+        for (let i = 0; i < values.length; i++) {
+            if (values[i].length > 0) {
+                // console.log(values[i][0]);
+                // console.log(`${DNMC_randomArmors.traitToDesc(values[i][0])} (slot: ${slot}, _yDrawIx: ${this._yDrawIx})`);
+                this.drawText(
+                    DNMC_randomArmors.traitToDesc(values[i][0]),
+                    slot === 0
+                        ? 8
+                        : this.itemWidth() * slot,
+                    this.lineHeight() * (this._yDrawIx + 2)
+                );
+                this._yDrawIx++;
+            }
+        }
+    };
+    
     /**
      * スロットごとの特徴をまとめた内容を描画する。
      */
     Window_EquipDetail.prototype.drawAllTraits = function () {
-        let ctr = 2;
-        let value = 0;
-        let trait = {};
-        let sa = [];
-        const offsetY = this.lineHeight() - this.lineHeight2();
-        const maxCount = 25;
-
-        sa = this._allTraits.params;
-        ctr = this.drawTraitMultiply(sa, 5, ctr);
-        // 表示件数上限
-        if (ctr >= maxCount) {
-            this.drawDash(ctr);
-            return;
-        }
-
-        sa = this._allTraits.addParams;
-        ctr = this.drawTraitAddSub(sa, 5, ctr);
-        // 表示件数上限
-        if (ctr >= maxCount) {
-            this.drawDash(ctr);
-            return;
-        }
-
-        sa = this._allTraits.addAttacks;
-        value = sa.reduce((v, e) => v += e.value, 0);
-        if (sa[0]) {
-            ctr = this.drawTraitCount(sa[0].code, value, 5, ctr);
-        }
-        // 表示件数上限
-        if (ctr >= maxCount) {
-            this.drawDash(ctr);
-            return;
-        }
-
-        sa = this._allTraits.addActions;
-        value = sa.reduce((v, e) => v += e.value, 0);
-        if (sa[0]) {
-            ctr = this.drawTraitCount(sa[0].code, value, 5, ctr);
-        }
-        // 表示件数上限
-        if (ctr >= maxCount) {
-            this.drawDash(ctr);
-            return;
-        }
-
-        sa = this._allTraits.elements;
-        ctr = this.drawTraitMultiply(sa, 5, ctr);
-        // 表示件数上限
-        if (ctr >= maxCount) {
-            this.drawDash(ctr);
-            return;
-        }
-
-        sa = this._allTraits.debuffs;
-        ctr = this.drawTraitMultiply(sa, 5, ctr);
-        // 表示件数上限
-        if (ctr >= maxCount) {
-            this.drawDash(ctr);
-            return;
-        }
-
-        sa = this._allTraits.states;
-        for (let i = 0; i < sa.length; i++) {
-            value = sa[i].reduce((v, e) => v *= e.value, 1);
-            if (sa[i][0] && value != 1) {
-                trait = {
-                    code: sa[i][0].code,
-                    dataId: sa[i][0].dataId,
-                    value: value
-                };
-                this.drawText(
-                    DNMC_randomArmors.traitToDesc(trait),
-                    this.itemWidth() * 5,
-                    this.lineHeight2() * ctr + offsetY
-                );
-                ctr++;
-            }
-        }
-        // 表示件数上限
-        if (ctr >= maxCount) {
-            this.drawDash(ctr);
-            return;
-        }
-
-        sa = this._allTraits.stateNos;
-        for (let i = 0; i < sa.length; i++) {
-            if (sa[i][0]) {
-                trait = {
-                    code: sa[i][0].code,
-                    dataId: sa[i][0].dataId
-                };
-                this.drawText(
-                    DNMC_randomArmors.traitToDesc(trait),
-                    this.itemWidth() * 5,
-                    this.lineHeight2() * ctr + offsetY
-                );
-                ctr++;
-            }
-        }
-        // 表示件数上限
-        if (ctr >= maxCount) {
-            this.drawDash(ctr);
-            return;
-        }
-
-        sa = this._allTraits.parties;
-        for (let i = 0; i < sa.length; i++) {
-            if (sa[i] > 0) {
-                trait = {
-                    code: Game_BattlerBase.TRAIT_PARTY_ABILITY,
-                    dataId: i
-                };
-                this.drawText(
-                    DNMC_randomArmors.traitToDesc(trait),
-                    this.itemWidth() * 5,
-                    this.lineHeight2() * ctr + offsetY
-                );
-                ctr++;
-            }
-        }
-        // 表示件数上限
-        if (ctr >= maxCount) {
-            this.drawDash(ctr);
-            return;
-        }
-
-        sa = this._allTraits.specials;
-        ctr = this.drawTraitMultiply(sa, 5, ctr);
-        // 表示件数上限
-        if (ctr >= maxCount) {
-            this.drawDash(ctr);
-            return;
-        }
+        console.log(`---------------- all ----------------`);
+        console.log(this._allTraits);
     }
-
-    /**
-     * 倍率型特徴を描画して行位置を返す。
-     * @param {array} sa 
-     * @param {number} slot 
-     * @param {number} ctr 
-     * @param {string} pushKey 
-     * @returns number
-     */
-    Window_EquipDetail.prototype.drawTraitMultiply = function (sa, slot, ctr, pushKey) {
-        let trait = {};
-        let value = 0;
-        let lineHeight = 0;
-        const offsetY = this.lineHeight() - this.lineHeight2();
-        for (let i = 0; i < sa.length; i++) {
-            value = sa[i].reduce((v, e) => v *= e.value, 1);
-            if (value != 1) {
-                trait = {
-                    code: sa[i][0].code,
-                    dataId: sa[i][0].dataId,
-                    value: value
-                };
-                if (pushKey) {
-                    lineHeight = this.lineHeight() * ctr;
-                    this._allTraits[pushKey][i].push(trait);
-                } else {
-                    lineHeight = this.lineHeight2() * ctr + offsetY;
-                }
-                this.drawText(
-                    DNMC_randomArmors.traitToDesc(trait),
-                    slot === 0
-                        ? 8
-                        : this.itemWidth() * slot,
-                    lineHeight
-                );
-                ctr++;
-            }
-        }
-
-        return ctr;
-    }
-
-    /**
-     * 加算型特徴を描画して行位置を返す。
-     * @param {array} sa 
-     * @param {number} slot 
-     * @param {number} ctr 
-     * @param {string} pushKey 
-     * @returns number
-     */
-    Window_EquipDetail.prototype.drawTraitAddSub = function (sa, slot, ctr, pushKey) {
-        let trait = {};
-        let value = 0;
-        let lineHeight = 0;
-        const offsetY = this.lineHeight() - this.lineHeight2();
-        for (let i = 0; i < sa.length; i++) {
-            value = sa[i].reduce((v, e) => v += e.value, 0);
-            if (value != 0) {
-                trait = {
-                    code: sa[i][0].code,
-                    dataId: sa[i][0].dataId,
-                    value: value
-                };
-                if (pushKey) {
-                    lineHeight = this.lineHeight() * ctr;
-                    this._allTraits[pushKey][i].push(trait);
-                } else {
-                    lineHeight = this.lineHeight2() * ctr + offsetY;
-                }
-                this.drawText(
-                    DNMC_randomArmors.traitToDesc(trait),
-                    slot === 0
-                        ? 8
-                        : this.itemWidth() * slot,
-                    lineHeight
-                );
-                ctr++;
-            }
-        }
-
-        return ctr;
-    }
-
-    /**
-     * 回数型特徴を描画して行位置を返す。
-     * @param {number} code 
-     * @param {number} value 
-     * @param {number} slot 
-     * @param {number} ctr 
-     * @param {string} pushKey 
-     * @returns 
-     */
-    Window_EquipDetail.prototype.drawTraitCount = function (code, value, slot, ctr, pushKey) {
-        const trait = {
-            code: code,
-            dataId: 0,
-            value: value
-        };
-        let lineHeight = 0;
-        const offsetY = this.lineHeight() - this.lineHeight2();
-        if (pushKey) {
-            lineHeight = this.lineHeight() * ctr;
-            this._allTraits[pushKey].push(trait);
-        } else {
-            lineHeight = this.lineHeight2() * ctr + offsetY;
-        }
-        this.drawText(
-            DNMC_randomArmors.traitDesc(trait),
-            slot === 0
-                ? 8
-                : this.itemWidth() * slot,
-            lineHeight
-        );
-        ctr++;
-
-        return ctr;
-    };
-
-    /**
-     * "..."表示
-     * @param {number} ctr 
-     */
-    Window_EquipDetail.prototype.drawDash = function (ctr) {
-        const offsetY = this.lineHeight() - this.lineHeight2();
-        this.drawText(
-            "...",
-            this.itemWidth() * 5,
-            this.lineHeight2() * ctr + offsetY
-        );
-    };
 
     /**
      * まとめ用特徴のクリア
@@ -1121,9 +990,11 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
             debuffs: [[], [], [], [], [], [], [], []],
             states: [[], [], [], [], [], [], [], [], [], [], [], [], []],
             stateNos: [[], [], [], [], [], [], [], [], [], [], [], [], []],
-            parties: [0, 0, 0, 0, 0, 0],
+            parties: [[], [], [], [], [], []],
             specials: [[], [], [], [], [], [], [], [], [], []]
         };
+        // Y方向描画インデックス
+        this._yDrawIx = 0;
     };
 
     /**
@@ -1147,7 +1018,7 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
      * @returns number
      */
     Window_EquipDetail.prototype.itemWidth = function () {
-        return Math.floor((this.width - this.itemPadding() * 5) / 6);
+        return Math.floor((this.width - this.itemPadding() * 4) / 5);
     };
 
     //-------------------------------------------------------------------------
