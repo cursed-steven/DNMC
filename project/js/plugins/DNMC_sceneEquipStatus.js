@@ -973,8 +973,120 @@ Scene_EquipStatus.prototype.constructor = Scene_EquipStatus;
      * スロットごとの特徴をまとめた内容を描画する。
      */
     Window_EquipDetail.prototype.drawAllTraits = function () {
-        console.log(`---------------- all ----------------`);
-        console.log(this._allTraits);
+        // console.log(`---------------- all ----------------`);
+        // console.log(this._allTraits);
+
+        let toBeDrawn = [];
+        for (const category of Object.keys(this._allTraits)) {
+            // console.log(category);
+            // console.log(this._allTraits[category]);
+
+            let code = 0;
+            let dataId = 0;
+            let value = 0;
+            let trait = null;
+            switch (category) {
+                case 'params':
+                case 'elements':
+                case 'debuffs':
+                case 'states':
+                case 'specials':
+                    for (let i = 0; i < this._allTraits[category].length; i++) {
+                        if (this._allTraits[category][i].length > 0) {
+                            value = 1;
+                            for (let j = 0; j < this._allTraits[category][i].length; j++){
+                                code = this._allTraits[category][i][j].code;
+                                dataId = this._allTraits[category][i][j].dataId;
+                                value *= this._allTraits[category][i][j].value;
+                                trait = new Trait_Effect(code, dataId, value);
+                            }
+                            // console.log(`${DNMC_randomArmors.traitToDesc(trait)} (_yDrawIx: ${this._yDrawIx})`);
+                            toBeDrawn.push({
+                                text: DNMC_randomArmors.traitToDesc(trait),
+                                category: category,
+                                dataId: dataId
+                            });
+                        }
+                    }
+                    break;
+                case 'addParams':
+                    for (let i = 0; i < this._allTraits[category].length; i++) {
+                        if (this._allTraits[category][i].length > 0) {
+                            value = 0;
+                            for (let j = 0; j < this._allTraits[category][i].length; j++){
+                                code = this._allTraits[category][i][j].code;
+                                dataId = this._allTraits[category][i][j].dataId;
+                                value += this._allTraits[category][i][j].value;
+                                trait = new Trait_Effect(code, dataId, value);
+                            }
+                            // console.log(`${DNMC_randomArmors.traitToDesc(trait)} (_yDrawIx: ${this._yDrawIx})`);
+                            toBeDrawn.push({
+                                text: DNMC_randomArmors.traitToDesc(trait),
+                                category: category,
+                                dataId: dataId
+                            });
+                        }
+                    }
+                    break;
+                case 'addAttacks':
+                case 'attActions':
+                    break;
+                case 'stateNos':
+                case 'parties':
+                    for (let i = 0; i < this._allTraits[category].length; i++) {
+                        if (this._allTraits[category][i].length > 0) {
+                            value = 0;
+                            for (let j = 0; j < this._allTraits[category][i].length; j++){
+                                code = this._allTraits[category][i][j].code;
+                                dataId = this._allTraits[category][i][j].dataId;
+                                value += this._allTraits[category][i][j].value;
+                                trait = new Trait_Effect(code, dataId, value);
+                            }
+                            // console.log(`${DNMC_randomArmors.traitToDesc(trait)} (_yDrawIx: ${this._yDrawIx})`);
+                            toBeDrawn.push({
+                                text: DNMC_randomArmors.traitToDesc(trait),
+                                category: category,
+                                dataId: dataId
+                            });
+                        }
+                    }
+                    break;
+            }
+        }
+        toBeDrawn = toBeDrawn.filter((tbd) => {
+            const category = tbd.category;
+            const dataId = tbd.dataId;
+            let found = [];
+            if (category === 'states') {
+                found = toBeDrawn.find((tbd2) => {
+                    const category2 = tbd2.category;
+                    const dataId2 = tbd2.dataId;
+                    return category2 === 'stateNos' && dataId2 === dataId;
+                });
+                return !found;
+            } else {
+                return tbd;
+            }
+        });
+        // console.log(toBeDrawn);
+
+        let xix = 0;
+        let yix = 0;
+        for (let i = 0; i < toBeDrawn.length; i++) {
+            // console.log(`${i}: ${toBeDrawn[i].text} (${xix}, ${yix})`);
+            this.drawText(
+                toBeDrawn[i].text,
+                xix === 0
+                    ? 8
+                    : this.itemWidth() * xix,
+                this.height / 2 + this.lineHeight() * (1 + yix)                
+            );
+            yix++;
+            if (yix > 6) {
+                xix++;
+                yix = 0;
+            }
+        }
     }
 
     /**
