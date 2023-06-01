@@ -94,6 +94,11 @@
  * @text 除籍不可アクターIDリスト変数ID
  * @type variable
  * 
+ * @param setSkillVarIndex
+ * @text セット中スキル変数開始
+ * @desc この変数の次から16変数に各部アクターのセット中スキルを入れる
+ * @type variable
+ * 
  * @param labelForEliminateMode
  * @text 除籍コマンドラベル
  * @type string
@@ -321,6 +326,46 @@
         if (!actorId) return false;
         return membersCantEliminate.toString().split(",").includes(actorId.toString());
     }
+
+    /**
+     * セット中スキルの書き込み先変数番号を取得する
+     * ※DNMC_sceneOperation.js にある同名関数と同じ内容にしておくこと
+     */
+    function getVarNumForRegisterSkill(actorId) { 
+        const ssvi = parseInt(param.setSkillVarIndex);
+        const MAX_ACTORS_COUNT = 16;
+        let vi = ssvi + 1;
+        let actorIdInVar = 0;
+        let viFound = false;
+
+        // 新式でまずさがす
+        for (let i = 0; i < MAX_ACTORS_COUNT; i++) {
+            actorIdInVar = $v.get(vi + i).toString().split(',').length > 0
+                ? $v.get(vi + i).toString().split(',')[0]
+                : 0;
+            if (parseInt(actorIdInVar) === parseInt(actorId)) {
+                vi += i;
+                viFound = true;
+                break
+            };
+        }
+        if (viFound) {
+            console.log(`vi found [new]: ${vi}`);
+            return vi;
+        }
+
+        // 新式にいなければ旧式を使う
+        vi = ssvi + parseInt(actorId);
+        if (vi > ssvi + MAX_ACTORS_COUNT) {
+            vi = ssvi + 1;
+            while ($v.get(vi) !== 0) {
+                vi++;
+            }
+        }
+        console.log(`vi [old]: ${vi}`);
+
+        return vi;
+    };
 
     //-----------------------------------------------------------------------------
     // Scene_PartyChange
@@ -1098,6 +1143,17 @@
     Scene_PartyEliminate.prototype.eliminate = function (actorId) {
         $gameParty.removeActor(actorId);
         this.removeFromReserve(actorId);
+
+        // 使用可能アクターからも削除
+        const deleted = $v.get(param.actorListVarId).split(',').filter((a) => {
+            return a != 0 && a != actorId
+        });
+        $v.set(param.actorListVarId, deleted.join(','));
+
+        // セット中スキルを削除
+        const setSkillVarId = getVarNumForRegisterSkill(actorId);
+        console.log(`setSKillVarId: ${setSkillVarId}`);
+        $v.set(setSkillVarId, 0);
     };
 
     /**

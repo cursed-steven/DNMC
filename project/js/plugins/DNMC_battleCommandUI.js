@@ -593,9 +593,22 @@
         if (this.actor()) {
             const vi = param.setSkillVarIndex + this.actor().actorId();
             const ss = $gameVariables.value(vi).toString().split(",");
-            ss.map(s => {
-                this._data.push($dataSkills[s]);
-            });
+
+            // 新式データの場合
+            if (ss.length === 9) {
+                this._data.push($dataSkills[ss[1]]);
+                this._data.push($dataSkills[ss[2]]);
+                this._data.push($dataSkills[ss[3]]);
+                this._data.push($dataSkills[ss[4]]);
+                this._data.push($dataSkills[ss[5]]);
+                this._data.push($dataSkills[ss[6]]);
+                this._data.push($dataSkills[ss[7]]);
+                this._data.push($dataSkills[ss[8]]);
+            } else {
+                ss.map(s => {
+                    this._data.push($dataSkills[s]);
+                });
+            }
         }
 
         if (!this._data[0]) this._data = this.defaultData();

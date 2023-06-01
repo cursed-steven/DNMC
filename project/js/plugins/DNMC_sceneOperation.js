@@ -23,9 +23,16 @@
  * 
  * @help DNMC_sceneOperation.js
  * 
+ * @param actorsMaxLength
+ * @text アクター最大人数
+ * @desc これを超えると除籍が必要になる人数
+ * @type number
+ * @min 2
+ * @default 16
+ * 
  * @param setSkillVarIndex
  * @text セット中スキル変数開始
- * @desc この変数の次から14変数に各部アクターのセット中スキルを入れる
+ * @desc この変数の次から16変数に各部アクターのセット中スキルを入れる
  * @type variable
  * 
  * @param lastCurrentSide
@@ -58,6 +65,45 @@ Scene_Operation.prototype.initialize = function () {
     'use strict';
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
+
+    /**
+     * セット中スキルの書き込み先変数番号を取得する
+     */
+    function getVarNumForRegisterSkill(actorId) { 
+        const ssvi = parseInt(param.setSkillVarIndex);
+        const maxActorCount = parseInt(param.actorsMaxLength);
+        let vi = ssvi + 1;
+        let actorIdInVar = 0;
+        let viFound = false;
+
+        // 新式でまずさがす
+        for (let i = 0; i < maxActorCount; i++) {
+            actorIdInVar = $v.get(vi + i).toString().split(',').length > 0
+                ? $v.get(vi + i).toString().split(',')[0]
+                : 0;
+            if (parseInt(actorIdInVar) === parseInt(actorId)) {
+                vi += i;
+                viFound = true;
+                break
+            };
+        }
+        if (viFound) {
+            console.log(`vi found [new]: ${vi}`);
+            return vi;
+        }
+
+        // 新式にいなければ旧式を使う
+        vi = ssvi + parseInt(actorId);
+        if (vi > ssvi + maxActorCount) {
+            vi = ssvi + 1;
+            while ($v.get(vi) !== 0) {
+                vi++;
+            }
+        }
+        console.log(`vi [old]: ${vi}`);
+
+        return vi;
+    };
 
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
     const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
@@ -393,11 +439,19 @@ Scene_Operation.prototype.initialize = function () {
                 currentItem = this._ctlrRWindow.item();
                 break;
         }
+        // セット中スキルデータ先頭にはアクターIDを入れるので
+        index++;
 
-        const vi = param.setSkillVarIndex + this.actor().actorId();
+        const actorId = this.actor().actorId();
+        const vi = getVarNumForRegisterSkill(actorId);
         let values = $v.get(vi).toString().split(",");
-        // 必ず8件必要なので、足りなければうめる
-        while (values.length < 8) {
+        // 8件以下の旧式データの場合、先頭にアクターIDを入れる
+        if (values.length < 9) {
+            values.unshift(actorId);
+        }
+
+        // 必ず9件必要なので、足りなければうめる
+        while (values.length < 9) {
             values.push("");
         }
         //console.log(currentItem);
@@ -521,14 +575,26 @@ Scene_Operation.prototype.initialize = function () {
      * Lサイドウィンドウの内容をセットする。
      */
     Window_CtlrL.prototype.makeItemList = function () {
-        const vi = param.setSkillVarIndex + this._actor.actorId();
+        const vi = getVarNumForRegisterSkill(this._actor.actorId());
         const ss = $v.get(vi).toString().split(",");
-        this._data = [
-            $dataSkills[ss[0]] ? $dataSkills[ss[0]] : null,
-            $dataSkills[ss[1]] ? $dataSkills[ss[1]] : null,
-            $dataSkills[ss[2]] ? $dataSkills[ss[2]] : null,
-            $dataSkills[ss[3]] ? $dataSkills[ss[3]] : null,
-        ];
+
+        if (ss.length < 9) {
+            // 旧式データ
+            this._data = [
+                $dataSkills[ss[0]] ? $dataSkills[ss[0]] : null,
+                $dataSkills[ss[1]] ? $dataSkills[ss[1]] : null,
+                $dataSkills[ss[2]] ? $dataSkills[ss[2]] : null,
+                $dataSkills[ss[3]] ? $dataSkills[ss[3]] : null,
+            ];
+        } else if (ss.length === 9) {
+            // 新式データ
+            this._data = [
+                $dataSkills[ss[1]] ? $dataSkills[ss[1]] : null,
+                $dataSkills[ss[2]] ? $dataSkills[ss[2]] : null,
+                $dataSkills[ss[3]] ? $dataSkills[ss[3]] : null,
+                $dataSkills[ss[4]] ? $dataSkills[ss[4]] : null,
+            ];
+        }
 
         const notNullElement = this._data.some(e => {
             return e;
@@ -543,6 +609,7 @@ Scene_Operation.prototype.initialize = function () {
             ];
             // デフォルトの内容で一旦保存してしまう
             $v.set(vi, [
+                this._actor.actorId(),
                 COMMON_SKILL_IDS.ATTACK,
                 COMMON_SKILL_IDS.DEFEND,
                 COMMON_SKILL_IDS.ESCAPE,
@@ -741,14 +808,26 @@ Scene_Operation.prototype.initialize = function () {
      * Rサイドウィンドウの内容をセットする。
      */
     Window_CtlrR.prototype.makeItemList = function () {
-        const vi = param.setSkillVarIndex + this._actor.actorId();
+        const vi = getVarNumForRegisterSkill(this._actor.actorId());
         const ss = $v.get(vi).toString().split(",");
-        this._data = [
-            $dataSkills[ss[4]] ? $dataSkills[ss[4]] : null,
-            $dataSkills[ss[5]] ? $dataSkills[ss[5]] : null,
-            $dataSkills[ss[6]] ? $dataSkills[ss[6]] : null,
-            $dataSkills[ss[7]] ? $dataSkills[ss[7]] : null,
-        ];
+
+        if (ss.length < 9) {
+            // 旧式データ
+            this._data = [
+                $dataSkills[ss[4]] ? $dataSkills[ss[4]] : null,
+                $dataSkills[ss[5]] ? $dataSkills[ss[5]] : null,
+                $dataSkills[ss[6]] ? $dataSkills[ss[6]] : null,
+                $dataSkills[ss[7]] ? $dataSkills[ss[7]] : null,
+            ];
+        } else if (ss.length === 9) {
+            // 新式データ
+            this._data = [
+                $dataSkills[ss[5]] ? $dataSkills[ss[5]] : null,
+                $dataSkills[ss[6]] ? $dataSkills[ss[6]] : null,
+                $dataSkills[ss[7]] ? $dataSkills[ss[7]] : null,
+                $dataSkills[ss[8]] ? $dataSkills[ss[8]] : null,
+            ];
+        }
     };
 
     /**

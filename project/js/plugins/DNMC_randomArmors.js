@@ -322,7 +322,7 @@ function DNMC_randomArmors() {
                     }
                 }
 
-                if (trait && trait.code) traits.push(trait);
+                if (trait && trait.code && trait.dataId) traits.push(trait);
             }
         }
 
