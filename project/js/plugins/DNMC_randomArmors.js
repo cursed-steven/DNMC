@@ -317,7 +317,7 @@ function DNMC_randomArmors() {
                             break;
                         case 9:
                             // exr
-                            trait.value = 1 + value / 100;
+                            trait.value = value / 100;
                             break;
                     }
                 }
