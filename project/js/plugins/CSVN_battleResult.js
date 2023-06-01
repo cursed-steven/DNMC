@@ -876,6 +876,7 @@
     Window_Exp.prototype.getEarned = function (actor) {
         let earned = BattleManager._rewards.exp;
         earned *= actor.traitsPi(Game_BattlerBase.TRAIT_SPARAM, SPECIAL_PARAM.EXP_GET_RATE);
+        earned = Math.floor(earned);
 
         return earned;
     };
