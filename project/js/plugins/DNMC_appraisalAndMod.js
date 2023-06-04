@@ -20,6 +20,15 @@
  * 
  * @help DNMC_appraisalAndMod.js
  * 
+ * @param startIxItemForApp
+ * @text 鑑定対象となるアイテムID開始
+ * @type item
+ * @default 382
+ * 
+ * @param endIxItemForApp
+ * @type item
+ * @default 401
+ * 
  * @command start
  * @text シーン開始
  */
@@ -29,6 +38,9 @@
     'use strict';
     const script = document.currentScript;
     const param = PluginManagerEx.createParameter(script);
+
+    const START_IX_ITEM_FOR_APP = param.startIxItemForApp ? param.startIxItemForApp : 382;
+    const END_IX_ITEM_FOR_APP = param.endIxItemForApp ? param.endIxItemForApp : 401;
 
     PluginManagerEx.registerCommand(script, 'start', () => {
         SceneManager.push(Scene_AppMod);
@@ -73,6 +85,7 @@
         this.createAppraisalWindow();
         this.createModWindow();
         this.createModMatWindow();
+        this.createModdedWindow();
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
         this._buttonGuide.refresh();
@@ -127,7 +140,6 @@
     Scene_AppMod.prototype.createAppraisalWindow = function () {
         const rect = this.appraisalaWindowRect();
         this._appraisalWindow = new Window_Appraisal(rect);
-        this._appraisalWindow.setupItems();
         this._appraisalWindow.setHelpWindow(this._helpWindow);
         this._appraisalWindow.hide();
         this._appraisalWindow.setHandler('ok', this.onAppraisalOk.bind(this));
@@ -153,7 +165,6 @@
     Scene_AppMod.prototype.createModWindow = function () {
         const rect = this.modWindowRect();
         this._modWindow = new Window_Mod(rect);
-        this._modWindow.setupItems();
         this._modWindow.setHelpWindow(this._helpWindow);
         this._modWindow.hide();
         this._modWindow.setHandler('ok', this.onModOk.bind(this));
@@ -175,7 +186,6 @@
     Scene_AppMod.prototype.createModMatWindow = function () {
         const rect = this.modMatWindowRect();
         this._modMatWindow = new Window_ModMat(rect);
-        this._modMatWindow.setupItems();
         this._modMatWindow.setHelpWindow(this._helpWindow);
         this._modMatWindow.hide();
         this._modMatWindow.setHandler('ok', this.onModMatOk.bind(this));
@@ -188,7 +198,25 @@
      * @returns Rectangle
      */
     Scene_AppMod.prototype.modMatWindowRect = function () {
-        return this.modWindowRect();
+        return this.dummyWindowRect();
+    };
+
+    /**
+     * 改造対象ウィンドウの作成
+     */
+    Scene_AppMod.prototype.createModdedWindow = function () { 
+        const rect = this.moddedWindowRect();
+        this._moddedWindow = new Window_Modded(rect);
+        this._moddedWindow.hide();
+        this.addWindow(this._moddedWindow);
+    };
+
+    /**
+     * 改造対象ウィンドウの領域を返す
+     * @returns Rectangle
+     */
+    Scene_AppMod.prototype.moddedWindowRect = function () {
+        return this.statusWindowRect();
     };
 
     Scene_AppMod.prototype.statusWidth = Scene_Shop.prototype.statusWidth;
@@ -335,8 +363,77 @@
     //-----------------------------------------------------------------------------
     // Window_Appraisal
     //
-    // The window for selecting item tobe appraised on the appmod shop screen.
+    // The window for selecting item to be appraised on the appmod shop screen.
+
+    function Window_Appraisal() {
+        this.initialize(...arguments);
+    }
+
+    Window_Appraisal.prototype = Object.create(Window_ItemList.prototype);
+    Window_Appraisal.prototype.constructor = Window_Appraisal;
+
+    Window_Appraisal.prototype.isCurrentItemEnabled = function () { 
+        return true;
+    };
+
+    Window_Appraisal.prototype.includes = function (item) {
+        if (!DataManager.isItem(item)) return false;
+        if (START_IX_ITEM_FOR_APP <= item.id
+            && item.id <= END_IX_ITEM_FOR_APP) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    Window_Appraisal.prototype.isEnabled = function (item) { 
+        return true;
+    };
+
+    Window_Appraisal.prototype.selectLast = function () { 
+        this.forceSelect(0);
+    };
+
+    //-----------------------------------------------------------------------------
+    // Window_Mod
+    //
+    // The window for selecting item to be modded on the appmod shop screen.
+
+    function Window_Mod() { 
+        this.initialize(...arguments);
+    }
+
+    Window_Mod.prototype = Object.create(Window_ItemList.prototype);
+    Window_Mod.prototype.constructor = Window_Mod;
+
+    Window_Mod.prototype.isCurrentItemEnabled = function () { 
+        return true;
+    };
+
+    Window_Mod.prototype.includes = function (item) { 
+        return DataManager.isWeapon(item) || DataManager.isArmor(item);
+    };
+
+    Window_Mod.prototype.isEnabled = function (item) { 
+        return true;
+    };
+
+    Window_Mod.prototype.selectLast = function () { 
+        this.forceSelect(0);
+    };
+
+    //-----------------------------------------------------------------------------
+    // Window_ModMat
+    //
+    // The window for selecting item to be used as mod mat on the appmod shop screen.
 
 
 
+    //-----------------------------------------------------------------------------
+    // Window_Modded
+    //
+    // The window for info for item to be modded on the appmod shop screen.
+
+    
+    
 })();
