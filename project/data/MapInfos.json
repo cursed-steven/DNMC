@@ -1,11 +1,11 @@
 [
 null,
 {"id":1,"expanded":false,"name":"TE","order":3,"parentId":0,"scrollX":981,"scrollY":942},
-{"id":2,"expanded":true,"name":"","order":4,"parentId":0,"scrollX":5871,"scrollY":5902},
+{"id":2,"expanded":true,"name":"","order":4,"parentId":0,"scrollX":4329,"scrollY":4650},
 {"id":3,"expanded":true,"name":"はじまりの森","order":7,"parentId":5,"scrollX":981,"scrollY":958},
 {"id":4,"expanded":true,"name":"","order":8,"parentId":3,"scrollX":981,"scrollY":958},
 {"id":5,"expanded":true,"name":"","order":6,"parentId":6,"scrollX":981,"scrollY":958},
-{"id":6,"expanded":true,"name":"","order":5,"parentId":2,"scrollX":997,"scrollY":962},
+{"id":6,"expanded":false,"name":"","order":5,"parentId":2,"scrollX":997,"scrollY":962},
 {"id":7,"expanded":false,"name":"","order":9,"parentId":4,"scrollX":509.5,"scrollY":471},
 {"id":8,"expanded":true,"name":"ギルドヘッド","order":10,"parentId":2,"scrollX":1355,"scrollY":1040},
 {"id":9,"expanded":true,"name":"宿屋１Ｆ","order":11,"parentId":8,"scrollX":981,"scrollY":942},
