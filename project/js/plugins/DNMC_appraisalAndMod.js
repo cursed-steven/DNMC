@@ -26,8 +26,19 @@
  * @default 382
  * 
  * @param endIxItemForApp
+ * @text 鑑定対象となるアイテムID終了
  * @type item
  * @default 401
+ * 
+ * @param startIxItemForModMat
+ * @text 改造材料となるアイテムID開始
+ * @type item
+ * @default 452
+ * 
+ * @param endIxItemForModMat
+ * @text 改造材料となるアイテムID終了
+ * @type item
+ * @default 523
  * 
  * @command start
  * @text シーン開始
@@ -41,6 +52,8 @@
 
     const START_IX_ITEM_FOR_APP = param.startIxItemForApp ? param.startIxItemForApp : 382;
     const END_IX_ITEM_FOR_APP = param.endIxItemForApp ? param.endIxItemForApp : 401;
+    const START_IX_ITEM_FOR_MODMAT = param.startIxItemForModMat ? param.startIxItemForModMat : 452;
+    const END_IX_ITEM_FOR_MODMAT = param.endIxItemForModMat ? param.endIxItemForModMat : 523;
 
     PluginManagerEx.registerCommand(script, 'start', () => {
         SceneManager.push(Scene_AppMod);
@@ -68,10 +81,6 @@
         Scene_MenuBase.prototype.initialize.call(this);
     };
 
-    Scene_AppMod.prototype.prepare = function () {
-        this._item = null;
-    };
-
     /**
      * 鑑定・改造屋シーン開始
      */
@@ -84,8 +93,10 @@
         this.createStatusWindow();
         this.createAppraisalWindow();
         this.createModWindow();
+        this.createModCommandWindow();
         this.createModMatWindow();
-        this.createModdedWindow();
+        this.createModDelWindow();
+        this.createModResultWindow();
         _Scene_Map_createMapHUD.call(this);
         _Scene_Map_createButtonGuide.call(this);
         this._buttonGuide.refresh();
@@ -181,6 +192,30 @@
     };
 
     /**
+     * 追加改造/削除改造の選択ウィンドウの作成
+     */
+    Scene_AppMod.prototype.createModCommandWindow = function () { 
+        const rect = this.modCommandWindowRect();
+        this._modCommandWindow = new Window_ModCommand(rect);
+        this._modCommandWindow.hide();
+        this._modCommandWindow.setHandler('modadd', this.commandModAdd.bind(this));
+        this._modCommandWindow.setHandler('moddel', this.commandModDel.bind(this));
+        this._modCommandWindow.setHandler('cancel', this.onModComCancel.bind(this));
+        this.addWindow(this._modCommandWindow);
+    };
+
+    /**
+     * 追加改造/削除改造の選択ウィンドウの領域を返す
+     */
+    Scene_AppMod.prototype.modCommandWindowRect = function () { 
+        const ww = this.mainCommandWidth();
+        const wh = this.calcWindowHeight(3, true);
+        const wx = (Graphics.boxWidth - ww) / 2;
+        const wy = (Graphics.boxHeight - this._commandWindow.y - wh) / 2;
+        return new Rectangle(wx, wy, ww, wh);
+    };
+
+    /**
      * 改造材料ウィンドウの作成
      */
     Scene_AppMod.prototype.createModMatWindow = function () {
@@ -202,66 +237,54 @@
     };
 
     /**
-     * 改造対象ウィンドウの作成
+     * 削除対象とする特徴の選択ウィンドウの作成
      */
-    Scene_AppMod.prototype.createModdedWindow = function () { 
-        const rect = this.moddedWindowRect();
-        this._moddedWindow = new Window_Modded(rect);
-        this._moddedWindow.hide();
-        this.addWindow(this._moddedWindow);
+    Scene_AppMod.prototype.createModDelWindow = function () { 
+        const rect = this.dummyWindowRect();
+        this._modDelWindow = new Window_ModDel(rect);
+        this._modDelWindow.hide();
+        this._modDelWindow.setHandler('ok', this.onModDelOk.bind(this));
+        this._modDelWindow.setHandler('cancel', this.onModDelCancel.bind(this));
+        this.addWindow(this._modDelWindow);
     };
 
     /**
-     * 改造対象ウィンドウの領域を返す
-     * @returns Rectangle
+     * 削除対象とする特徴の選択ウィンドウの領域を返す
      */
-    Scene_AppMod.prototype.moddedWindowRect = function () {
-        return this.statusWindowRect();
+    Scene_AppMod.prototype.modDelWindowRect = function () { 
+        return this.dummyWindowRect();
     };
 
     Scene_AppMod.prototype.statusWidth = Scene_Shop.prototype.statusWidth;
-
-    /**
-     * 鑑定対象の選択に移行
-     */
-    Scene_AppMod.prototype.activateAppraisalWindow = function () {
-        this._appraisalWindow.setMoney(this.money());
-        this._appraisalWindow.show();
-        this._appraisalWindow.activate();
-        this._statusWindow.show();
-    };
-
-    /**
-     * 改造対象の選択に移行
-     */
-    Scene_AppMod.prototype.activateModWindow = function () {
-        this._modWindow.setMoney(this.money());
-        this._modWindow.show();
-        this._modWindow.activate();
-        this._statusWindow.show();
-    };
 
     /**
      * 鑑定コマンド選択時の処理
      */
     Scene_AppMod.prototype.commandAppraisal = function () {
         this._dummyWindow.hide();
-        this.activateAppraisalWindow();
+        this._appraisalWindow.setMoney(this.money());
+        this._appraisalWindow.show();
+        this._appraisalWindow.activate();
+        this._commandWindow.deactivate();
     };
-
+    
     /**
      * 改造コマンド選択時の処理
      */
     Scene_AppMod.prototype.commandMod = function () {
         this._dummyWindow.hide();
-        this.activateModWindow();
+        this._modWindow.setMoney(this.money());
+        this._modWindow.show();
+        this._modWindow.activate();
+        this._modWindow.selectLast();
+        this._statusWindow.show();
+        this._commandWindow.deactivate();
     };
 
     /**
      * 鑑定対象を選択してOKしたときの処理
      */
     Scene_AppMod.prototype.onAppraisalOk = function () {
-        this._item = this._appraisalWindow.item();
         this._appraisalWindow.hide();
         this.execAppraisal();
     };
@@ -273,26 +296,6 @@
         this._commandWindow.activate();
         this._dummyWindow.show();
         this._appraisalWindow.hide();
-        this._statusWindow.hide();
-        this._statusWindow.setItem(null);
-        this._helpWindow.clear();
-    };
-
-    /**
-     * 改造対象を選択してOKしたときの処理
-     */
-    Scene_AppMod.prototype.onModOk = function () {
-        this._item = this._modWindow.item();
-        this._modWindow.hide();
-        this.startSelectModMats();
-    };
-
-    /**
-     * 改造対象の選択をキャンセルした時の処理
-     */
-    Scene_AppMod.prototype.onModCancel = function () {
-        this._modWindow.deselect();
-        this._statusWindow.setItem(null);
         this._helpWindow.clear();
     };
 
@@ -300,7 +303,7 @@
      * 鑑定実行
      */
     Scene_AppMod.prototype.execAppraisal = function () {
-        // TODO this._item から鑑定結果の
+        // TODO this._appraisalWindow.item() から鑑定結果の
         //      ランク(meta)
         //      スロット(meta)
         // TODO ランクごとに鑑定料を提示
@@ -315,10 +318,83 @@
     };
 
     /**
-     * 改造材料の選択を開始
+     * 改造対象を選択してOKしたときの処理
      */
-    Scene_AppMod.prototype.startSelectModMats = function () {
-        // TODO 
+    Scene_AppMod.prototype.onModOk = function () {
+        this._modWindow.hide();
+        this._modCommandWindow.show();
+        this._modCommandWindow.activate();
+        this._modWindow.deactivate();
+    };
+
+    /**
+     * 改造対象の選択をキャンセルした時の処理
+     */
+    Scene_AppMod.prototype.onModCancel = function () {
+        this._modMatWindow.deselect();
+        this._modMatWindow.deactivate();
+        this._modMatWindow.hide();
+        this._modWindow.show();
+        this._modWindow.activate();
+        this._helpWindow.clear();
+    };
+
+    /**
+     * 追加改造/削除改造の選択ウィンドウで追加改造を選んだときの処理
+     */
+    Scene_AppMod.prototype.commandModAdd = function () {
+        this._modCommandWindow.hide();
+        this._modMatWindow.show();
+        this._modMatWindow.activate();
+        this._modCommandWindow.deactivate();
+    };
+
+    /**
+     * 追加改造/削除改造の選択ウィンドウで削除改造を選んだときの処理
+     */
+    Scene_AppMod.prototype.commandModDel = function () { 
+        this._modCommandWindow.hide();
+        this._modDelWindow.show();
+        this._modDelWindow.activate();
+        this._modCommandWindow.deactivate();
+    };
+
+    /**
+     * 追加改造/削除改造の選択ウィンドウでキャンセルを選んだときの処理
+     */
+    Scene_AppMod.prototype.onModComCancel = function () { 
+        this._modCommandWindow.hide();
+        this._modWindow.activate();
+        this._modCommandWindow.deactivate();
+    };
+
+    /**
+     * 追加改造の材料を選択してOKしたときの処理
+     */
+    Scene_AppMod.prototype.onModMatOk = function () { 
+        this._modMatWindow.hide();
+        this.execModAdd();
+    };
+
+    /**
+     * 追加改造の材料を選択でキャンセルしたときの処理
+     */
+    Scene_AppMod.prototype.onModMatCancel = function () { 
+        // TODO
+    };
+
+    /**
+     * 削除改造ウィンドウで対象を選択してOKしたときの処理
+     */
+    Scene_AppMod.prototype.onModDelOk = function () { 
+        // TODO
+    };
+
+    /**
+     * 削除改造ウィンドウでキャンセルしたときの処理
+     */
+    Scene_AppMod.prototype.onModDelCancel = function () { 
+        // TODO
     };
 
     //-----------------------------------------------------------------------------
@@ -423,17 +499,69 @@
     };
 
     //-----------------------------------------------------------------------------
+    // Window_ModCommand
+    //
+    // The window for mod menu commands to select add/del on the appmod shop screen.
+
+    function Window_ModCommand() {
+        this.initialize(...arguments);
+    }
+
+    Window_ModCommand.prototype = Object.create(Window_HorzCommand.prototype);
+    Window_ModCommand.prototype.constructor = Window_ModCommand;
+
+    // TODO
+
+    //-----------------------------------------------------------------------------
     // Window_ModMat
     //
     // The window for selecting item to be used as mod mat on the appmod shop screen.
 
+    function Window_ModMat() { 
+        this.initialize(...arguments);
+    }
 
+    Window_ModMat.prototype = Object.create(Window_ItemList.prototype);
+    Window_ModMat.prototype.constructor = Window_ModMat;
+
+    Window_ModMat.prototype.maxCols = function () {
+        return 2;
+    };
+
+    Window_ModMat.prototype.isCurrentItemEnabled = function () { 
+        return true;
+    };
+
+    Window_ModMat.prototype.includes = function (item) { 
+        if (!DataManager.isItem(item)) return false;
+        if (START_IX_ITEM_FOR_MODMAT <= item.id
+            && item.id <= END_IX_ITEM_FOR_MODMAT) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    Window_ModMat.prototype.isEnabled = function (item) { 
+        return true;
+    };
+
+    Window_ModMat.prototype.selectLast = function () { 
+        this.forceSelect(0);
+    };
 
     //-----------------------------------------------------------------------------
-    // Window_Modded
+    // Window_ModDel
     //
-    // The window for info for item to be modded on the appmod shop screen.
+    // The window for mod menu commands to select add/del on the appmod shop screen.
 
-    
-    
+    function Window_ModDel() { 
+        this.initialize(...arguments);
+    }
+
+    Window_ModDel.prototype = Object.create(Window_ItemList.prototype);
+    Window_ModDel.prototype.constructor = Window_ModDel;
+
+    // TODO
+
 })();
