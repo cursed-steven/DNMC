@@ -12,7 +12,7 @@ var $plugins =
 {"name":"CSVN_statics","status":true,"description":"定数の再定義、クラスの定義","parameters":{}},
 {"name":"CSVN_base","status":true,"description":"CSVN系列の公開プラグインや自作プラグインの基盤にする関数群","parameters":{"debugModeSwId":"1","lastCEVId":"89"}},
 {"name":"NUUN_Base","status":true,"description":"共通処理","parameters":{}},
-{"name":"DNMC_system3","status":true,"description":"Donut Machine 専用追加システム設定","parameters":{"originalCommandNames":"[\"装備・ステータス\",\"作戦\",\"比較\",\"回復\",\"戦闘専用\",\"メニュー\",\"装備効果一覧\",\"通常行動\",\"鑑定\",\"改造\"]","otherStrings":"[\"装備分\",\"合計\"]"}},
+{"name":"DNMC_system3","status":true,"description":"Donut Machine 専用追加システム設定","parameters":{"originalCommandNames":"[\"装備・ステータス\",\"作戦\",\"比較\",\"回復\",\"戦闘専用\",\"メニュー\",\"装備効果一覧\",\"通常行動\",\"鑑定\",\"改造\",\"改造(追加)\",\"改造(削除)\"]","otherStrings":"[\"装備分\",\"合計\"]"}},
 {"name":"DNMC_statics","status":true,"description":"ランダム生成用定数","parameters":{}},
 {"name":"DNMC_base","status":true,"description":"Donut Machine 内で共通利用する関数群","parameters":{}},
 {"name":"SimpleScrollBar","status":true,"description":"スクロールバーを導入します。","parameters":{"drawBackground":"true","barWidth":"3","barColor1":"rgba(255, 255, 255, 1)","barColor2":"rgba(128, 128, 128, 1)","fadeOut":"true","onlyWhileScrolling":"true","waitDuration":"60","fadeOutDuration":"10"}},

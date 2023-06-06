@@ -242,6 +242,7 @@
     Scene_AppMod.prototype.createModDelWindow = function () { 
         const rect = this.dummyWindowRect();
         this._modDelWindow = new Window_ModDel(rect);
+        this._modDelWindow.setHelpWindow(this._helpWindow);
         this._modDelWindow.hide();
         this._modDelWindow.setHandler('ok', this.onModDelOk.bind(this));
         this._modDelWindow.setHandler('cancel', this.onModDelCancel.bind(this));
@@ -274,6 +275,7 @@
     Scene_AppMod.prototype.commandMod = function () {
         this._dummyWindow.hide();
         this._modWindow.setMoney(this.money());
+        this._modWindow.setHelpWindow(this._helpWindow);
         this._modWindow.show();
         this._modWindow.activate();
         this._modWindow.selectLast();
@@ -324,6 +326,7 @@
         this._modWindow.hide();
         this._modCommandWindow.show();
         this._modCommandWindow.activate();
+        this._modDelWindow.setItem(this._modWindow.item());
         this._modWindow.deactivate();
     };
 
@@ -377,24 +380,73 @@
     };
 
     /**
+     * 追加改造実行
+     */
+    Scene_AppMod.prototype.execModAdd = function () { 
+        // TODO this._modWindow.item() が改造対象
+        //      this._modMatWindow.item() が改造材料
+        // TODO 改造対象についてる特徴の数を確認
+        //          6個ついていたらbuzzer出してキャンセル
+        // TODO 改造材料に対応する特徴とランクを導出
+        // TODO 導出した特徴が改造対象についているか確認
+        //          ついている場合、上書き可能か確認
+        //              上書き可能なら上書きして実行
+        //              上書き不可ならbuzzer出して終了
+        //          ついていない場合実行
+        // TODO 改造対象のDataXXXのレコードはそのまま更新せずに
+        //      コピーして新しいIDを採番し、それをインベントリに加える
+        //          そうしないと改造品がいきなり店に並ぶ可能性がある
+        //      改造品にはそれとわかる印を何かつけておく
+        // TODO もともと改造対象であった武具は失う
+        // TODO 改造材料にしたアイテムも失う
+        // TODO 改造対象選択画面に戻る
+    };
+
+    /**
      * 追加改造の材料を選択でキャンセルしたときの処理
      */
     Scene_AppMod.prototype.onModMatCancel = function () { 
-        // TODO
+        this._modMatWindow.hide();
+        this._modCommandWindow.show();
+        this._modCommandWindow.activate();
+        this._modMatWindow.deactivate();
     };
 
     /**
      * 削除改造ウィンドウで対象を選択してOKしたときの処理
      */
     Scene_AppMod.prototype.onModDelOk = function () { 
-        // TODO
+        this._modDelWindow.hide();
+        this.execModDel();
+    };
+
+    /**
+     * 削除改造実行
+     */
+    Scene_AppMod.prototype.execModDel = function () { 
+        // TODO this._modWindow.item() が改造対象
+        //      this._modDelWindow.item() が削除対象
+        // TODO 改造対象についてる特徴の数を確認
+        //          0個だったらbuzzer出してキャンセル
+        // TODO 削除する特徴とそのランクに合わせて排出されるアイテムを決定
+        // TODO 特徴削除実行
+        //      改造対象のDataXXXのレコードはそのまま更新せずに
+        //      コピーして新しいIDを採番し、それをインベントリに加える
+        //          そうしないと改造品がいきなり店に並ぶ可能性がある
+        //      改造品にはそれとわかる印を何かつけておく
+        // TODO もともと改造対象であった武具は失う
+        // TODO 削除で発生した削りかす的なアイテムをインベントリに追加する
+        // TODO 改造対象選択画面に戻る
     };
 
     /**
      * 削除改造ウィンドウでキャンセルしたときの処理
      */
     Scene_AppMod.prototype.onModDelCancel = function () { 
-        // TODO
+        this._modDelWindow.hide();
+        this._modCommandWindow.show();
+        this._modCommandWindow.activate();
+        this._modMatWindow.deactivate();
     };
 
     //-----------------------------------------------------------------------------
@@ -448,10 +500,19 @@
     Window_Appraisal.prototype = Object.create(Window_ItemList.prototype);
     Window_Appraisal.prototype.constructor = Window_Appraisal;
 
+    /**
+     * 選択中アイテムで決定が可能か
+     * @returns boolean
+     */
     Window_Appraisal.prototype.isCurrentItemEnabled = function () { 
         return true;
     };
 
+    /**
+     * 指定したアイテムがリストに含まれるべきかどうかを返す
+     * @param {any} item 
+     * @returns boolean
+     */
     Window_Appraisal.prototype.includes = function (item) {
         if (!DataManager.isItem(item)) return false;
         if (START_IX_ITEM_FOR_APP <= item.id
@@ -462,10 +523,18 @@
         }
     }
 
+    /**
+     * 指定したアイテムで決定可能かどうかを返す
+     * @param {any} item 
+     * @returns boolean
+     */
     Window_Appraisal.prototype.isEnabled = function (item) { 
         return true;
     };
 
+    /**
+     * 強制的に1項目めを選択する
+     */
     Window_Appraisal.prototype.selectLast = function () { 
         this.forceSelect(0);
     };
@@ -482,19 +551,36 @@
     Window_Mod.prototype = Object.create(Window_ItemList.prototype);
     Window_Mod.prototype.constructor = Window_Mod;
 
+    /**
+     * 選択中アイテムで決定が可能か
+     * @returns boolean
+     */
     Window_Mod.prototype.isCurrentItemEnabled = function () { 
         return true;
     };
 
+    /**
+     * 指定したアイテムで決定可能かどうかを返す
+     * @param {any} item 
+     * @returns boolean
+     */
     Window_Mod.prototype.includes = function (item) { 
         return DataManager.isWeapon(item) || DataManager.isArmor(item);
     };
 
+    /**
+     * 指定したアイテムで決定可能かどうかを返す
+     * @param {any} item 
+     * @returns boolean
+     */
     Window_Mod.prototype.isEnabled = function (item) { 
         return true;
     };
 
-    Window_Mod.prototype.selectLast = function () { 
+    /**
+     * 強制的に1項目めを選択する
+     */
+   Window_Mod.prototype.selectLast = function () { 
         this.forceSelect(0);
     };
 
@@ -510,7 +596,32 @@
     Window_ModCommand.prototype = Object.create(Window_HorzCommand.prototype);
     Window_ModCommand.prototype.constructor = Window_ModCommand;
 
-    // TODO
+    /**
+     * 初期化
+     * @param {Rectangle} rect 
+     */
+    Window_ModCommand.prototype.initialize = function (rect) { 
+        Window_HorzCommand.prototype.initialize.call(this, rect);
+    };
+
+    /**
+     * 列数を返す
+     * @returns number
+     */
+    Window_ModCommand.prototype.maxCols = function () { 
+        return 3;
+    };
+
+    /**
+     * 改造対象選択後の追加/削除選択コマンド
+     */
+    Window_ModCommand.prototype.makeCommandList = function () { 
+        const addCommandName = TextManager.originalCommand[10];
+        const delCommandName = TextManager.originalCommand[11];
+        this.addCommand(addCommandName ? addCommandName : 'ModAdd', 'modadd');
+        this.addCommand(delCommandName ? delCommandName : 'ModDel', 'moddel');
+        this.addCommand(TextManager.cancel, 'cancel');
+    };
 
     //-----------------------------------------------------------------------------
     // Window_ModMat
@@ -524,14 +635,27 @@
     Window_ModMat.prototype = Object.create(Window_ItemList.prototype);
     Window_ModMat.prototype.constructor = Window_ModMat;
 
+    /**
+     * 列数を返す
+     * @returns number
+     */
     Window_ModMat.prototype.maxCols = function () {
         return 2;
     };
 
+    /**
+     * 選択中アイテムで決定が可能か
+     * @returns boolean
+     */
     Window_ModMat.prototype.isCurrentItemEnabled = function () { 
         return true;
     };
 
+    /**
+     * 指定したアイテムがリストに含まれるべきかどうかを返す
+     * @param {any} item 
+     * @returns boolean
+     */
     Window_ModMat.prototype.includes = function (item) { 
         if (!DataManager.isItem(item)) return false;
         if (START_IX_ITEM_FOR_MODMAT <= item.id
@@ -542,10 +666,18 @@
         }
     };
 
+    /**
+     * 指定したアイテムで決定可能か
+     * @param {any} item 
+     * @returns boolean
+     */
     Window_ModMat.prototype.isEnabled = function (item) { 
         return true;
     };
 
+    /**
+     * 強制的に1項目めを選択する
+     */
     Window_ModMat.prototype.selectLast = function () { 
         this.forceSelect(0);
     };
@@ -562,6 +694,88 @@
     Window_ModDel.prototype = Object.create(Window_ItemList.prototype);
     Window_ModDel.prototype.constructor = Window_ModDel;
 
-    // TODO
+    /**
+     * 改造対象ウィンドウで選択した項目をセットする
+     * @param {any} item 
+     */
+    Window_ModDel.prototype.setModItem = function (item) { 
+        this._modItem = item;
+    };
+
+    /**
+     * 列数を返す
+     * @returns number
+     */
+    Window_ModDel.prototype.maxCols = function () { 
+        return 1;
+    };
+
+    /**
+     * 一度に画面に出す行数
+     * @returns number
+     */
+    Window_ModDel.prototype.numVisibleRows = function () { 
+        return 6;
+    };
+
+    /**
+     * 選択中の特徴で決定が可能か
+     * @returns boolean
+     */
+    Window_ModDel.prototype.isCurrentItemEnabled = function () { 
+        return true;
+    };
+
+    /**
+     * 指定した特徴で決定可能かどうか
+     * @param {any} item 
+     * @returns boolean
+     */
+    Window_ModDel.prototype.isEnabled = function (item) {
+        return true;
+    }
+
+    /**
+     * 改造対象ウィンドウで選択した武具についている特徴全て
+     */
+    Window_ModDel.prototype.makeItemList = function () { 
+        this._data = this.traits;
+    };
+
+    /**
+     * 強制的に1項目めを選択する
+     */
+    Window_ModDel.prototype.selectLast = function () { 
+        this.forceSelect(0);
+    };
+
+    /**
+     * 項目の描画
+     * @param {number} index 
+     */
+    Window_ModDel.prototype.drawItem = function (index) {
+        const item = this.itemAt(index);
+        if (item) {
+            const rect = this.itemLineRect(index);
+        this.changePaintOpacity(this.isEnabled(item));
+        this.drawItemName(item, rect.x, rect.y, rect.width);
+        this.changePaintOpacity(1);
+        }
+    }
+
+    /**
+     * 項目名の描画
+     * @param {any} item 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} width 
+     */
+    Window_ModDel.prototype.drawItemName = function (item, x, y, width) { 
+        if (item) {
+            this.resetTextColor();
+            const text = DNMC_randomArmors.traitToDesc(item);
+            this.drawText(text, x, y, width);
+        }
+    };
 
 })();
