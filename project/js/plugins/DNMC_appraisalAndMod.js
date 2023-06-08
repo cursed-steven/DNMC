@@ -55,6 +55,8 @@
     const START_IX_ITEM_FOR_MODMAT = param.startIxItemForModMat ? param.startIxItemForModMat : 452;
     const END_IX_ITEM_FOR_MODMAT = param.endIxItemForModMat ? param.endIxItemForModMat : 523;
 
+    const ITEM_PADDING = 8;
+
     PluginManagerEx.registerCommand(script, 'start', () => {
         SceneManager.push(Scene_AppMod);
     });
@@ -66,9 +68,6 @@
 
     const _Scene_Map_createMapHUD = Scene_Map.prototype.createMapHUD;
     const _Scene_Map_createButtonGuide = Scene_Map.prototype.createButtonGuide;
-    Scene_AppMod.prototype.buttonGuideRect = Scene_Map.prototype.buttonGuideRect;
-    Scene_AppMod.prototype.createQuestHUD = Scene_Map.prototype.createQuestHUD;
-    Scene_AppMod.prototype.questHUDRect = Scene_Map.prototype.questHUDRect;
 
     function Scene_AppMod() {
         this.initialize(...arguments);
@@ -90,6 +89,7 @@
         this.createGoldWindow();
         this.createCommandWindow();
         this.createDummyWindow();
+        // TODO statusWindow の位置にくる Dummy2
         this.createStatusWindow();
         this.createAppraisalWindow();
         this.createModWindow();
@@ -107,10 +107,18 @@
     Scene_AppMod.prototype.createGoldWindow = Scene_Shop.prototype.createGoldWindow;
     Scene_AppMod.prototype.goldWindowRect = Scene_Shop.prototype.goldWindowRect;
 
-    /**
-     * HUDの領域を返す。
-     * @returns Rectangle
-     */
+    Scene_AppMod.prototype.buttonGuideRect = function () { 
+        return Scene_Map.prototype.buttonGuideRect.call(this);
+    };
+
+    Scene_AppMod.prototype.createQuestHUD = function () { 
+        Scene_Map.prototype.createQuestHUD.call(this);
+    };
+
+    Scene_AppMod.prototype.questHUDRect = function () { 
+        return Scene_Map.prototype.questHUDRect.call(this);
+    };
+
     Scene_AppMod.prototype.mapHUDRect = function () {
         const ww = 160;
         const wh = this.HUDHeight();
@@ -119,12 +127,18 @@
         return new Rectangle(wx, wy, ww, wh);
     };
 
-    /**
-     * HUDの高さを返す
-     * @returns number
-     */
     Scene_AppMod.prototype.HUDHeight = function () {
         return this.calcWindowHeight(3 * $gameParty.size(), true);
+    };
+
+    /**
+     * ボタンガイドとクエストHUDの描画更新
+     */
+    Scene_AppMod.prototype.update = function () { 
+        Scene_MenuBase.prototype.update.call(this);
+        this._buttonGuide.refresh();
+        this._questHUD.show();
+        this._questHUD.refresh();
     };
 
     /**
@@ -256,6 +270,30 @@
         return this.dummyWindowRect();
     };
 
+    /**
+     * 改造結果表示ウィンドウの作成
+     */
+    Scene_AppMod.prototype.createModResultWindow = function () { 
+        const rect = this.modResultWindowRect();
+        this._modResultWindow = new Window_ModResult(rect);
+        this._modResultWindow.setHelpWindow(this._helpWindow);
+        this._modResultWindow.hide();
+        this._modResultWindow.setHandler('ok', this.onModResultOk.bind(this));
+        this._modResultWindow.setHandler('cancel', this.onModResultCancel.bind(this));
+        this.addWindow(this._modResultWindow);
+    };
+
+    /**
+     * 改造結果表示ウィンドウの領域を返す
+     */
+    Scene_AppMod.prototype.modResultWindowRect = function () { 
+        const ww = this._statusWindow.width * 3 + ITEM_PADDING * 2;
+        const wh = this._statusWindow.height;
+        const wx = (Graphics.boxWidth - ww) / 2;
+        const wy = (Graphics.boxHeight - this._commandWindow.y - wh) / 2;
+        return new Rectangle(wx, wy, ww, wh);
+    };
+
     Scene_AppMod.prototype.statusWidth = Scene_Shop.prototype.statusWidth;
 
     /**
@@ -279,7 +317,6 @@
         this._modWindow.show();
         this._modWindow.activate();
         this._modWindow.selectLast();
-        this._statusWindow.show();
         this._commandWindow.deactivate();
     };
 
@@ -447,6 +484,20 @@
         this._modCommandWindow.show();
         this._modCommandWindow.activate();
         this._modMatWindow.deactivate();
+    };
+
+    /**
+     * 改造結果表示でOKしたときの処理
+     */
+    Scene_AppMod.prototype.onModResultOk = function () { 
+        // TODO
+    };
+
+    /**
+     * 改造結果表示でキャンセルしたときの処理
+     */
+    Scene_AppMod.prototype.onModResultCancel = function () { 
+        this.onModResultOk();
     };
 
     //-----------------------------------------------------------------------------
@@ -685,7 +736,7 @@
     //-----------------------------------------------------------------------------
     // Window_ModDel
     //
-    // The window for mod menu commands to select add/del on the appmod shop screen.
+    // The window for mod menu to select trait to be deleted on the appmod shop screen.
 
     function Window_ModDel() { 
         this.initialize(...arguments);
@@ -776,6 +827,76 @@
             const text = DNMC_randomArmors.traitToDesc(item);
             this.drawText(text, x, y, width);
         }
+    };
+
+    //-----------------------------------------------------------------------------
+    // Window_ModResult
+    //
+    // The window for mod result on the appmod shop screen.
+
+    function Window_ModResult() {
+        this.initialize(...arguments);
+    }
+
+    Window_ModResult.prototype = Object.create(Window_MenuStatus.prototype);
+    Window_ModResult.prototype.constructor = Window_ModResult;
+
+    Window_ModResult.prototype.initialize = function (rect) {
+        Window_MenuStatus.prototype.initialize.call(this, rect);
+    }
+
+    /**
+     * 列数を返す
+     * @returns number
+     */
+    Window_ModResult.prototype.maxCols = function () { 
+        return 3;
+    };
+
+    /**
+     * 表示行数を返す
+     * @returns number
+     */
+    Window_ModResult.prototype.numVisibleRows = function () { 
+        return 1;
+    };
+
+    /**
+     * 最大項目数
+     * @returns number
+     */
+    Window_ModResult.prototype.maxItems = function () { 
+        return 3;
+    }
+
+    /**
+     * 各項目の描画
+     */
+    Window_ModResult.prototype.drawItem = function () { 
+        this.drawModTarget();
+        this.drawModMat();
+        this.drawModResult();
+    };
+
+    /**
+     * 改造対象を描画する
+     */
+    Window_ModResult.prototype.drawModTarget = function () { 
+        // TODO
+    };
+
+    /**
+     * 改造材料を描画する
+     */
+    Window_ModResult.prototype.drawModMat = function () { 
+        // TODO
+    };
+
+    /**
+     * 改造結果を描画する
+     */
+    Window_ModResult.prototype.drawModResult = function () { 
+        // TODO
     };
 
 })();
