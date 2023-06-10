@@ -140,6 +140,24 @@ function DNMC_base() {
         return wtypeIds;
     };
 
+    /**
+     * ランクに応じたランダムな職業(ID)を返す
+     * @param {number} rank 
+     * @returns number
+     */
+    DNMC_base.randomClass = function (rank) {
+        let result = 0;
+        if (typeof rank !== 'number') {
+            const flat = [].concat(...RANKS_JOBS);
+            result = flat[Math.randomInt(flat.length)];
+        } else {
+            const classes = RANKS_JOBS[rank];
+            result = classes[Math.randomInt(classes.length)];
+        }
+
+        return result;
+    }
+
     //-----------------------------------------------------------------------------
     // Bitmap
 
