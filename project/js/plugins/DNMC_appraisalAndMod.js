@@ -89,7 +89,7 @@
         this.createGoldWindow();
         this.createCommandWindow();
         this.createDummyWindow();
-        // TODO statusWindow の位置にくる Dummy2
+        this.createDummyWindow2();
         this.createStatusWindow();
         this.createAppraisalWindow();
         this.createModWindow();
@@ -156,6 +156,7 @@
     Scene_AppMod.prototype.commandWindowRect = Scene_Shop.prototype.commandWindowRect;
     Scene_AppMod.prototype.createDummyWindow = Scene_Shop.prototype.createDummyWindow;
     Scene_AppMod.prototype.dummyWindowRect = Scene_Shop.prototype.dummyWindowRect;
+    Scene_AppMod.prototype.createDummyWindow2 = Scene_Shop.prototype.createDummyWindow2;
     Scene_AppMod.prototype.createStatusWindow = Scene_Shop.prototype.createStatusWindow;
     Scene_AppMod.prototype.statusWindowRect = Scene_Shop.prototype.statusWindowRect;
 
@@ -177,11 +178,7 @@
      * @returns Rectangle
      */
     Scene_AppMod.prototype.appraisalaWindowRect = function () {
-        const wx = 0;
-        const wy = this._commandWindow.y + this._commandWindow.height;
-        const ww = Graphics.boxWidth;
-        const wh = this.mainAreaHeight() - this._commandWindow.height;
-        return new Rectangle(wx, wy, ww, wh);
+        return this.dummyWindowRect();
     };
 
     /**
@@ -301,9 +298,11 @@
      */
     Scene_AppMod.prototype.commandAppraisal = function () {
         this._dummyWindow.hide();
-        this._appraisalWindow.setMoney(this.money());
+        // this._appraisalWindow.setMoney(this.money());
+        this._appraisalWindow.refresh();
         this._appraisalWindow.show();
         this._appraisalWindow.activate();
+        this._appraisalWindow.forceSelect(0);
         this._commandWindow.deactivate();
     };
     
@@ -324,7 +323,7 @@
      * 鑑定対象を選択してOKしたときの処理
      */
     Scene_AppMod.prototype.onAppraisalOk = function () {
-        this._appraisalWindow.hide();
+        this._appraisalWindow.contents.clear();
         this.execAppraisal();
     };
 
@@ -342,10 +341,13 @@
      * 鑑定実行
      */
     Scene_AppMod.prototype.execAppraisal = function () {
-        // TODO this._appraisalWindow.item() から鑑定結果の
-        //      ランク(meta)
-        //      スロット(meta)
+        const itemForApp = $this._appraisalWindow.item();
+        const rank = itemForApp.meta.rank;
+        const slot = itemForApp.meta.slot;
+
         // TODO ランクごとに鑑定料を提示
+
+
         // TODO ランクから対象職業をランダム決定
         // TODO 武器(=スロット1)の場合 DNMC_randomWeapons で生成
         // TODO 防具(=スロット2-5)の場合 DNMC_randomArmors で生成
@@ -354,6 +356,51 @@
         // TODO 生成したものをインベントリに追加して鑑定対象アイテムを減らす
         // TODO 鑑定結果の表示
         // TODO 鑑定料徴収
+    };
+
+    /**
+     * ランクとスロットで鑑定料を算出
+     * @param {number} rank 
+     * @param {number} slot 
+     * @returns number
+     */
+    Scene_AppMod.prototype.getAppPrice = function (rank, slot) { 
+        let priceByRank = 0;
+        switch (rank) {
+            case 0:
+                priceByRank = 100;
+                break;
+            case 1:
+                priceByRank = 500;
+                break;
+            case 2:
+                priceByRank = 1000;
+                break;
+            case 3:
+                priceByRank = 5000;
+                break;
+        }
+
+        let priceBySlot = 0;
+        switch (slot) {
+            case 1:
+                priceBySlot = 100;
+                break;
+            case 2:
+                priceBySlot = 100;
+                break;
+            case 3:
+                priceBySlot = 200;
+                break;
+            case 4:
+                priceBySlot = 500;
+                break;
+            case 5:
+                priceBySlot = 1000;
+                break;
+        }
+
+        return priceByRank + priceBySlot;
     };
 
     /**
@@ -532,8 +579,8 @@
      * コマンドリスト作成
      */
     Window_AppModCommand.prototype.makeCommandList = function () {
-        const appCommandName = TextManager.originalCommand[8];
-        const modCommandName = TextManager.originalCommand[9];
+        const appCommandName = TextManager.originalCommand(8);
+        const modCommandName = TextManager.originalCommand(9);
         this.addCommand(appCommandName ? appCommandName : 'Appraisal', 'appraisal');
         this.addCommand(modCommandName ? modCommandName : 'Mod', 'mod');
         this.addCommand(TextManager.cancel, 'cancel');
@@ -550,6 +597,14 @@
 
     Window_Appraisal.prototype = Object.create(Window_ItemList.prototype);
     Window_Appraisal.prototype.constructor = Window_Appraisal;
+
+    /**
+     * 列数を返す
+     * @returns number
+     */
+    Window_Appraisal.prototype.maxCols = function () { 
+        return 1;
+    };
 
     /**
      * 選択中アイテムで決定が可能か
@@ -589,6 +644,8 @@
     Window_Appraisal.prototype.selectLast = function () { 
         this.forceSelect(0);
     };
+
+    
 
     //-----------------------------------------------------------------------------
     // Window_Mod
@@ -667,8 +724,8 @@
      * 改造対象選択後の追加/削除選択コマンド
      */
     Window_ModCommand.prototype.makeCommandList = function () { 
-        const addCommandName = TextManager.originalCommand[10];
-        const delCommandName = TextManager.originalCommand[11];
+        const addCommandName = TextManager.originalCommand(10);
+        const delCommandName = TextManager.originalCommand(11);
         this.addCommand(addCommandName ? addCommandName : 'ModAdd', 'modadd');
         this.addCommand(delCommandName ? delCommandName : 'ModDel', 'moddel');
         this.addCommand(TextManager.cancel, 'cancel');
