@@ -341,66 +341,45 @@
      * 鑑定実行
      */
     Scene_AppMod.prototype.execAppraisal = function () {
-        const itemForApp = $this._appraisalWindow.item();
-        const rank = itemForApp.meta.rank;
-        const slot = itemForApp.meta.slot;
+        const item = this._appraisalWindow.item();
+        const rank = parseInt(item.meta.rank);
+        const slot = parseInt(item.meta.slot);
+        const appPrice = this._appraisalWindow.itemAppPrice(item);
 
-        // TODO ランクごとに鑑定料を提示
+        if ($gameParty.gold() < appPrice) {
+            // 資金不足
+            SoundManager.playBuzzer();
+            return;
+        }
 
+        const classId = DNMC_base.randomClass(rank);
+        let appraised = null;
+        if (slot === 1) {
+            // 武器
+            appraised = DNMC_randomWeapons.randomWeapon(rank, classId);
+        } else {
+            // 防具
+            appraised = DNMC_randomArmors.randomArmor(rank, classId, slot);
+        }
 
-        // TODO ランクから対象職業をランダム決定
-        // TODO 武器(=スロット1)の場合 DNMC_randomWeapons で生成
-        // TODO 防具(=スロット2-5)の場合 DNMC_randomArmors で生成
-        //      ※武器タイプ・防具タイプは職業からランダム決定されるので手で決めなくてよい
         // TODO アニメーションか何かで演出
+
         // TODO 生成したものをインベントリに追加して鑑定対象アイテムを減らす
+        $gameParty.gainItem($gameTemp.getLatestGenerated()[0], 1);
+        $gameParty.loseItem(item, 1);
+        this._appraisalWindow.refresh();
+
         // TODO 鑑定結果の表示
+
         // TODO 鑑定料徴収
-    };
+        $gameParty.loseGold(appPrice);
+        this._goldWindow.refresh();
 
-    /**
-     * ランクとスロットで鑑定料を算出
-     * @param {number} rank 
-     * @param {number} slot 
-     * @returns number
-     */
-    Scene_AppMod.prototype.getAppPrice = function (rank, slot) { 
-        let priceByRank = 0;
-        switch (rank) {
-            case 0:
-                priceByRank = 100;
-                break;
-            case 1:
-                priceByRank = 500;
-                break;
-            case 2:
-                priceByRank = 1000;
-                break;
-            case 3:
-                priceByRank = 5000;
-                break;
+        if (this._appraisalWindow._data.length === 0) {
+            this.onAppraisalCancel();
+        } else {
+            // TODO
         }
-
-        let priceBySlot = 0;
-        switch (slot) {
-            case 1:
-                priceBySlot = 100;
-                break;
-            case 2:
-                priceBySlot = 100;
-                break;
-            case 3:
-                priceBySlot = 200;
-                break;
-            case 4:
-                priceBySlot = 500;
-                break;
-            case 5:
-                priceBySlot = 1000;
-                break;
-        }
-
-        return priceByRank + priceBySlot;
     };
 
     /**
@@ -645,7 +624,87 @@
         this.forceSelect(0);
     };
 
-    
+    /**
+     * 項目の描画
+     * @param {number} index 
+     */
+    Window_Appraisal.prototype.drawItem = function (index) { 
+        const item = this.itemAt(index);
+        if (item) {
+            const priceWidth = this.priceWidth();
+            const rect = this.itemLineRect(index);
+            this.changePaintOpacity(this.isEnabled(item));
+            this.drawItemName(item, rect.x, rect.y, rect.width - priceWidth);
+            this.drawItemPrice(item, rect.x, rect.y, rect.width);
+            this.changePaintOpacity(1);
+        }
+    };
+
+    /**
+     * 鑑定価格表示に使う幅
+     * @returns number
+     */
+    Window_Appraisal.prototype.priceWidth = function () { 
+        return this.textWidth('000000000000');
+    };
+
+    /**
+     * 鑑定費用の描画
+     * @param {any} item 
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} width 
+     */
+    Window_Appraisal.prototype.drawItemPrice = function(item, x, y, width){
+        this.drawText('鑑定費:', x, y, width - this.textWidth('00000000'), 'right');
+        this.drawText(this.itemAppPrice(item), x, y, width, 'right');
+    }
+
+    /**
+     * 鑑定費用の算出
+     * @param {any} item 
+     * @returns number
+     */
+    Window_Appraisal.prototype.itemAppPrice = function (item) {
+        const rank = item.meta.rank;
+        let priceByRank = 0;
+        switch (parseInt(rank)) {
+            case 0:
+                priceByRank = 100;
+                break;
+            case 1:
+                priceByRank = 500;
+                break;
+            case 2:
+                priceByRank = 1000;
+                break;
+            case 3:
+                priceByRank = 5000;
+                break;
+        }
+
+        const slot = item.meta.slot;
+        let priceBySlot = 0;
+        switch (parseInt(slot)) {
+            case 1:
+                priceBySlot = 100;
+                break;
+            case 2:
+                priceBySlot = 100;
+                break;
+            case 3:
+                priceBySlot = 200;
+                break;
+            case 4:
+                priceBySlot = 500;
+                break;
+            case 5:
+                priceBySlot = 1000;
+                break;
+        }
+
+        return priceByRank + priceBySlot;
+    };
 
     //-----------------------------------------------------------------------------
     // Window_Mod
