@@ -1,4 +1,4 @@
-# Donut Machine MZ (体験版 v1.0.6)
+# Donut Machine MZ (体験版 v1.0.6a)
 
 Donut Machine MZ (ドーナツマシン MZ) の世界へようこそ。
 
@@ -106,6 +106,9 @@ https://twitter.com/cursed_steven
 - フリーゲーム夢現: https://freegame-mugen.jp/roleplaying/game_11133.html (macOS(M1)版、Windows 版)
 
 # 更新履歴
+
+- v1.0.6a
+  鑑定屋のイベントが作業中の状態のままで落ちるだけだったので代替メッセージに差し替え。
 
 - v1.0.6
   魔法薬系が MP 回復ではなく HP 回復になっている問題の修正。
