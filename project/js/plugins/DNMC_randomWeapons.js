@@ -97,12 +97,14 @@ function DNMC_randomWeapons() {
     });
 
     /**
-     * ランダムに武器を生成して返す。
+     * 武器をランダム生成して返す
      * @param {number} rank 
+     * @param {number} classId 
+     * @param {boolean} mod 
      * @returns DataWeapon
      */
-    DNMC_randomWeapons.randomWeapon = function (rank, classId) {
-        const weapon = randomWeapon(rank, classId);
+    DNMC_randomWeapons.randomWeapon = function (rank, classId, mod=false) {
+        const weapon = randomWeapon(rank, classId, mod);
         DataManager.registerWeapon(weapon);
         registerWeaponId(weapon.id);
         $gameTemp.setLatestGenerated([weapon]);
@@ -732,9 +734,10 @@ function DNMC_randomWeapons() {
      * @param {number} classId 
      * @param {number} wtypeId 
      * @param {number} matId 
+     * @param {boolean} mod
      * @returns DataWeapon
      */
-    function randomWeapon(rank, classId, wtypeId, matId) {
+    function randomWeapon(rank, classId, wtypeId, matId, mod) {
         const id = getNewId();
         const nameTmpl = "{{matName}}の{{wtypeName}}";
         let descItems = [];
@@ -807,6 +810,9 @@ function DNMC_randomWeapons() {
         weapon.iconIndex = iconIndex;
         weapon.params = params;
         weapon.price = price;
+        if (mod) {
+            weapon.note = '<mod:true>';
+        }
 
         return weapon;
     }

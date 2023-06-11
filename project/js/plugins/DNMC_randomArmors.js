@@ -110,11 +110,13 @@ function DNMC_randomArmors() {
      * ランダムに防具を生成して返す。
      * @param {number} rank 
      * @param {number} classId 
+     * @param {number} slot 
+     * @param {boolean} mod 
      * @returns DataArmor
      */
-    DNMC_randomArmors.randomArmor = function (rank, classId, slot) {
+    DNMC_randomArmors.randomArmor = function (rank, classId, slot, mod=false) {
         const type = randomTypeId(classId);
-        const armor = randomArmor(rank, type, slot);
+        const armor = randomArmor(rank, type, slot, mod);
         DataManager.registerArmor(armor);
         registerArmorId(armor.id);
         $gameTemp.setLatestGenerated([armor]);
@@ -1021,9 +1023,10 @@ function DNMC_randomArmors() {
      * @param {number} rank 
      * @param {number} type 
      * @param {number} slot 
+     * @param {boolean} mod 
      * @returns DataArmor
      */
-    function randomArmor(rank, type, slot) {
+    function randomArmor(rank, type, slot, mod) {
         const id = getNewId();
         const nameTmpl = "{{matName}}の{{atypeName}}";
         let descItems = [];
@@ -1086,6 +1089,9 @@ function DNMC_randomArmors() {
         armor.iconIndex = iconIndex;
         armor.params = params;
         armor.price = price;
+        if (mod) {
+            armor.note = '<mod:true>';
+        }
 
         return armor;
     }

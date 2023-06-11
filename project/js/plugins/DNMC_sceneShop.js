@@ -217,7 +217,7 @@
     Scene_Shop.prototype.commandSell = function () {
         _Scene_Shop_commandSell.call(this);
         if (this._categoryWindow.needsSelection()) {
-            this._dummyWindow2.show();
+            // this._dummyWindow2.show();
             // 売り物のカテゴリウィンドウの分ダミー２の高さを削ってY座標を下げる
             this._dummyWindow2.height -= this._categoryWindow.height;
             this._dummyWindow2.y += this._categoryWindow.height;

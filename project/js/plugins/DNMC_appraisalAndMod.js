@@ -139,6 +139,7 @@
         this._buttonGuide.refresh();
         this._questHUD.show();
         this._questHUD.refresh();
+        this._statusWindow.setEnableChangeActor(true);
     };
 
     /**
@@ -157,8 +158,16 @@
     Scene_AppMod.prototype.createDummyWindow = Scene_Shop.prototype.createDummyWindow;
     Scene_AppMod.prototype.dummyWindowRect = Scene_Shop.prototype.dummyWindowRect;
     Scene_AppMod.prototype.createDummyWindow2 = Scene_Shop.prototype.createDummyWindow2;
-    Scene_AppMod.prototype.createStatusWindow = Scene_Shop.prototype.createStatusWindow;
     Scene_AppMod.prototype.statusWindowRect = Scene_Shop.prototype.statusWindowRect;
+
+    /**
+     * 鑑定結果ウィンドウにハンドラ追加
+     */
+    Scene_AppMod.prototype.createStatusWindow = function () { 
+        Scene_Shop.prototype.createStatusWindow.call(this);
+        this._statusWindow.setHandler('ok', this.onAppraisalCancel.bind(this));
+        this._statusWindow.setHandler('cancel', this.onAppraisalCancel.bind(this));
+    };
 
     /**
      * 鑑定対象選択ウィンドウの作成
@@ -333,7 +342,9 @@
     Scene_AppMod.prototype.onAppraisalCancel = function () {
         this._commandWindow.activate();
         this._dummyWindow.show();
+        this._dummyWindow2.show();
         this._appraisalWindow.hide();
+        this._statusWindow.hide();
         this._helpWindow.clear();
     };
 
@@ -341,9 +352,11 @@
      * 鑑定実行
      */
     Scene_AppMod.prototype.execAppraisal = function () {
+        // 鑑定対象
         const item = this._appraisalWindow.item();
         const rank = parseInt(item.meta.rank);
         const slot = parseInt(item.meta.slot);
+        // 鑑定費用
         const appPrice = this._appraisalWindow.itemAppPrice(item);
 
         if ($gameParty.gold() < appPrice) {
@@ -352,6 +365,7 @@
             return;
         }
 
+        // ランクに応じた職業決定
         const classId = DNMC_base.randomClass(rank);
         let appraised = null;
         if (slot === 1) {
@@ -362,24 +376,37 @@
             appraised = DNMC_randomArmors.randomArmor(rank, classId, slot);
         }
 
-        // TODO アニメーションか何かで演出
+        // SE
+        SoundManager.playAppraisal();
 
-        // TODO 生成したものをインベントリに追加して鑑定対象アイテムを減らす
-        $gameParty.gainItem($gameTemp.getLatestGenerated()[0], 1);
-        $gameParty.loseItem(item, 1);
-        this._appraisalWindow.refresh();
+        // 鑑定結果の表示
+        this.showAppraisalResult();
 
-        // TODO 鑑定結果の表示
-
-        // TODO 鑑定料徴収
+        // 鑑定料徴収
         $gameParty.loseGold(appPrice);
         this._goldWindow.refresh();
+    };
 
-        if (this._appraisalWindow._data.length === 0) {
-            this.onAppraisalCancel();
-        } else {
-            // TODO
-        }
+    /**
+     * 鑑定結果の表示
+     */
+    Scene_AppMod.prototype.showAppraisalResult = function () { 
+        const gainingItem = $gameTemp.getLatestGenerated()[0];
+        const losingItem = this._appraisalWindow.item();
+
+        this._dummyWindow2.hide();
+        this._appraisalWindow.setHelpWindowItem(gainingItem);
+        this._statusWindow.setItem(gainingItem);
+        this._appraisalWindow.refresh();
+        this._statusWindow.setEnableChangeActor(true);
+        this._statusWindow.show();
+        this._statusWindow.activate();
+        this._appraisalWindow.deactivate();
+
+        // 鑑定後のアイテムの増減の実処理はここ
+        $gameParty.gainItem(gainingItem, 1);
+        $gameParty.loseItem(losingItem, 1);
+
     };
 
     /**
@@ -582,7 +609,7 @@
      * @returns number
      */
     Window_Appraisal.prototype.maxCols = function () { 
-        return 1;
+        return 2;
     };
 
     /**
@@ -645,7 +672,7 @@
      * @returns number
      */
     Window_Appraisal.prototype.priceWidth = function () { 
-        return this.textWidth('000000000000');
+        return this.textWidth('000000');
     };
 
     /**
@@ -656,8 +683,7 @@
      * @param {number} width 
      */
     Window_Appraisal.prototype.drawItemPrice = function(item, x, y, width){
-        this.drawText('鑑定費:', x, y, width - this.textWidth('00000000'), 'right');
-        this.drawText(this.itemAppPrice(item), x, y, width, 'right');
+        this.drawText(': '+this.itemAppPrice(item), x, y, width, 'right');
     }
 
     /**
@@ -1015,4 +1041,42 @@
         // TODO
     };
 
+    //-----------------------------------------------------------------------------
+    // SoundManager
+
+    /**
+     * 鑑定完了SE
+     */
+    SoundManager.playAppraisal = function () { 
+        AudioManager.playStaticSe({
+            name: 'retro/echo/Fire_Magic_Spell_01', 
+            volume: 45, 
+            pitch: 150, 
+            pan: 0
+        });
+    };
+
+    /**
+     * 追加改造SE
+     */
+    SoundManager.playModdAdd = function () { 
+        AudioManager.playStaticSe({
+            name: 'retro/echo/HP_Mana_Up_03', 
+            volume: 45, 
+            pitch: 150, 
+            pan: 0
+        });
+    };
+
+    /**
+     * 削除改造SE
+     */
+    SoundManager.playModDel = function () { 
+        AudioManager.playStaticSe({
+            name: 'retro/echo/HP_Mana_Down_03', 
+            volume: 45, 
+            pitch: 150, 
+            pan: 0
+        });
+    };
 })();

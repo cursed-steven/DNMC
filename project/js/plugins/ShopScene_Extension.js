@@ -151,7 +151,8 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
     const _Scene_Shop_update = Scene_Shop.prototype.update;
     Scene_Shop.prototype.update = function () {
         _Scene_Shop_update.call(this);
-        if (this._buyWindow.active) {
+        // 2023-06-11 cursed_steven custom 
+        if (this._buyWindow.active || this._sellWindow.active) {
             this._statusWindow.setEnableChangeActor(true);
         } else {
             this._statusWindow.setEnableChangeActor(false);
@@ -400,7 +401,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
             !this._cursorFixed &&
             !this._cursorAll &&
             this._item &&
-            this.isEquipItem()
+            (DataManager.isWeapon(this._item) || DataManager.isArmor(this._item))
         );
     };
 
@@ -411,7 +412,7 @@ const ShopScene_ExtensionPluginName = document.currentScript.src.match(/^.*\/(.+
         this.drawPossession(x, 0);
         this.hideActorCharacters();
         if (EnableActorArrow) this.hideActorCursors();
-        if (this.isEquipItem()) {
+        if (DataManager.isWeapon(this._item) || DataManager.isArmor(this._item)) {
             const y = this.lineHeight();
             this.drawEquipInfo(x, y);
         }
