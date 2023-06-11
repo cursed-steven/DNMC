@@ -94,6 +94,7 @@
         this.createAppraisalWindow();
         this.createModWindow();
         this.createModCommandWindow();
+        this.createModTargetWindow();
         this.createModMatWindow();
         this.createModDelWindow();
         this.createModResultWindow();
@@ -107,15 +108,15 @@
     Scene_AppMod.prototype.createGoldWindow = Scene_Shop.prototype.createGoldWindow;
     Scene_AppMod.prototype.goldWindowRect = Scene_Shop.prototype.goldWindowRect;
 
-    Scene_AppMod.prototype.buttonGuideRect = function () { 
+    Scene_AppMod.prototype.buttonGuideRect = function () {
         return Scene_Map.prototype.buttonGuideRect.call(this);
     };
 
-    Scene_AppMod.prototype.createQuestHUD = function () { 
+    Scene_AppMod.prototype.createQuestHUD = function () {
         Scene_Map.prototype.createQuestHUD.call(this);
     };
 
-    Scene_AppMod.prototype.questHUDRect = function () { 
+    Scene_AppMod.prototype.questHUDRect = function () {
         return Scene_Map.prototype.questHUDRect.call(this);
     };
 
@@ -134,7 +135,7 @@
     /**
      * ボタンガイドとクエストHUDの描画更新
      */
-    Scene_AppMod.prototype.update = function () { 
+    Scene_AppMod.prototype.update = function () {
         Scene_MenuBase.prototype.update.call(this);
         this._buttonGuide.refresh();
         this._questHUD.show();
@@ -163,7 +164,7 @@
     /**
      * 鑑定結果ウィンドウにハンドラ追加
      */
-    Scene_AppMod.prototype.createStatusWindow = function () { 
+    Scene_AppMod.prototype.createStatusWindow = function () {
         Scene_Shop.prototype.createStatusWindow.call(this);
         this._statusWindow.setHandler('ok', this.onAppraisalCancel.bind(this));
         this._statusWindow.setHandler('cancel', this.onAppraisalCancel.bind(this));
@@ -214,7 +215,7 @@
     /**
      * 追加改造/削除改造の選択ウィンドウの作成
      */
-    Scene_AppMod.prototype.createModCommandWindow = function () { 
+    Scene_AppMod.prototype.createModCommandWindow = function () {
         const rect = this.modCommandWindowRect();
         this._modCommandWindow = new Window_ModCommand(rect);
         this._modCommandWindow.hide();
@@ -227,12 +228,30 @@
     /**
      * 追加改造/削除改造の選択ウィンドウの領域を返す
      */
-    Scene_AppMod.prototype.modCommandWindowRect = function () { 
+    Scene_AppMod.prototype.modCommandWindowRect = function () {
         const ww = this.mainCommandWidth();
         const wh = this.calcWindowHeight(3, true);
         const wx = (Graphics.boxWidth - ww) / 2;
         const wy = (Graphics.boxHeight - this._commandWindow.y - wh) / 2;
         return new Rectangle(wx, wy, ww, wh);
+    };
+
+    /**
+     * 改造対象ウィンドウの作成
+     */
+    Scene_AppMod.prototype.createModTargetWindow = function () {
+        const rect = this.modTargetWindowRect();
+        this._modTargetWindow = new Window_ModTarget(rect);
+        this._modTargetWindow.hide();
+        this.addWindow(this._modTargetWindow);
+    };
+
+    /**
+     * 改造対象ウィンドウの領域を返す
+     * @returns Rectangle
+     */
+    Scene_AppMod.prototype.modTargetWindowRect = function () {
+        return this.statusWindowRect();
     };
 
     /**
@@ -259,7 +278,7 @@
     /**
      * 削除対象とする特徴の選択ウィンドウの作成
      */
-    Scene_AppMod.prototype.createModDelWindow = function () { 
+    Scene_AppMod.prototype.createModDelWindow = function () {
         const rect = this.dummyWindowRect();
         this._modDelWindow = new Window_ModDel(rect);
         this._modDelWindow.setHelpWindow(this._helpWindow);
@@ -272,14 +291,14 @@
     /**
      * 削除対象とする特徴の選択ウィンドウの領域を返す
      */
-    Scene_AppMod.prototype.modDelWindowRect = function () { 
+    Scene_AppMod.prototype.modDelWindowRect = function () {
         return this.dummyWindowRect();
     };
 
     /**
      * 改造結果表示ウィンドウの作成
      */
-    Scene_AppMod.prototype.createModResultWindow = function () { 
+    Scene_AppMod.prototype.createModResultWindow = function () {
         const rect = this.modResultWindowRect();
         this._modResultWindow = new Window_ModResult(rect);
         this._modResultWindow.setHelpWindow(this._helpWindow);
@@ -292,7 +311,7 @@
     /**
      * 改造結果表示ウィンドウの領域を返す
      */
-    Scene_AppMod.prototype.modResultWindowRect = function () { 
+    Scene_AppMod.prototype.modResultWindowRect = function () {
         const ww = this._statusWindow.width * 3 + ITEM_PADDING * 2;
         const wh = this._statusWindow.height;
         const wx = (Graphics.boxWidth - ww) / 2;
@@ -314,14 +333,14 @@
         this._appraisalWindow.forceSelect(0);
         this._commandWindow.deactivate();
     };
-    
+
     /**
      * 改造コマンド選択時の処理
      */
     Scene_AppMod.prototype.commandMod = function () {
         this._dummyWindow.hide();
-        this._modWindow.setMoney(this.money());
         this._modWindow.setHelpWindow(this._helpWindow);
+        this._modWindow.refresh();
         this._modWindow.show();
         this._modWindow.activate();
         this._modWindow.selectLast();
@@ -390,7 +409,7 @@
     /**
      * 鑑定結果の表示
      */
-    Scene_AppMod.prototype.showAppraisalResult = function () { 
+    Scene_AppMod.prototype.showAppraisalResult = function () {
         const gainingItem = $gameTemp.getLatestGenerated()[0];
         const losingItem = this._appraisalWindow.item();
 
@@ -406,17 +425,28 @@
         // 鑑定後のアイテムの増減の実処理はここ
         $gameParty.gainItem(gainingItem, 1);
         $gameParty.loseItem(losingItem, 1);
+    };
 
+    /**
+     * 改造コマンドウィンドウの移動
+     */
+    Scene_AppMod.prototype.moveModComWindow = function () {
+        const modItemIx = this._modWindow.index();
+        const modItemRect = this._modWindow.itemLineRect(modItemIx);
+        const destX = modItemRect.x + modItemRect.width;
+        const destY = modItemRect.y + this._modCommandWindow.height;
+        this._modCommandWindow.x = destX;
+        this._modCommandWindow.y = destY;
     };
 
     /**
      * 改造対象を選択してOKしたときの処理
      */
     Scene_AppMod.prototype.onModOk = function () {
-        this._modWindow.hide();
+        this.moveModComWindow();
         this._modCommandWindow.show();
         this._modCommandWindow.activate();
-        this._modDelWindow.setItem(this._modWindow.item());
+        this._modDelWindow.setModItem(this._modWindow.item());
         this._modWindow.deactivate();
     };
 
@@ -424,11 +454,12 @@
      * 改造対象の選択をキャンセルした時の処理
      */
     Scene_AppMod.prototype.onModCancel = function () {
-        this._modMatWindow.deselect();
-        this._modMatWindow.deactivate();
-        this._modMatWindow.hide();
-        this._modWindow.show();
-        this._modWindow.activate();
+        this._dummyWindow.show();
+        this._modWindow.hide();
+        this._modDelWindow.clearModItem();
+        this._commandWindow.activate();
+        this._commandWindow.forceSelect(1);
+        this._modWindow.deactivate();
         this._helpWindow.clear();
     };
 
@@ -436,35 +467,47 @@
      * 追加改造/削除改造の選択ウィンドウで追加改造を選んだときの処理
      */
     Scene_AppMod.prototype.commandModAdd = function () {
+        this._modWindow.hide();
         this._modCommandWindow.hide();
         this._modMatWindow.show();
         this._modMatWindow.activate();
+        this._modMatWindow.refresh();
+        this._modMatWindow.forceSelect(0);
+        this._modTargetWindow.setItem(this._modWindow.item());
+        this._modTargetWindow.refresh();
+        this._modTargetWindow.show();
+        this._statusWindow.hide();
+        this._dummyWindow2.hide();
         this._modCommandWindow.deactivate();
     };
 
     /**
      * 追加改造/削除改造の選択ウィンドウで削除改造を選んだときの処理
      */
-    Scene_AppMod.prototype.commandModDel = function () { 
+    Scene_AppMod.prototype.commandModDel = function () {
         this._modCommandWindow.hide();
         this._modDelWindow.show();
         this._modDelWindow.activate();
+        this._modDelWindow.refresh();
         this._modCommandWindow.deactivate();
     };
 
     /**
      * 追加改造/削除改造の選択ウィンドウでキャンセルを選んだときの処理
      */
-    Scene_AppMod.prototype.onModComCancel = function () { 
+    Scene_AppMod.prototype.onModComCancel = function () {
         this._modCommandWindow.hide();
         this._modWindow.activate();
+        this._statusWindow.hide();
+        this._modTargetWindow.hide();
+        this._dummyWindow2.show();
         this._modCommandWindow.deactivate();
     };
 
     /**
      * 追加改造の材料を選択してOKしたときの処理
      */
-    Scene_AppMod.prototype.onModMatOk = function () { 
+    Scene_AppMod.prototype.onModMatOk = function () {
         this._modMatWindow.hide();
         this.execModAdd();
     };
@@ -472,7 +515,7 @@
     /**
      * 追加改造実行
      */
-    Scene_AppMod.prototype.execModAdd = function () { 
+    Scene_AppMod.prototype.execModAdd = function () {
         // TODO this._modWindow.item() が改造対象
         //      this._modMatWindow.item() が改造材料
         // TODO 改造対象についてる特徴の数を確認
@@ -495,8 +538,9 @@
     /**
      * 追加改造の材料を選択でキャンセルしたときの処理
      */
-    Scene_AppMod.prototype.onModMatCancel = function () { 
+    Scene_AppMod.prototype.onModMatCancel = function () {
         this._modMatWindow.hide();
+        this._modWindow.show();
         this._modCommandWindow.show();
         this._modCommandWindow.activate();
         this._modMatWindow.deactivate();
@@ -505,7 +549,7 @@
     /**
      * 削除改造ウィンドウで対象を選択してOKしたときの処理
      */
-    Scene_AppMod.prototype.onModDelOk = function () { 
+    Scene_AppMod.prototype.onModDelOk = function () {
         this._modDelWindow.hide();
         this.execModDel();
     };
@@ -513,7 +557,7 @@
     /**
      * 削除改造実行
      */
-    Scene_AppMod.prototype.execModDel = function () { 
+    Scene_AppMod.prototype.execModDel = function () {
         // TODO this._modWindow.item() が改造対象
         //      this._modDelWindow.item() が削除対象
         // TODO 改造対象についてる特徴の数を確認
@@ -532,7 +576,7 @@
     /**
      * 削除改造ウィンドウでキャンセルしたときの処理
      */
-    Scene_AppMod.prototype.onModDelCancel = function () { 
+    Scene_AppMod.prototype.onModDelCancel = function () {
         this._modDelWindow.hide();
         this._modCommandWindow.show();
         this._modCommandWindow.activate();
@@ -542,14 +586,14 @@
     /**
      * 改造結果表示でOKしたときの処理
      */
-    Scene_AppMod.prototype.onModResultOk = function () { 
+    Scene_AppMod.prototype.onModResultOk = function () {
         // TODO
     };
 
     /**
      * 改造結果表示でキャンセルしたときの処理
      */
-    Scene_AppMod.prototype.onModResultCancel = function () { 
+    Scene_AppMod.prototype.onModResultCancel = function () {
         this.onModResultOk();
     };
 
@@ -608,7 +652,7 @@
      * 列数を返す
      * @returns number
      */
-    Window_Appraisal.prototype.maxCols = function () { 
+    Window_Appraisal.prototype.maxCols = function () {
         return 2;
     };
 
@@ -616,7 +660,7 @@
      * 選択中アイテムで決定が可能か
      * @returns boolean
      */
-    Window_Appraisal.prototype.isCurrentItemEnabled = function () { 
+    Window_Appraisal.prototype.isCurrentItemEnabled = function () {
         return true;
     };
 
@@ -640,14 +684,14 @@
      * @param {any} item 
      * @returns boolean
      */
-    Window_Appraisal.prototype.isEnabled = function (item) { 
+    Window_Appraisal.prototype.isEnabled = function (item) {
         return true;
     };
 
     /**
      * 強制的に1項目めを選択する
      */
-    Window_Appraisal.prototype.selectLast = function () { 
+    Window_Appraisal.prototype.selectLast = function () {
         this.forceSelect(0);
     };
 
@@ -655,7 +699,7 @@
      * 項目の描画
      * @param {number} index 
      */
-    Window_Appraisal.prototype.drawItem = function (index) { 
+    Window_Appraisal.prototype.drawItem = function (index) {
         const item = this.itemAt(index);
         if (item) {
             const priceWidth = this.priceWidth();
@@ -671,7 +715,7 @@
      * 鑑定価格表示に使う幅
      * @returns number
      */
-    Window_Appraisal.prototype.priceWidth = function () { 
+    Window_Appraisal.prototype.priceWidth = function () {
         return this.textWidth('000000');
     };
 
@@ -682,8 +726,8 @@
      * @param {number} y 
      * @param {number} width 
      */
-    Window_Appraisal.prototype.drawItemPrice = function(item, x, y, width){
-        this.drawText(': '+this.itemAppPrice(item), x, y, width, 'right');
+    Window_Appraisal.prototype.drawItemPrice = function (item, x, y, width) {
+        this.drawText(': ' + this.itemAppPrice(item), x, y, width, 'right');
     }
 
     /**
@@ -737,7 +781,7 @@
     //
     // The window for selecting item to be modded on the appmod shop screen.
 
-    function Window_Mod() { 
+    function Window_Mod() {
         this.initialize(...arguments);
     }
 
@@ -745,10 +789,18 @@
     Window_Mod.prototype.constructor = Window_Mod;
 
     /**
+     * 列数
+     * @returns number
+     */
+    Window_Mod.prototype.maxCols = function () {
+        return 2;
+    };
+
+    /**
      * 選択中アイテムで決定が可能か
      * @returns boolean
      */
-    Window_Mod.prototype.isCurrentItemEnabled = function () { 
+    Window_Mod.prototype.isCurrentItemEnabled = function () {
         return true;
     };
 
@@ -757,7 +809,7 @@
      * @param {any} item 
      * @returns boolean
      */
-    Window_Mod.prototype.includes = function (item) { 
+    Window_Mod.prototype.includes = function (item) {
         return DataManager.isWeapon(item) || DataManager.isArmor(item);
     };
 
@@ -766,14 +818,14 @@
      * @param {any} item 
      * @returns boolean
      */
-    Window_Mod.prototype.isEnabled = function (item) { 
+    Window_Mod.prototype.isEnabled = function (item) {
         return true;
     };
 
     /**
      * 強制的に1項目めを選択する
      */
-   Window_Mod.prototype.selectLast = function () { 
+    Window_Mod.prototype.selectLast = function () {
         this.forceSelect(0);
     };
 
@@ -793,7 +845,7 @@
      * 初期化
      * @param {Rectangle} rect 
      */
-    Window_ModCommand.prototype.initialize = function (rect) { 
+    Window_ModCommand.prototype.initialize = function (rect) {
         Window_HorzCommand.prototype.initialize.call(this, rect);
     };
 
@@ -801,14 +853,22 @@
      * 列数を返す
      * @returns number
      */
-    Window_ModCommand.prototype.maxCols = function () { 
+    Window_ModCommand.prototype.maxCols = function () {
+        return 1;
+    };
+
+    /**
+     * 表示行数
+     * @returns number
+     */
+    Window_ModCommand.prototype.numVisibleRows = function () {
         return 3;
     };
 
     /**
      * 改造対象選択後の追加/削除選択コマンド
      */
-    Window_ModCommand.prototype.makeCommandList = function () { 
+    Window_ModCommand.prototype.makeCommandList = function () {
         const addCommandName = TextManager.originalCommand(10);
         const delCommandName = TextManager.originalCommand(11);
         this.addCommand(addCommandName ? addCommandName : 'ModAdd', 'modadd');
@@ -817,11 +877,125 @@
     };
 
     //-----------------------------------------------------------------------------
+    // Window_ModTarget
+    //
+    // The window for item to be modded on the appmod shop screen.
+
+    function Window_ModTarget() {
+        this.initialize(...arguments);
+    }
+
+    Window_ModTarget.prototype = Object.create(Window_StatusBase.prototype);
+    Window_ModTarget.prototype.constructor = Window_ModTarget;
+
+    Window_ModTarget.prototype.initialize = function (rect) {
+        Window_StatusBase.prototype.initialize.call(this, rect);
+        this._item = null;
+    };
+
+    /**
+     * 描画対象とするアイテムの設定
+     * @param {any} item 
+     */
+    Window_ModTarget.prototype.setItem = function (item) {
+        this._item = item;
+    };
+
+    /**
+     * 描画の更新
+     */
+    Window_ModTarget.prototype.refresh = function () {
+        this.contents.clear();
+        if (this._item) {
+            let x = 4;
+            let y = 0;
+            const lineHeight2 = this.lineHeight() * 0.8;
+            const descLines = this._item.description.split("\n");
+            let splitDescs = [];
+            for (let i = 0; i < descLines.length; i++) {
+                splitDescs.push(descLines[i].split('／'));
+            }
+            const flat = [].concat(...splitDescs);
+            const w2 = (this.width - this.itemPadding() * 3) / 2;
+            let paramNames = [];
+            for (let i = 0; i < 8; i++) {
+                paramNames.push(TextManager.param(i));
+            }
+            let params = [];
+            for (let i = 0; i < 8; i++) {
+                params.push(`${this._item.params[i]}   `);
+            }
+            const price = `${this._item.price} ${TextManager.currencyUnit}`;
+
+            this.contents.fontSize = 16;
+
+            // タイトル
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText('【改造対象／特徴追加】', x, y, this.width);
+
+            // 武具名・アイコン
+            y += this.lineHeight();
+            this.drawItemName(this._item, x, y, this.width);
+
+            // 説明
+            y += lineHeight2;
+            for (let i = 0; i < flat.length; i++) {
+                y += lineHeight2;
+                this.drawText(flat[i], x, y, this.width);
+            }
+
+            // 8パラメータ
+            y += lineHeight2;
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText(`${paramNames[0]}`, w2 * 0 + x, y, w2);
+            this.resetTextColor();
+            this.drawText(params[0], w2 * 0, y, w2, 'right');
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText(`${paramNames[1]}`, w2 * 1 + x, y, w2);
+            this.resetTextColor();
+            this.drawText(params[1], w2 * 1, y, w2, 'right');
+            y += lineHeight2;
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText(`${paramNames[2]}`, w2 * 0 + x, y, w2);
+            this.resetTextColor();
+            this.drawText(params[2], w2 * 0, y, w2, 'right');
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText(`${paramNames[3]}`, w2 * 1 + x, y, w2);
+            this.resetTextColor();
+            this.drawText(params[3], w2 * 1, y, w2, 'right');
+            y += lineHeight2;
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText(`${paramNames[4]}`, w2 * 0 + x, y, w2);
+            this.resetTextColor();
+            this.drawText(params[4], w2 * 0, y, w2, 'right');
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText(`${paramNames[5]}`, w2 * 1 + x, y, w2);
+            this.resetTextColor();
+            this.drawText(params[5], w2 * 1, y, w2, 'right');
+            y += lineHeight2;
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText(`${paramNames[6]}`, w2 * 0 + x, y, w2);
+            this.resetTextColor();
+            this.drawText(params[6], w2 * 0, y, w2, 'right');
+            this.changeTextColor(ColorManager.systemColor());
+            this.drawText(`${paramNames[7]}`, w2 * 1 + x, y, w2);
+            this.resetTextColor();
+            this.drawText(params[7], w2 * 1, y, w2, 'right');
+
+            // 価格
+            y += lineHeight2 * 1.5;
+            this.drawText(price, 0, y, w2 * 2, 'right');
+
+            this.contents.fontSize = $gameSystem.mainFontSize();
+        }
+    };
+
+    //-----------------------------------------------------------------------------
     // Window_ModMat
     //
     // The window for selecting item to be used as mod mat on the appmod shop screen.
 
-    function Window_ModMat() { 
+    function Window_ModMat() {
         this.initialize(...arguments);
     }
 
@@ -840,7 +1014,7 @@
      * 選択中アイテムで決定が可能か
      * @returns boolean
      */
-    Window_ModMat.prototype.isCurrentItemEnabled = function () { 
+    Window_ModMat.prototype.isCurrentItemEnabled = function () {
         return true;
     };
 
@@ -849,7 +1023,7 @@
      * @param {any} item 
      * @returns boolean
      */
-    Window_ModMat.prototype.includes = function (item) { 
+    Window_ModMat.prototype.includes = function (item) {
         if (!DataManager.isItem(item)) return false;
         if (START_IX_ITEM_FOR_MODMAT <= item.id
             && item.id <= END_IX_ITEM_FOR_MODMAT) {
@@ -864,14 +1038,14 @@
      * @param {any} item 
      * @returns boolean
      */
-    Window_ModMat.prototype.isEnabled = function (item) { 
+    Window_ModMat.prototype.isEnabled = function (item) {
         return true;
     };
 
     /**
      * 強制的に1項目めを選択する
      */
-    Window_ModMat.prototype.selectLast = function () { 
+    Window_ModMat.prototype.selectLast = function () {
         this.forceSelect(0);
     };
 
@@ -880,7 +1054,7 @@
     //
     // The window for mod menu to select trait to be deleted on the appmod shop screen.
 
-    function Window_ModDel() { 
+    function Window_ModDel() {
         this.initialize(...arguments);
     }
 
@@ -891,15 +1065,22 @@
      * 改造対象ウィンドウで選択した項目をセットする
      * @param {any} item 
      */
-    Window_ModDel.prototype.setModItem = function (item) { 
+    Window_ModDel.prototype.setModItem = function (item) {
         this._modItem = item;
+    };
+
+    /**
+     * 改造対象をクリア
+     */
+    Window_ModDel.prototype.clearModItem = function () {
+        this._modItem = null;
     };
 
     /**
      * 列数を返す
      * @returns number
      */
-    Window_ModDel.prototype.maxCols = function () { 
+    Window_ModDel.prototype.maxCols = function () {
         return 1;
     };
 
@@ -907,7 +1088,7 @@
      * 一度に画面に出す行数
      * @returns number
      */
-    Window_ModDel.prototype.numVisibleRows = function () { 
+    Window_ModDel.prototype.numVisibleRows = function () {
         return 6;
     };
 
@@ -915,7 +1096,7 @@
      * 選択中の特徴で決定が可能か
      * @returns boolean
      */
-    Window_ModDel.prototype.isCurrentItemEnabled = function () { 
+    Window_ModDel.prototype.isCurrentItemEnabled = function () {
         return true;
     };
 
@@ -931,14 +1112,14 @@
     /**
      * 改造対象ウィンドウで選択した武具についている特徴全て
      */
-    Window_ModDel.prototype.makeItemList = function () { 
+    Window_ModDel.prototype.makeItemList = function () {
         this._data = this.traits;
     };
 
     /**
      * 強制的に1項目めを選択する
      */
-    Window_ModDel.prototype.selectLast = function () { 
+    Window_ModDel.prototype.selectLast = function () {
         this.forceSelect(0);
     };
 
@@ -950,9 +1131,9 @@
         const item = this.itemAt(index);
         if (item) {
             const rect = this.itemLineRect(index);
-        this.changePaintOpacity(this.isEnabled(item));
-        this.drawItemName(item, rect.x, rect.y, rect.width);
-        this.changePaintOpacity(1);
+            this.changePaintOpacity(this.isEnabled(item));
+            this.drawItemName(item, rect.x, rect.y, rect.width);
+            this.changePaintOpacity(1);
         }
     }
 
@@ -963,7 +1144,7 @@
      * @param {number} y 
      * @param {number} width 
      */
-    Window_ModDel.prototype.drawItemName = function (item, x, y, width) { 
+    Window_ModDel.prototype.drawItemName = function (item, x, y, width) {
         if (item) {
             this.resetTextColor();
             const text = DNMC_randomArmors.traitToDesc(item);
@@ -991,7 +1172,7 @@
      * 列数を返す
      * @returns number
      */
-    Window_ModResult.prototype.maxCols = function () { 
+    Window_ModResult.prototype.maxCols = function () {
         return 3;
     };
 
@@ -999,7 +1180,7 @@
      * 表示行数を返す
      * @returns number
      */
-    Window_ModResult.prototype.numVisibleRows = function () { 
+    Window_ModResult.prototype.numVisibleRows = function () {
         return 1;
     };
 
@@ -1007,14 +1188,14 @@
      * 最大項目数
      * @returns number
      */
-    Window_ModResult.prototype.maxItems = function () { 
+    Window_ModResult.prototype.maxItems = function () {
         return 3;
     }
 
     /**
      * 各項目の描画
      */
-    Window_ModResult.prototype.drawItem = function () { 
+    Window_ModResult.prototype.drawItem = function () {
         this.drawModTarget();
         this.drawModMat();
         this.drawModResult();
@@ -1023,21 +1204,21 @@
     /**
      * 改造対象を描画する
      */
-    Window_ModResult.prototype.drawModTarget = function () { 
+    Window_ModResult.prototype.drawModTarget = function () {
         // TODO
     };
 
     /**
      * 改造材料を描画する
      */
-    Window_ModResult.prototype.drawModMat = function () { 
+    Window_ModResult.prototype.drawModMat = function () {
         // TODO
     };
 
     /**
      * 改造結果を描画する
      */
-    Window_ModResult.prototype.drawModResult = function () { 
+    Window_ModResult.prototype.drawModResult = function () {
         // TODO
     };
 
@@ -1047,11 +1228,11 @@
     /**
      * 鑑定完了SE
      */
-    SoundManager.playAppraisal = function () { 
+    SoundManager.playAppraisal = function () {
         AudioManager.playStaticSe({
-            name: 'retro/echo/Fire_Magic_Spell_01', 
-            volume: 45, 
-            pitch: 150, 
+            name: 'retro/echo/Fire_Magic_Spell_01',
+            volume: 45,
+            pitch: 150,
             pan: 0
         });
     };
@@ -1059,11 +1240,11 @@
     /**
      * 追加改造SE
      */
-    SoundManager.playModdAdd = function () { 
+    SoundManager.playModdAdd = function () {
         AudioManager.playStaticSe({
-            name: 'retro/echo/HP_Mana_Up_03', 
-            volume: 45, 
-            pitch: 150, 
+            name: 'retro/echo/HP_Mana_Up_03',
+            volume: 45,
+            pitch: 150,
             pan: 0
         });
     };
@@ -1071,11 +1252,11 @@
     /**
      * 削除改造SE
      */
-    SoundManager.playModDel = function () { 
+    SoundManager.playModDel = function () {
         AudioManager.playStaticSe({
-            name: 'retro/echo/HP_Mana_Down_03', 
-            volume: 45, 
-            pitch: 150, 
+            name: 'retro/echo/HP_Mana_Down_03',
+            volume: 45,
+            pitch: 150,
             pan: 0
         });
     };
