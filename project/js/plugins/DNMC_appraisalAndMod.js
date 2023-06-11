@@ -945,42 +945,17 @@
             }
 
             // 8パラメータ
-            y += lineHeight2;
-            this.changeTextColor(ColorManager.systemColor());
-            this.drawText(`${paramNames[0]}`, w2 * 0 + x, y, w2);
-            this.resetTextColor();
-            this.drawText(params[0], w2 * 0, y, w2, 'right');
-            this.changeTextColor(ColorManager.systemColor());
-            this.drawText(`${paramNames[1]}`, w2 * 1 + x, y, w2);
-            this.resetTextColor();
-            this.drawText(params[1], w2 * 1, y, w2, 'right');
-            y += lineHeight2;
-            this.changeTextColor(ColorManager.systemColor());
-            this.drawText(`${paramNames[2]}`, w2 * 0 + x, y, w2);
-            this.resetTextColor();
-            this.drawText(params[2], w2 * 0, y, w2, 'right');
-            this.changeTextColor(ColorManager.systemColor());
-            this.drawText(`${paramNames[3]}`, w2 * 1 + x, y, w2);
-            this.resetTextColor();
-            this.drawText(params[3], w2 * 1, y, w2, 'right');
-            y += lineHeight2;
-            this.changeTextColor(ColorManager.systemColor());
-            this.drawText(`${paramNames[4]}`, w2 * 0 + x, y, w2);
-            this.resetTextColor();
-            this.drawText(params[4], w2 * 0, y, w2, 'right');
-            this.changeTextColor(ColorManager.systemColor());
-            this.drawText(`${paramNames[5]}`, w2 * 1 + x, y, w2);
-            this.resetTextColor();
-            this.drawText(params[5], w2 * 1, y, w2, 'right');
-            y += lineHeight2;
-            this.changeTextColor(ColorManager.systemColor());
-            this.drawText(`${paramNames[6]}`, w2 * 0 + x, y, w2);
-            this.resetTextColor();
-            this.drawText(params[6], w2 * 0, y, w2, 'right');
-            this.changeTextColor(ColorManager.systemColor());
-            this.drawText(`${paramNames[7]}`, w2 * 1 + x, y, w2);
-            this.resetTextColor();
-            this.drawText(params[7], w2 * 1, y, w2, 'right');
+            let mod = 0;
+            for (let i = 0; i < 8; i++) {
+                mod = i % 2;
+                if (mod === 0) {
+                    y += lineHeight2;
+                }
+                this.changeTextColor(ColorManager.systemColor());
+                this.drawText(`${paramNames[i]}`, w2 * mod + x, y, w2);
+                this.resetTextColor();
+                this.drawText(params[i], w2 * mod, y, w2, 'right');
+            }
 
             // 価格
             y += lineHeight2 * 1.5;
