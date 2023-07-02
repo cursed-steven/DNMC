@@ -508,7 +508,7 @@
      * 追加改造の材料を選択してOKしたときの処理
      */
     Scene_AppMod.prototype.onModMatOk = function () {
-        this._modMatWindow.hide();
+        this._modMatWindow.deactivate();
         this.execModAdd();
     };
 
@@ -516,11 +516,24 @@
      * 追加改造実行
      */
     Scene_AppMod.prototype.execModAdd = function () {
-        // TODO this._modWindow.item() が改造対象
-        //      this._modMatWindow.item() が改造材料
-        // TODO 改造対象についてる特徴の数を確認
-        //          6個ついていたらbuzzer出してキャンセル
+        const target = this._modWindow.item();
+        const mat = this._modMatWindow.item();
+
+        // 特徴は最大6つまでなので、それに追加しようとした場合はキャンセル
+        if (target.traits.length >= 6) {
+            SoundManager.playBuzzer();
+            this.onModMatCancel();
+            return;
+        }
+
         // TODO 改造材料に対応する特徴とランクを導出
+        let trait = null;
+        if (DataManager.isWeapon(target)) {
+            trait = this.extractTrait(mat.wtrait);
+        } else {
+            trait = this.extractTrait(mat.atrait);
+        }
+
         // TODO 導出した特徴が改造対象についているか確認
         //          ついている場合、上書き可能か確認
         //              上書き可能なら上書きして実行
@@ -533,6 +546,101 @@
         // TODO もともと改造対象であった武具は失う
         // TODO 改造材料にしたアイテムも失う
         // TODO 改造対象選択画面に戻る
+    };
+
+    /**
+     * 錬金材料アイテムのメモ欄から特徴を抽出する
+     * @param {string} traitStr 
+     * @returns Trait_Effect
+     */
+    Scene_AppMod.prototype.extractTrait = function (traitStr) {
+        const split = traitStr.split(',');
+        const candd = this.translateTraitCode(split[0]);
+        const value = Math.applyVariance(split[1], 20);
+
+        return new Trait_Effect(
+            candd.code,
+            candd.dataId,
+            value,
+            value,
+            0
+        );
+    };
+
+    /**
+     * 文字列から特徴のコードとデータIDの組を返す
+     * @param {string} str 
+     * @returns any
+     */
+    Scene_AppMod.prototype.translateTraitCode = function (str) {
+        let result = {
+            code: 0,
+            dataId: 0
+        };
+        switch (str) {
+            case 'mhp':
+                result.code = Game_BattlerBase.TRAIT_PARAM;
+                result.dataId = PARAM.MHP;
+                break;
+            case 'mmp':
+                result.code = Game_BattlerBase.TRAIT_PARAM;
+                result.dataId = PARAM.MMP;
+                break;
+            case 'atk':
+                break;
+            case 'def':
+                break;
+            case 'mat':
+                break;
+            case 'mdf':
+                break;
+            case 'agi':
+                break;
+            case 'luk':
+                break;
+            case 'bash':
+                break;
+            case 'fire':
+                break;
+            case 'ice':
+                break;
+            case 'thunder':
+                break;
+            case 'soil':
+                break;
+            case 'water':
+                break;
+            case 'wind':
+                break;
+            case 'light':
+                break;
+            case 'darkness':
+                break;
+            case 'counter':
+                break;
+            case 'critical':
+                break;
+            case 'hitRate':
+                break;
+            case 'evadeRate':
+                break;
+            case 'fury':
+                break;
+            case 'death':
+                break;
+            case 'poison':
+                break;
+            case 'temptation':
+                break;
+            case 'confusion':
+                break;
+            case 'blind':
+                break;
+            case 'silent':
+                break;
+        }
+
+        return result;
     };
 
     /**
